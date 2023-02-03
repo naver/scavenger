@@ -1,0 +1,217 @@
+body {
+  margin: 0;
+  padding: 0;
+  width: 100% !important;
+  background-color: #f3f3f4;
+  font-family: "나눔고딕", NanumGothic, "맑은고딕", malgun gothic, "돋움", dotum, "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+  #app {
+    height: calc(100vh - 46px);
+
+    .common-layout {
+      height: 100%;
+
+      .el-container {
+        background: url(/assets/header-background.png) repeat-x;
+
+        .el-header {
+          position: relative;
+          width: 100%;
+
+          .banner {
+            padding-top: 40px;
+            margin: 0 auto;
+            background: url(/assets/banner.png) no-repeat;
+            width: 1232px;
+            color: #fff;
+            height: 100%;
+
+            .caption {
+              h3 {
+                margin: 0;
+                height: 81px;
+                font-size: 68px;
+                font-weight: 900;
+                word-wrap: normal;
+                line-height: normal;
+              }
+
+              p {
+                margin: 0;
+                display: block;
+                font-size: 18px;
+              }
+            }
+
+            .el-link {
+              width: 220px;
+              height: 50px;
+              font-size: 18px;
+              font-weight: 600;
+              background-color: #fff;
+              border: 1px solid #333;
+              margin-top: 27px;
+              border-radius: 25px;
+              --el-link-hover-text-color: #a8abb2;
+            }
+          }
+        }
+
+        .el-main {
+          margin: 0 auto;
+          width: 1232px !important;
+
+          .title-area {
+            border-bottom: 1px solid #333;
+
+            h1 {
+              font-size: 22px;
+              color: #000;
+            }
+
+            .el-tag--dark {
+              &.el-tag--warning {
+                --el-tag-bg-color: #be714f;
+                --el-tag-border-color: #be714f;
+                margin-left: 5px;
+              }
+            }
+
+            .search-box {
+              margin-top: 12px;
+            }
+          }
+
+          .card-area {
+            margin-top: 15px;
+            height: 350px;
+
+            .el-space__item {
+              margin-left: 8px;
+              margin-right: 8px !important;
+
+              .customer-card {
+                width: 280px;
+                height: 155px;
+
+                .el-card__header {
+                  :hover {
+                    color: #409eff;
+                  }
+
+                  a {
+                    text-decoration: none;
+                    color: #333;
+                  }
+
+                  h1 {
+                    margin: 0;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                  }
+                }
+
+                .el-card__body {
+                  font-size: 12px;
+                  padding-top: 0;
+
+                  dt {
+                    width: 66px;
+                    float: left;
+                    overflow: hidden;
+                    color: #333;
+                    font-weight: 600;
+                    line-height: 24px;
+                    white-space: nowrap;
+                  }
+
+                  dd {
+                    margin-top: 0;
+                    font-size: 12px;
+                    line-height: 21px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    padding-left: 15px;
+                    color: #666;
+                  }
+                }
+              }
+            }
+          }
+
+          .empty-card-area {
+            margin-top: 15px;
+            height: 350px;
+            align-items: center;
+            justify-content: center;
+          }
+
+          .footer-area {
+            border-top: 1px solid #e5e5e5;
+            padding-top: 25px;
+
+            .create-button {
+              &.el-button {
+                --el-button-text-color: #fff !important;
+                --el-button-hover-text-color: #fff !important;
+              }
+            }
+
+            .dialog {
+              .el-dialog__header {
+                padding-right: 0 !important;
+
+                .dialog-header {
+                  display: flex;
+                  flex-direction: row;
+                  justify-content: space-between;
+                  border-bottom: 1px solid #e5e5e5;
+
+                  h4 {
+                    margin: 0;
+                  }
+                }
+              }
+
+              .el-dialog__body {
+                padding-top: 10px;
+                padding-bottom: 10px;
+
+                .el-form-item__label {
+                  font-weight: 850;
+                }
+
+                .el-checkbox__label {
+                  width: 100%;
+                  white-space: normal;
+                }
+              }
+
+              .date-time-picker {
+                .el-input__wrapper {
+                  width: 88%;
+                }
+              }
+
+              .form-submit {
+                .el-form-item__content {
+                  justify-content: end;
+                }
+              }
+            }
+
+            .pagination {
+              text-align: right;
+
+              .el-pagination {
+                justify-content: flex-end;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

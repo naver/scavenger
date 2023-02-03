@@ -1,0 +1,39 @@
+{
+    "sharded": false,
+    "tables": {
+        "customers_sequence": {
+            "type": "sequence"
+        },
+        "agent_state_sequence": {
+            "type": "sequence"
+        },
+        "applications_sequence": {
+            "type": "sequence"
+        },
+        "codebase_fingerprints_sequence": {
+            "type": "sequence"
+        },
+        "environments_sequence": {
+            "type": "sequence"
+        },
+        "jvms_sequence": {
+            "type": "sequence"
+        },
+        "methods_sequence": {
+            "type": "sequence"
+        },
+        "invocations_sequence": {
+            "type": "sequence"
+        },
+        "snapshots_sequence": {
+            "type": "sequence"
+        },
+        "snapshot_nodes_sequence": {
+            "type": "sequence"
+        },
+        "github_mappings_sequence": {
+            "type": "sequence"
+        },
+        "leadership": {}
+    }
+}

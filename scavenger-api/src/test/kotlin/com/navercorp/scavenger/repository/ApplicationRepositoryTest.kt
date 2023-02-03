@@ -1,0 +1,24 @@
+package com.navercorp.scavenger.repository
+
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.test.context.SpringBootTest
+
+@SpringBootTest
+class ApplicationRepositoryTest {
+    @Autowired
+    private lateinit var sut: ApplicationRepository
+
+    @Test
+    fun findByCustomerId() {
+        assertThat(sut.findByCustomerId(1)).hasSize(1)
+    }
+
+    @Test
+    fun findByCustomerIdAndId() {
+        assertThat(sut.findByCustomerIdAndId(1, 1)).satisfies {
+            assertThat(it.id).isEqualTo(1)
+        }
+    }
+}

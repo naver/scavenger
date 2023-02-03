@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+import "com/navercorp/scavenger/model/CommonPublicationData.proto";
+
+option java_package = "com.navercorp.scavenger.model";
+option java_multiple_files = true;
+
+message InvocationDataPublication {
+    message InvocationDataEntry {
+        string hash = 1;
+    }
+
+    CommonPublicationData common_data = 1;
+    repeated InvocationDataEntry entry = 2;
+    int64 recording_interval_started_at_millis = 3;
+}

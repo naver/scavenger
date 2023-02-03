@@ -1,0 +1,6 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/schema.sql
+  - include:
+      file: db/changelog/test-data-set.sql
+      context: local

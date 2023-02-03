@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+option java_package = "com.navercorp.scavenger.model";
+option java_multiple_files = true;
+
+message InitConfigResponse {
+    string collector_url = 1;
+}

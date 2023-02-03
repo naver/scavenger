@@ -1,0 +1,59 @@
+package com.navercorp.scavenger.repository
+
+import com.navercorp.scavenger.repository.sql.LeadershipSql
+import com.navercorp.spring.data.jdbc.plus.sql.provider.EntityJdbcProvider
+import com.navercorp.spring.data.jdbc.plus.sql.support.trait.SingleValueSelectTrait
+import org.springframework.stereotype.Repository
+import java.time.Instant
+
+@Repository
+class LeadershipDao(
+    entityJdbcProvider: EntityJdbcProvider
+) : ExtendedJdbcDaoSupport(entityJdbcProvider), SingleValueSelectTrait {
+
+    private val sql: LeadershipSql = super.sqls(::LeadershipSql)
+
+    fun tryAcquireLeadership(memberId: String, now: Instant, expirationDeadline: Instant): Int {
+        return update(
+            sql.tryAcquireLeadership(),
+            mapParameterSource()
+                .addValue("memberId", memberId)
+                .addValue("lastSeenActive", now)
+                .addValue("lastSeenActiveWithMargin", expirationDeadline)
+        )
+    }
+
+    fun forceLeadership(memberId: String, now: Instant): Int {
+        return update(
+            sql.forceLeadership(),
+            mapParameterSource()
+                .addValue("memberId", memberId)
+                .addValue("lastSeenActive", now)
+        )
+    }
+
+    fun forceReelection(): Int {
+        return update(
+            sql.forceReelection(),
+            mapParameterSource()
+        )
+    }
+
+    fun isLeader(memberId: String): Boolean {
+        val count = selectSingleValue(
+            sql.isLeader(),
+            mapParameterSource()
+                .addValue("memberId", memberId),
+            Int::class.java
+        )
+        return count != 0
+    }
+
+    fun getLeader(): String? {
+        return selectSingleValue(
+            sql.selectLeader(),
+            mapParameterSource(),
+            String::class.java
+        )
+    }
+}

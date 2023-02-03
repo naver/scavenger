@@ -1,0 +1,24 @@
+{
+    "sharded": true,
+    "vindexes": {
+        "customers_licenseKey_lookup": {
+            "type": "consistent_lookup_unique",
+            "params": {
+                "table": "main.customers_licenseKey_lookup",
+                "from": "licenseKey",
+                "to": "keyspace_id"
+            },
+            "owner": "customers"
+        }
+    },
+    "tables": {
+        "customers": {
+            "column_vindexes": [
+                {
+                    "column": "licenseKey",
+                    "name": "customers_licenseKey_lookup"
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,30 @@
+{
+    "tables": {
+        "customers": {
+        },
+        "agent_state": {
+        },
+        "applications": {
+        },
+        "codebase_fingerprints": {
+        },
+        "environments": {
+        },
+        "jvms": {
+        },
+        "methods": {
+        },
+        "invocations": {
+        },
+        "snapshots": {
+        },
+        "snapshot_nodes": {
+        },
+        "snapshot_environment": {
+        },
+        "snapshot_application": {
+        },
+        "github_mappings": {
+        }
+    }
+}

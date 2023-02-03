@@ -1,0 +1,37 @@
+spring:
+  application:
+    name: scavenger-collector
+  profiles:
+    active: local
+  datasource:
+    password: ${DATASOURCE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 100
+      connection-timeout: 60000
+      data-source-properties:
+        cachePrepStmts: true
+        prepStmtCacheSize: 250
+        prepStmtCacheSqlLimit: 2048
+        useServerPrepStmts: true
+        useLocalSessionState: true
+        cacheResultSetMetadata: true
+        cacheServerConfiguration: true
+        elideSetAutoCommits: true
+        maintainTimeStats: false
+        rewriteBatchedStatements: true
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+  liquibase:
+    contexts: ${spring.profiles.active}
+
+scavenger:
+  poll-interval-seconds: 120
+  publish-interval-seconds: 120
+  retry-interval-seconds: 120
+
+grpc:
+  server:
+    max-inbound-message-size: 10485760

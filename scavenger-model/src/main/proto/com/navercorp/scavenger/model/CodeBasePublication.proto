@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+import "com/navercorp/scavenger/model/CommonPublicationData.proto";
+
+option java_package = "com.navercorp.scavenger.model";
+option java_multiple_files = true;
+
+message CodeBasePublication {
+    message CodeBaseEntry {
+        string declaring_type = 1;
+        string visibility = 2;
+        string signature = 3;
+        string method_name = 4;
+        string modifiers = 5;
+        string package_name = 6;
+        string parameter_types = 7;
+        string signature_hash = 8;
+    }
+
+    CommonPublicationData common_data = 1;
+    repeated CodeBaseEntry entry = 2;
+}

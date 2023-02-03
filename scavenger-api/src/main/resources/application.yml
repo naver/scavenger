@@ -1,0 +1,39 @@
+server:
+  servlet:
+    context-path: /scavenger
+  compression:
+    enabled: true
+    mime-types: application/json
+
+scavenger:
+  collector-server-url: ${COLLECTOR_URL}
+
+spring:
+  profiles:
+    active: local
+  main:
+    allow-bean-definition-overriding: true
+  messages:
+    encoding: UTF-8
+  application:
+    name: scavenger
+  datasource:
+    password: ${DATASOURCE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      connection-test-query: SELECT 1 FROM DUAL
+      data-source-properties:
+        cachePrepStmts: true
+        prepStmtCacheSize: 250
+        prepStmtCacheSqlLimit: 2048
+        useServerPrepStmts: true
+        useLocalSessionState: true
+        cacheResultSetMetadata: true
+        cacheServerConfiguration: true
+        elideSetAutoCommits: true
+        maintainTimeStats: false
+        rewriteBatchedStatements: true
+  thymeleaf:
+    prefix: classpath:/static/
+  liquibase:
+    contexts: ${spring.profiles.active}

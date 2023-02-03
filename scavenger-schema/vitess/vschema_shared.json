@@ -1,0 +1,158 @@
+{
+    "sharded": true,
+    "vindexes": {
+        "hash": {
+            "type": "hash"
+        }
+    },
+    "tables": {
+        "customers": {
+            "column_vindexes": [
+                {
+                    "column": "id",
+                    "name": "hash"
+                }
+            ],
+            "auto_increment": {
+                "column": "id",
+                "sequence": "customers_sequence"
+            }
+        },
+        "agent_state": {
+            "column_vindexes": [
+                {
+                    "column": "customerId",
+                    "name": "hash"
+                }
+            ],
+            "auto_increment": {
+                "column": "id",
+                "sequence": "agent_state_sequence"
+            }
+        },
+        "applications": {
+            "column_vindexes": [
+                {
+                    "column": "customerId",
+                    "name": "hash"
+                }
+            ],
+            "auto_increment": {
+                "column": "id",
+                "sequence": "applications_sequence"
+            }
+        },
+        "codebase_fingerprints": {
+            "column_vindexes": [
+                {
+                    "column": "customerId",
+                    "name": "hash"
+                }
+            ],
+            "auto_increment": {
+                "column": "id",
+                "sequence": "codebase_fingerprints_sequence"
+            }
+        },
+        "environments": {
+            "column_vindexes": [
+                {
+                    "column": "customerId",
+                    "name": "hash"
+                }
+            ],
+            "auto_increment": {
+                "column": "id",
+                "sequence": "environments_sequence"
+            }
+        },
+        "jvms": {
+            "column_vindexes": [
+                {
+                    "column": "customerId",
+                    "name": "hash"
+                }
+            ],
+            "auto_increment": {
+                "column": "id",
+                "sequence": "jvms_sequence"
+            }
+        },
+        "methods": {
+            "column_vindexes": [
+                {
+                    "column": "customerId",
+                    "name": "hash"
+                }
+            ],
+            "auto_increment": {
+                "column": "id",
+                "sequence": "methods_sequence"
+            }
+        },
+        "invocations": {
+            "column_vindexes": [
+                {
+                    "column": "customerId",
+                    "name": "hash"
+                }
+            ],
+            "auto_increment": {
+                "column": "id",
+                "sequence": "invocations_sequence"
+            }
+        },
+        "snapshots": {
+            "column_vindexes": [
+                {
+                    "column": "customerId",
+                    "name": "hash"
+                }
+            ],
+            "auto_increment": {
+                "column": "id",
+                "sequence": "snapshots_sequence"
+            }
+        },
+        "snapshot_nodes": {
+            "column_vindexes": [
+                {
+                    "column": "customerId",
+                    "name": "hash"
+                }
+            ],
+            "auto_increment": {
+                "column": "id",
+                "sequence": "snapshot_nodes_sequence"
+            }
+        },
+        "github_mappings": {
+            "column_vindexes": [
+                {
+                    "column": "customerId",
+                    "name": "hash"
+                }
+            ],
+            "auto_increment": {
+                "column": "id",
+                "sequence": "github_mappings_sequence"
+            }
+        },
+        "snapshot_application": {
+            "column_vindexes": [
+                {
+                    "column": "customerId",
+                    "name": "hash"
+                }
+            ]
+        },
+        "snapshot_environment": {
+            "column_vindexes": [
+                {
+                    "column": "customerId",
+                    "name": "hash"
+                }
+            ]
+        }
+    }
+}

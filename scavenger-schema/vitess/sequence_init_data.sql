@@ -1,0 +1,11 @@
+INSERT INTO customers_sequence (id, next_id, cache) VALUES (0, 0, 1000);
+INSERT INTO agent_state_sequence (id, next_id, cache) VALUES (0, 0, 1000);
+INSERT INTO applications_sequence (id, next_id, cache) VALUES (0, 0, 1000);
+INSERT INTO codebase_fingerprints_sequence (id, next_id, cache) VALUES (0, 0, 1000);
+INSERT INTO environments_sequence (id, next_id, cache) VALUES (0, 0, 1000);
+INSERT INTO jvms_sequence (id, next_id, cache) VALUES (0, 0, 1000);
+INSERT INTO methods_sequence (id, next_id, cache) VALUES (0, 0, 1000);
+INSERT INTO invocations_sequence (id, next_id, cache) VALUES (0, 0, 1000);
+INSERT INTO snapshots_sequence (id, next_id, cache) VALUES (0, 0, 1000);
+INSERT INTO snapshot_nodes_sequence (id, next_id, cache) VALUES (0, 0, 1000);
+INSERT INTO github_mappings_sequence (id, next_id, cache) VALUES (0, 0, 1000);

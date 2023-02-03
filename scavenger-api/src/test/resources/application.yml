@@ -1,0 +1,22 @@
+scavenger:
+  collector-server-url: tmp
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:scavenger;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE
+    username: scavenger
+    password: scavenger
+    driver-class-name: org.h2.Driver
+  profiles:
+    active: local
+  liquibase:
+    enabled: false
+  sql:
+    init:
+      continue-on-error: true
+      schema-locations: classpath:/db/changelog/schema.sql
+      data-locations: classpath:/db/changelog/test-data-set.sql
+
+server:
+  servlet:
+    context-path: /scavenger
