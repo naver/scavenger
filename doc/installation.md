@@ -7,8 +7,8 @@
 - Scavenger uses 3 ports. if some ports are blocked by your firewall, you should ask the network admin to open the
   following ports in the firewall.
   These ports can be configured by the configuration.
-    - Agent: Any ===> Collector: This is dependent on your tomcat configuration. By default, it is set as 8080.
-    - Agent: Any ===> Collector: This is dependent on your grpc configuration. By default, it is set as 9090.
+    - Agent: Any ===> Collector: This is dependent on your tomcat configuration. By default, it is set as 9090.
+    - Agent: Any ===> Collector: This is dependent on your grpc configuration. By default, it is set as 8080.
     - API: This is dependent on your tomcat configuration. By default, it is set as 8081.
 
 ## Install Collector
@@ -31,12 +31,12 @@ Start Collector using the following command.
 
 You can override any configuration values with `-D` option.
 
-- `java -jar -Dgrpc.server.port=8090 scavenger-collector-boot.jar`
+- `java -jar -Dgrpc.server.port=8080 scavenger-collector-boot.jar`
 
-To change the http(default 8080) and grpc(default 9090) ports used by Collector, you can change the settings below.
+To change the http(default 9090) and grpc(default 8080) ports used by Collector, you can change the settings below.
 
-- `server.port`: Tomcat uses 8080 by default
-- `grpc.server.port`: grpc uses 9090 by default
+- `server.port`: Tomcat uses 9090 by default
+- `grpc.server.port`: grpc uses 8080 by default
 
 Collector provide `local` profile.</br>
 profile enables `spring.profiles.active` and enables the below configuration.</br>
