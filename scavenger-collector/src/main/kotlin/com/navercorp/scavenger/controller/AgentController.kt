@@ -26,7 +26,8 @@ import javax.servlet.http.HttpServletRequest
 @RestController
 class AgentController(
     val agentService: AgentService,
-    @Value("\${scavenger.grpc-direct-access-port:}") val grpcDirectAccessPort: String,
+    @Value("\${grpc.server.port:8080}") val grpcServerPort: String,
+    @Value("\${scavenger.proxy-port:}") val proxyPort: String,
 ) {
     val logger = KotlinLogging.logger {}
 
@@ -44,7 +45,7 @@ class AgentController(
     fun grpcInitConfig(@RequestParam licenseKey: String, request: HttpServletRequest): InitConfigResponse {
         logger.info { "init config requested from grpc client ${request.remoteAddr} with licenseKey: $licenseKey" }
         val splitUrl = request.requestURL.split("/")
-        val grpcBaseUrl = splitUrl[2].split(":")[0] + if (grpcDirectAccessPort.isEmpty()) "" else ":$grpcDirectAccessPort"
+        val grpcBaseUrl = splitUrl[2].split(":")[0] + if (proxyPort.isEmpty()) ":$grpcServerPort" else ":$proxyPort"
         return InitConfigResponse.newBuilder()
             .setCollectorUrl(grpcBaseUrl)
             .build()
