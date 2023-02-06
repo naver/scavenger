@@ -31,19 +31,10 @@ class GarbageCollectService(
     val leadershipService: LeadershipService,
     val operationService: OperationService,
     val transactionTemplate: TransactionTemplate,
-    @Value("\${scavenger.operation-directory:}") operationDirectory: String,
 ) {
     val logger = KotlinLogging.logger {}
 
     var leader: Boolean = false
-
-    val codebaseDirectory: String =
-        if (operationDirectory.isNotEmpty()) {
-            File("$operationDirectory/codebase").mkdirs()
-            "$operationDirectory/codebase"
-        } else {
-            ""
-        }
 
     @PostConstruct
     fun init() {
@@ -99,20 +90,6 @@ class GarbageCollectService(
         customerDao.findAll().map { it.id }
             .forEach {
                 sweepMethods(it, now)
-            }
-
-        cleanUpCodeBaseBackUp()
-    }
-
-    fun cleanUpCodeBaseBackUp() {
-        if (codebaseDirectory.isEmpty()) {
-            return
-        }
-        val weeks2Ago = Instant.now().minus(14, ChronoUnit.DAYS).toEpochMilli()
-        File(codebaseDirectory)
-            .listFiles { file -> file.lastModified() < weeks2Ago }
-            ?.forEach {
-                it.delete()
             }
     }
 

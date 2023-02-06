@@ -58,7 +58,7 @@ class PublicationImportServiceTest {
             @Test
             @DisplayName("it invokes invocation import")
             fun import_invokeInvocationImportWhenProtoCodebase() {
-                verify(codeBaseImportService).import(any(), any(), any())
+                verify(codeBaseImportService).import(any())
             }
 
             @Test
@@ -88,7 +88,7 @@ class PublicationImportServiceTest {
             @Test
             @DisplayName("it invokes invocation import")
             fun import_invokeInvocationImportWhenLegacyCodebase() {
-                verify(codeBaseImportService).import(any(), any(), any())
+                verify(codeBaseImportService).import(any())
             }
 
             @Test
