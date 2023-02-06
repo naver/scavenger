@@ -2,7 +2,7 @@
 
 ## Prerequisite
 
-- Scavenger is a combination of a web applications(API, Frontend) and Java applications(Agent java, Collector).
+- Scavenger is a combination of various server components(API, Frontend, Collector) and agent component.
   To install scavenger, you need JDK 11 or latest version.
 - Scavenger uses 3 ports. if some ports are blocked by your firewall, you should ask the network admin to open the
   following ports in the firewall.
@@ -17,21 +17,21 @@
 
 Download Collector from the following link.
 https://github.com/naver/scavenger/releases
-> You can also build it yourself. <br/>
+> Or, You can also build it by yourself. <br/>
 > 1. Build Scavenger manually from the Git clone.
 > 2. Run `./gradlew assemble -p scavenger-collector`
 
 #### Installation
 
-Start Collector by running it directly.
+Start Collector using the following command.
 
-- e.g) `java -jar -Dscavenger.grpc-direct-access-port=9090 scavenger-collector-boot.jar`
+- e.g) `java -jar scavenger-collector-boot.jar`
 
 #### Configuration
 
 You can override any configuration values with `-D` option.
 
-- `java -jar -Dspring.profiles.active=test -Dscavenger.grpc-direct-access-port=9090 scavenger-collector-boot.jar`
+- `java -jar -Dgrpc.server.port=8090 scavenger-collector-boot.jar`
 
 To change the http(default 8080) and grpc(default 9090) ports used by Collector, you can change the settings below.
 
@@ -61,13 +61,13 @@ You can modify default configuration values or add new profiles under `scavenger
 
 Download API from the following link.
 https://github.com/naver/scavenger/releases
-> You can also build it yourself. <br/>
+> Or, You can also build it by yourself. <br/>
 > 1. Build Scavenger manually from the Git clone.
 > 2. Run `./gradlew assemble -p scavenger-api`
 
 #### Installation
 
-Start API by running it directly.
+Start API using the following command.
 When you start the API, you need to set the value `scavenger.collector-server-url` with the `-D` option so that the API
 knows the collector's url.
 
@@ -77,7 +77,7 @@ knows the collector's url.
 
 You can override any configuration values with `-D` option.
 
-- `java -jar -Dspring.profiles.active=test scavenger-api-boot.jar`
+- `java -jar scavenger-api-boot.jar`
 
 To change the http(default 8080) ports used by API, you can change the settings below.
 
