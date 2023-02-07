@@ -106,6 +106,7 @@ class Scheduler:
 
                 if len(codebase.functions) == 0:
                     logging.warning("no methods are found")
+                    return
 
                 self.code_base_publication = CodeBasePublication(
                     common_data=self.config.build_common_publication_data(codebase.get_fingerprint(self.config)),

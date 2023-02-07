@@ -5,7 +5,6 @@ import time
 from _ast import FunctionDef, Module
 from dataclasses import dataclass
 from pathlib import Path
-
 from typing import List
 
 from scavenger.internal.model import Codebase, Function
@@ -29,7 +28,7 @@ class CodeBaseScanner:
         self.packages = packages
         self.exclude_packages = exclude_packages
 
-    def scan(self) -> Codebase:
+    def scan(self) -> Codebase:  # FIXME CodeBasePublication을 리턴하도록 변경
         logger.info("Codebase scanning is starting.")
         start: int = time.perf_counter_ns()
         functions: List[Function] = []
