@@ -1,0 +1,4 @@
+asgiref==3.6.0
+Django==4.1.5
+scavenger-py @ file:///Users/minjeong/workspace/scavenger-py
+sqlparse==0.4.3
