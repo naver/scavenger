@@ -3,7 +3,7 @@ from __future__ import annotations
 import time
 from _queue import Empty
 from queue import Queue
-from threading import Thread, Event
+from threading import Thread
 from typing import List, Set
 
 from scavenger.internal.util import current_milli_time
@@ -22,8 +22,7 @@ class InvocationRegistry:
         self.queue = Queue()
         self.current_index = self.FRONT_BUFFER_INDEX
         self.recording_interval_started_at_millis = current_milli_time()
-        self.stop_thread_event = Event()
-        self.thread = Thread(target=self._update_invocations)
+        self.thread = Thread(target=self._update_invocations, daemon=True)
         self.thread.start()
 
     def register(self, hash_: str):

@@ -69,7 +69,6 @@ class Scheduler:
 
     def poll_dynamic_config_if_needed(self):
         if self.poll_state.is_due_time():
-            logging.debug("poll state due time")
             # noinspection PyBroadException
             try:
                 self.dynamic_config = self.client.poll_config()

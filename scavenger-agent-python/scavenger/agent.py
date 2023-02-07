@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 
 def start(config: Config):
-    Agent(config).start()
+    return Agent(config).start()
 
 
 class Agent:
@@ -47,3 +47,7 @@ class Agent:
                 entry=[function.to_codebase_entry() for function in codebase.functions]
             )
         self.scheduler.start()
+        return self.scheduler
+
+    def shutdown(self):
+        self.scheduler.shutdown()
