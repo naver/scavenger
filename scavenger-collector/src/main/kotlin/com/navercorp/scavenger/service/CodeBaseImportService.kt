@@ -1,6 +1,5 @@
 package com.navercorp.scavenger.service
 
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.navercorp.scavenger.dto.CodeBaseImportDto
 import com.navercorp.scavenger.entity.CodeBaseFingerprint
 import com.navercorp.scavenger.param.InvocationUpsertParam
@@ -10,11 +9,9 @@ import com.navercorp.scavenger.repository.InvocationDao
 import com.navercorp.scavenger.repository.MethodDao
 import io.codekvast.javaagent.model.v4.SignatureStatus4
 import mu.KotlinLogging
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.data.relational.core.conversion.DbActionExecutionException
 import org.springframework.stereotype.Service
-import java.io.File
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
@@ -23,40 +20,10 @@ class CodeBaseImportService(
     val codeBaseFingerprintDao: CodeBaseFingerprintDao,
     val methodDao: MethodDao,
     val invocationDao: InvocationDao,
-    @Value("\${scavenger.operation-directory:}") operationDirectory: String,
 ) {
-
-    val codebaseDirectory: String =
-        if (operationDirectory.isNotEmpty()) {
-            File("$operationDirectory/codebase").mkdirs()
-            "$operationDirectory/codebase"
-        } else {
-            ""
-        }
-
-    val objectMapper = jacksonObjectMapper()
-
     val logger = KotlinLogging.logger {}
 
-    fun reimport(codeBaseFingerprint: String) {
-        if (codebaseDirectory.isNotEmpty()) {
-            var customerId: Long? = null
-            try {
-
-                val codebaseImportDto = File(codebaseDirectory, codeBaseFingerprint + ".pub")
-                    .inputStream().use {
-                        objectMapper.readValue(it, CodeBaseImportDto::class.java)
-                    }
-                customerId = codebaseImportDto.customerId
-                import(codebaseImportDto, forceImport = true, backup = false)
-            } catch (e: Exception) {
-                logger.error(e) { "[$customerId] error while reimport codebase from $codeBaseFingerprint" }
-                throw e
-            }
-        }
-    }
-
-    fun import(codeBaseImportDto: CodeBaseImportDto, forceImport: Boolean = false, backup: Boolean = true) {
+    fun import(codeBaseImportDto: CodeBaseImportDto) {
         with(codeBaseImportDto) {
             logger.info { "[${codeBaseImportDto.customerId}] trying to import ${entries.size} methods: $codeBaseImportDto" }
 
@@ -72,11 +39,8 @@ class CodeBaseImportService(
                 return
             }
 
-            if (forceImport || newCodeBaseImported) {
+            if (newCodeBaseImported) {
                 try {
-                    if (backup) {
-                        backupCodeBaseFingerprint(codeBaseImportDto)
-                    }
                     // insert new methods or update last seen
                     upsertMethods(customerId, publishedAt, truncatedPublishedAtMillis, entries)
                     // insert new invocations or update last seen
@@ -102,19 +66,6 @@ class CodeBaseImportService(
                             "applicationId=$applicationId, environmentId=$environmentId, fingerprint=$codeBaseFingerprint"
                     }
                 }
-            }
-        }
-    }
-
-    fun backupCodeBaseFingerprint(codeBaseImportDto: CodeBaseImportDto) {
-        if (codebaseDirectory.isNotEmpty()) {
-            try {
-                File(codebaseDirectory, codeBaseImportDto.codeBaseFingerprint + ".pub")
-                    .outputStream().use {
-                        objectMapper.writeValue(it, codeBaseImportDto)
-                    }
-            } catch (e: Exception) {
-                logger.error(e) { "error while backing up codebase ${codeBaseImportDto.codeBaseFingerprint}" }
             }
         }
     }

@@ -47,8 +47,6 @@ class OperationService(
 
     data class OperationInfo(
         val disabledCustomerIds: List<Long> = emptyList(),
-        val maintenance: Boolean = false,
         val blockGc: Boolean = false,
-        val diagnosis: Boolean = false
     )
 }

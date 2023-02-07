@@ -35,3 +35,7 @@ scavenger:
 grpc:
   server:
     max-inbound-message-size: 10485760
+    port: 8080
+
+server:
+  port: 9090

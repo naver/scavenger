@@ -25,11 +25,6 @@ class GrpcAgentController(
     }
 
     override suspend fun sendCodeBasePublication(request: CodeBasePublication): PublicationResponse {
-        if (operationService.operationInfo.maintenance) {
-            return PublicationResponse.newBuilder()
-                .setStatus("OK")
-                .build()
-        }
         try {
             validate(request)
             agentService.savePublication(ProtoPublication.from(request))
@@ -44,11 +39,6 @@ class GrpcAgentController(
     }
 
     override suspend fun sendInvocationDataPublication(request: InvocationDataPublication): PublicationResponse {
-        if (operationService.operationInfo.maintenance) {
-            return PublicationResponse.newBuilder()
-                .setStatus("OK")
-                .build()
-        }
         try {
             validate(request)
             agentService.savePublication(ProtoPublication.from(request))
