@@ -1,11 +1,10 @@
 from dataclasses import dataclass, field
 from pathlib import Path
-
 from typing import List
 
-from scavenger.model.CommonPublicationData_pb2 import CommonPublicationData
-from scavenger.internal.constant import HOSTNAME, JVM_START_AT_MILLIS, JVM_UUID
+from scavenger.internal.constant import HOSTNAME, JVM_START_AT_MILLIS, PROCESS_UUID
 from scavenger.internal.util import current_milli_time
+from scavenger.model.CommonPublicationData_pb2 import CommonPublicationData
 
 
 @dataclass
@@ -20,8 +19,9 @@ class Config:
     environment: str = "<default>"
     async_codebase_scan_mode: bool = False
     debugMode: bool = False
-    scheduler_initial_delay_millis = 10_000
-    scheduler_interval_millis = 10_000
+    scheduler_initial_delay_seconds: int = 10
+    scheduler_interval_seconds: int = 10
+    force_interval_seconds: int = 0
 
     def build_common_publication_data(self, codebase_fingerprint) -> CommonPublicationData:
         return CommonPublicationData(
@@ -31,7 +31,7 @@ class Config:
             environment=self.environment,
             hostname=HOSTNAME,
             jvm_started_at_millis=JVM_START_AT_MILLIS,
-            jvm_uuid=JVM_UUID,
+            jvm_uuid=PROCESS_UUID,
             app_version=self.app_version,
             published_at_millis=current_milli_time()
         )

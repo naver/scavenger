@@ -1,4 +1,5 @@
 import inspect
+import logging
 import sys
 from importlib.machinery import PathFinder, SourceFileLoader, ModuleSpec
 from typing import Optional, List, Dict
@@ -18,12 +19,15 @@ class Finder(PathFinder):
         self.invocation_registry = invocation_registry
 
     def find_spec(self, fullname, path=None, target=None) -> ModuleSpec:
-        spec = super().find_spec(fullname, path, target)
+        try:
+            spec = super().find_spec(fullname, path, target)
 
-        if spec and spec.loader and self.patch_required(fullname):
-            loader = CustomLoader(fullname, spec.origin, self.invocation_registry)
-            spec.loader = loader
-            return spec
+            if spec and spec.loader and self.patch_required(fullname):
+                loader = CustomLoader(fullname, spec.origin, self.invocation_registry)
+                spec.loader = loader
+                return spec
+        except Exception as e:
+            logging.warning("Creating custom loader is failed. ", e)
 
     def patch_required(self, fullname) -> bool:
         if filter_by_exclude_packages(fullname, self.exclude_packages):
@@ -48,7 +52,10 @@ class CustomLoader(SourceFileLoader):
 
     def exec_module(self, module):
         super().exec_module(module)
-        self.patch_recursively(module)
+        try:
+            self.patch_recursively(module)
+        except Exception as e:
+            logging.warning("Scavenger function patching is Failed. ", e)
 
     def patch_recursively(self, obj):
         for child_str in dir(obj):
