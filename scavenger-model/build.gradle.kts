@@ -52,6 +52,9 @@ protobuf {
             }
             it.builtins {
                 id("kotlin")
+                id("python") {
+                    outputSubDir = "$projectDir/scavenger-agnet-python"
+                }
             }
         }
     }
