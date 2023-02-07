@@ -3,7 +3,6 @@ package com.navercorp.scavenger.repository
 import com.navercorp.scavenger.repository.sql.EnvironmentSql
 import com.navercorp.scavenger.util.getFirstKey
 import com.navercorp.spring.data.jdbc.plus.sql.provider.EntityJdbcProvider
-import com.navercorp.spring.data.jdbc.plus.sql.support.JdbcDaoSupport
 import org.springframework.jdbc.support.GeneratedKeyHolder
 import org.springframework.stereotype.Repository
 import java.time.Instant
