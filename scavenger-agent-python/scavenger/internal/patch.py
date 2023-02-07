@@ -1,18 +1,20 @@
 import inspect
 import sys
 from importlib.machinery import PathFinder, SourceFileLoader, ModuleSpec
-from typing import List, Optional
+from typing import Optional, List, Dict
 
 from scavenger.internal.invocation_registry import InvocationRegistry
-from scavenger.internal.util import md5
+from scavenger.internal.util import md5, filter_by_exclude_packages
 
 
 class Finder(PathFinder):
     invocation_registry: InvocationRegistry
-    packages: list[str]
+    packages: List[str]
+    exclude_packages: List[str]
 
-    def __init__(self, packages: List[str], invocation_registry: InvocationRegistry):
+    def __init__(self, packages: List[str], exclude_packages: List[str], invocation_registry: InvocationRegistry):
         self.packages = packages
+        self.exclude_packages = exclude_packages
         self.invocation_registry = invocation_registry
 
     def find_spec(self, fullname, path=None, target=None) -> ModuleSpec:
@@ -24,7 +26,17 @@ class Finder(PathFinder):
             return spec
 
     def patch_required(self, fullname) -> bool:
-        return 0 < sum(1 for module_name in self.packages if fullname.startswith(module_name))
+        if filter_by_exclude_packages(fullname, self.exclude_packages):
+            return False
+
+        return 0 < sum(1 for module_name in self.packages if
+                       fullname.startswith(module_name))
+
+    @staticmethod
+    def filter_by_exclude_packages(target, exclude_packages):
+        for exclude_package in exclude_packages:
+            if target.startswith(exclude_package):
+                return True
 
 
 class CustomLoader(SourceFileLoader):
@@ -43,11 +55,13 @@ class CustomLoader(SourceFileLoader):
             child = inspect.getattr_static(obj, child_str)
 
             is_staticmethod = isinstance(child, staticmethod)
+            if is_staticmethod:
+                child = child.__func__
 
             if not (getattr(child, "__module__", None) is not None and self.is_target_module(child)):
                 continue
 
-            if inspect.isfunction(child) or is_staticmethod:
+            if inspect.isfunction(child):
                 signature = f"{child.__module__}.{child.__qualname__}{inspect.signature(child)}"
                 setattr(obj, child_str, self.patcher(child, signature, self.invocation_registry, is_staticmethod))
 
@@ -70,16 +84,18 @@ class CustomLoader(SourceFileLoader):
 
 class Patcher:
     _finder: Optional[Finder]
-    packages: list[str]
-    store: dict[str, int]
+    packages: List[str]
+    exclude_packages: List[str]
+    store: Dict[str, int]
 
-    def __init__(self, packages: List[str], invocation_registry: InvocationRegistry):
+    def __init__(self, packages: List[str], exclude_packages: List[str], invocation_registry: InvocationRegistry):
         self._finder = None
         self.packages = packages
+        self.exclude_packages = exclude_packages
         self.invocation_registry = invocation_registry
 
     def patch(self):
-        finder = Finder(self.packages, self.invocation_registry)
+        finder = Finder(self.packages, self.exclude_packages, self.invocation_registry)
         sys.meta_path.insert(0, finder)
         self._finder = finder
 

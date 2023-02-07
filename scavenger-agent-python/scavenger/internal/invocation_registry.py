@@ -1,14 +1,17 @@
+from __future__ import annotations
+
 from _queue import Empty
 from queue import Queue
 from threading import Thread, Event
+
+from typing import List, Set
 
 from scavenger.internal.util import current_milli_time
 
 
 class InvocationRegistry:
-    terminate: bool
     queue: Queue[str]
-    invocations: list[set[str]]
+    invocations: List[Set[str]]
     recording_interval_started_at_millis: int
     current_index: int
     FRONT_BUFFER_INDEX = 0
@@ -41,7 +44,7 @@ class InvocationRegistry:
     def _update_invocations(self):
         while not (self.stop_thread_event.is_set() and self.queue.empty()):
             try:
-                hash_ = self.queue.get(timeout=5)
+                hash_ = self.queue.get(timeout=1)
             except Empty:
                 continue
             self.invocations[self.current_index].add(hash_)

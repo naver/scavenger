@@ -32,7 +32,7 @@ class Agent:
 
     def start(self):
         logger.info("Scavenger agent is starting.")
-        Patcher(self.config.packages, self.invocation_registry).patch()
+        Patcher(self.config.packages, self.config.exclude_packages, self.invocation_registry).patch()
         if self.config.async_codebase_scan_mode:
             Thread(target=self.send_codebase_publication).start()
         else:

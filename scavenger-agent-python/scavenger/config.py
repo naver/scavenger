@@ -1,6 +1,8 @@
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from typing import List
+
 from scavenger.model.CommonPublicationData_pb2 import CommonPublicationData
 from scavenger.internal.constant import HOSTNAME, JVM_START_AT_MILLIS, JVM_UUID
 from scavenger.internal.util import current_milli_time
@@ -10,9 +12,9 @@ from scavenger.internal.util import current_milli_time
 class Config:
     server_url: str
     api_key: str
-    codebase: list[Path]
-    packages: list[str]
-    exclude_packages: list[str] = field(default_factory=list)
+    codebase: List[Path]
+    packages: List[str]
+    exclude_packages: List[str] = field(default_factory=list)
     app_name: str = "missing-appName"
     app_version: str = "unspecified"
     environment: str = "<default>"

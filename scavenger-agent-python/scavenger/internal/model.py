@@ -1,6 +1,8 @@
 import hashlib
 from dataclasses import dataclass
 
+from typing import List
+
 from scavenger.model.CodeBasePublication_pb2 import CodeBasePublication
 from scavenger.config import Config
 from scavenger.internal.util import md5
@@ -28,17 +30,18 @@ class Function:
 
 
 class Codebase:
-    functions: list[Function]
+    functions: List[Function]
 
-    def __init__(self, functions: list[Function]):
+    def __init__(self, functions: List[Function]):
         self.functions = functions
 
-    def get_fingerprint(self, config: Config):
+    def get_fingerprint(self, config: Config, sort: bool = False):
         m = hashlib.sha256()
         m.update(bytes(str(config.codebase), 'utf-8'))
         m.update(bytes(str(config.packages), 'utf-8'))
         m.update(len(self.functions).to_bytes(1, 'big'))
-        for function in self.functions:
+        functions = sorted(self.functions, key=lambda x: x.name) if sort else self.functions
+        for function in functions:
             m.update(bytes(function.signature, 'utf-8'))
 
         return m.hexdigest()
