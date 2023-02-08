@@ -23,6 +23,8 @@ class Config:
     scheduler_initial_delay_seconds: int = 10
     scheduler_interval_seconds: int = 10
     force_interval_seconds: int = 0
+    http_connect_timeout_seconds: int = 10
+    http_read_timeout_seconds: int = 10
 
     def build_common_publication_data(self, codebase_fingerprint) -> CommonPublicationData:
         return CommonPublicationData(

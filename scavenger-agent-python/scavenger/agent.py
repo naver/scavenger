@@ -29,7 +29,7 @@ class Agent:
         )
         self.scheduler = Scheduler(
             config=self.config,
-            client=Client(self.config.server_url, self.config.api_key),
+            client=Client(self.config),
             codebase_scanner=self.codebase_scanner,
             invocation_registry=invocation_registry
         )
