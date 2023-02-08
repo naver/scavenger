@@ -83,7 +83,7 @@ publishing {
     publications {
         create<MavenPublication>("agent") {
             groupId = "com.navercorp.scavenger"
-            artifactId = "agent-java"
+            artifactId = "scavenger-agent-java"
             from(components["java"])
 
             pom {
