@@ -69,6 +69,7 @@ class Scheduler:
 
     def poll_dynamic_config_if_needed(self):
         if self.poll_state.is_due_time():
+            logging.debug("Poll dynamic config is due time.")
             # noinspection PyBroadException
             try:
                 self.dynamic_config = self.client.poll_config()
@@ -96,6 +97,7 @@ class Scheduler:
 
     def publish_code_base_if_needed(self):
         if not self.is_code_base_published and self.code_base_publisher_state.is_due_time() and self.dynamic_config is not None:
+            logging.debug("Publish codebase is due time.")
             try:
                 codebase = self.codebase_scanner.scan()
 
@@ -122,6 +124,7 @@ class Scheduler:
 
     def publish_invocation_data_if_needed(self):
         if self.invocation_data_publisher_state.is_due_time() and self.dynamic_config is not None and self.is_code_base_published:
+            logging.debug("Publish invocation data is due time.")
             try:
                 if self.invocation_data_publication is None:
                     invocations, recording_interval_started_at_millis = self.invocation_registry.get_invocations()
