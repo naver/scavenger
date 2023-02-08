@@ -4,6 +4,7 @@ import io.freefair.gradle.plugins.lombok.tasks.Delombok
 plugins {
     java
     `maven-publish`
+    signing
     id("org.hibernate.build.maven-repo-auth") version "3.0.4"
     id("io.freefair.lombok") version "6.5.1"
     id("com.github.johnrengelman.shadow") version "7.0.0"
@@ -15,21 +16,6 @@ val gitVersion: groovy.lang.Closure<String> by extra
 
 repositories {
     mavenCentral()
-}
-
-group = "com.navercorp.scavenger"
-
-version = "4.0"
-version = if (project.hasProperty("build.number")) {
-    "$version.${project.property("build.number")}"
-} else {
-    "$version-${gitVersion()}"
-}
-if (project.hasProperty("jdk7")) {
-    version = "$version-jdk7"
-}
-if (!project.hasProperty("release")) {
-    version = "$version-SNAPSHOT"
 }
 
 dependencies {
@@ -55,6 +41,11 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter-migrationsupport:5.7.2")
     testImplementation("org.hamcrest:hamcrest:2.2")
     testImplementation("org.springframework.boot:spring-boot-starter-test:1.5.22.RELEASE")
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
 
 tasks.compileJava {
@@ -178,21 +169,68 @@ tasks.named<Test>("integrationTest") {
 publishing {
     publications {
         create<MavenPublication>("agent") {
+            groupId = "com.navercorp.scavenger"
+            artifactId = "old-agent-java"
             from(components["java"])
+
+            pom {
+                name.set("Scavenger java agent for jdk7 support")
+                description.set("Java agent for jdk support of Scavenger, a runtime dead code analysis tool")
+                url.set("https://github.com/naver/scavenger")
+
+                licenses {
+                    license {
+                        name.set("The Apache License, Version 2.0")
+                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                    }
+                }
+                developers {
+                    developer {
+                        id.set("taeyeon-Kim")
+                        name.set("Taeyeon Kim")
+                        email.set("duszzang@gmail.com")
+                    }
+                    developer {
+                        id.set("dbgsprw")
+                        name.set("Minjeong Yoo")
+                        email.set("dbgsprw@gmail.com")
+                    }
+                    developer {
+                        id.set("kojandy")
+                        name.set("Ohjun Kwon")
+                        email.set("kojandy@gmail.com")
+                    }
+                    developer {
+                        id.set("junoyoon")
+                        name.set("JunHo Yoon")
+                        email.set("junoyoon@gmail.com")
+                    }
+                }
+                scm {
+                    connection.set("scm:git:git:github.com/naver/scavenger.git")
+                    developerConnection.set("scm:git:ssh://github.com/naver/scavenger.git")
+                    url.set("https://github.com/naver/scavenger")
+                }
+            }
         }
     }
     repositories {
         maven {
             credentials {
-                username = ""
-                password = ""
+                username = project.properties["ossrhUsername"].toString()
+                password = project.properties["ossrhPassword"].toString()
             }
-            name = "navercorp"
+            name = "OSSRH"
             url = if (version.toString().endsWith("-SNAPSHOT")) {
-                uri("")
+                uri("https://oss.sonatype.org/content/repositories/snapshots/")
             } else {
-                uri("")
+                uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
             }
         }
     }
+}
+
+
+signing {
+    sign(publishing.publications["agent"])
 }

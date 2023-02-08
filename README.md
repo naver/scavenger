@@ -22,7 +22,7 @@ Scavenger provides more sophisticated and clear UI and elaborate the instrumenta
 
 * Analyze runtime dead code with no code changes.
 * Support JVM based languages.
-    * Java 7 must use [old agent]().
+    * Java 7 must use [old agent](..?).
 * Provide a web-based interface for project management, invocation snapshot, and project dashboard.
 * Supports MySQL, Vitess, and H2 as databases.
 
@@ -30,17 +30,20 @@ Scavenger provides more sophisticated and clear UI and elaborate the instrumenta
 
 You can download the latest Scavenger in the following link.
 
-- TBD
+- Collector, API
+    - https://github.com/naver/scavenger/releases
+- Agent
+    - ..?
 
 # Documentation
 
 You can find the installation guide at the following link.
 
-- TBD
+- https://github.com/naver/scavenger/blob/develop/doc/installation.md
 
 You can find the user guide at the following location link.
 
-- TBD
+- TB
 
 # Contribution?
 
