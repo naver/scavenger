@@ -13,9 +13,10 @@ class Finder(PathFinder):
     packages: List[str]
     exclude_packages: List[str]
 
-    def __init__(self, packages: List[str], exclude_packages: List[str], invocation_registry: InvocationRegistry):
+    def __init__(self, packages: List[str], exclude_packages: List[str], exclude_init: bool, invocation_registry: InvocationRegistry):
         self.packages = packages
         self.exclude_packages = exclude_packages
+        self.exclude_init = exclude_init
         self.invocation_registry = invocation_registry
 
     def find_spec(self, fullname, path=None, target=None) -> ModuleSpec:
@@ -23,7 +24,7 @@ class Finder(PathFinder):
             spec = super().find_spec(fullname, path, target)
 
             if spec and spec.loader and self.patch_required(fullname):
-                loader = CustomLoader(fullname, spec.origin, self.invocation_registry)
+                loader = CustomLoader(fullname, spec.origin, self.invocation_registry, self.exclude_init)
                 spec.loader = loader
                 return spec
         except Exception as e:
@@ -46,9 +47,10 @@ class Finder(PathFinder):
 class CustomLoader(SourceFileLoader):
     invocation_registry: InvocationRegistry
 
-    def __init__(self, fullname, origin, invocation_registry):
+    def __init__(self, fullname, origin, invocation_registry, exclude_init):
         super().__init__(fullname, origin)
         self.invocation_registry = invocation_registry
+        self.exclude_init = exclude_init
 
     def exec_module(self, module):
         super().exec_module(module)
@@ -69,6 +71,9 @@ class CustomLoader(SourceFileLoader):
                 continue
 
             if inspect.isfunction(child):
+                if self.exclude_init and child_str == '__init__':
+                    continue
+
                 signature = f"{child.__module__}.{child.__qualname__}{inspect.signature(child)}"
                 setattr(obj, child_str, self.patcher(child, signature, self.invocation_registry, is_staticmethod))
 
@@ -95,14 +100,15 @@ class Patcher:
     exclude_packages: List[str]
     store: Dict[str, int]
 
-    def __init__(self, packages: List[str], exclude_packages: List[str], invocation_registry: InvocationRegistry):
+    def __init__(self, packages: List[str], exclude_packages: List[str], exclude_init: bool, invocation_registry: InvocationRegistry):
         self._finder = None
         self.packages = packages
         self.exclude_packages = exclude_packages
+        self.exclude_init = exclude_init
         self.invocation_registry = invocation_registry
 
     def patch(self):
-        finder = Finder(self.packages, self.exclude_packages, self.invocation_registry)
+        finder = Finder(self.packages, self.exclude_packages, self.exclude_init, self.invocation_registry)
         sys.meta_path.insert(0, finder)
         self._finder = finder
 

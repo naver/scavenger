@@ -23,10 +23,11 @@ class CodeBaseScanner:
     packages: List[str]
     codebase_path_list: List[Path]
 
-    def __init__(self, codebase_path_list: List[Path], packages: List[str], exclude_packages: List[str]):
+    def __init__(self, codebase_path_list: List[Path], packages: List[str], exclude_packages: List[str], exclude_init: bool):
         self.codebase_path_list = codebase_path_list
         self.packages = packages
         self.exclude_packages = exclude_packages
+        self.exclude_init = exclude_init
 
     def scan(self) -> Codebase:  # FIXME CodeBasePublication을 리턴하도록 변경
         logger.info("Codebase scanning is starting.")
@@ -49,8 +50,7 @@ class CodeBaseScanner:
 
         return Codebase(functions=functions)
 
-    @staticmethod
-    def get_all_functions_from_tree(root: Module) -> List[FunctionDef]:
+    def get_all_functions_from_tree(self, root: Module) -> List[FunctionDef]:
         function_nodes: List[FunctionDef] = []
 
         for node in ast.walk(root):
@@ -58,6 +58,8 @@ class CodeBaseScanner:
                 for child in ast.iter_child_nodes(node):
                     child._parent = remove_prefix(f"{getattr(node, '_parent', '')}.{node.name}", ".")
             elif isinstance(node, ast.FunctionDef):
+                if self.exclude_init and node.name == '__init__':
+                    continue
                 function_nodes.append(node)
         return function_nodes
 
@@ -93,7 +95,8 @@ class CodeBaseScanner:
 
         return py_files
 
-    def find_files_in_package(self, codebase_path, exclude_packages, package):
+    @staticmethod
+    def find_files_in_package(codebase_path, exclude_packages, package):
         py_files = []
         pattern: str = os.path.join(package.replace(".", os.sep), "**", "*.py")
         for absolute_path in codebase_path.glob(pattern):

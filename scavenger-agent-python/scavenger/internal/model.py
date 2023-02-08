@@ -38,6 +38,8 @@ class Codebase:
         m = hashlib.sha256()
         m.update(bytes(str(config.codebase), 'utf-8'))
         m.update(bytes(str(config.packages), 'utf-8'))
+        m.update(bytes(str(config.exclude_packages), 'utf-8'))
+        m.update(bytes(str(config.exclude_init), 'utf-8'))
         m.update(len(self.functions).to_bytes(1, 'big'))
         functions = sorted(self.functions, key=lambda x: x.name) if sort else self.functions
         for function in functions:

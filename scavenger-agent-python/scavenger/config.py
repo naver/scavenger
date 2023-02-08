@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import List
 
-from scavenger.internal.constant import HOSTNAME, JVM_START_AT_MILLIS, PROCESS_UUID
+from scavenger.internal.constant import HOSTNAME, PROCESS_START_AT_MILLIS, PROCESS_UUID
 from scavenger.internal.util import current_milli_time
 from scavenger.model.CommonPublicationData_pb2 import CommonPublicationData
 
@@ -14,6 +14,7 @@ class Config:
     codebase: List[Path]
     packages: List[str]
     exclude_packages: List[str] = field(default_factory=list)
+    exclude_init: bool = False
     app_name: str = "missing-appName"
     app_version: str = "unspecified"
     environment: str = "<default>"
@@ -30,7 +31,7 @@ class Config:
             code_base_fingerprint=codebase_fingerprint,
             environment=self.environment,
             hostname=HOSTNAME,
-            jvm_started_at_millis=JVM_START_AT_MILLIS,
+            jvm_started_at_millis=PROCESS_START_AT_MILLIS,
             jvm_uuid=PROCESS_UUID,
             app_version=self.app_version,
             published_at_millis=current_milli_time()

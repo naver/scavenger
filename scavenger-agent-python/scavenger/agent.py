@@ -20,10 +20,11 @@ class Agent:
         self.config = config
 
         invocation_registry = InvocationRegistry()
-        self.codebase_scanner = CodeBaseScanner(config.codebase, config.packages, config.exclude_packages)
+        self.codebase_scanner = CodeBaseScanner(config.codebase, config.packages, config.exclude_packages, config.exclude_init)
         self.patcher = Patcher(
             packages=self.config.packages,
             exclude_packages=self.config.exclude_packages,
+            exclude_init=self.config.exclude_init,
             invocation_registry=invocation_registry
         )
         self.scheduler = Scheduler(

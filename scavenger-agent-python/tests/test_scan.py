@@ -13,7 +13,7 @@ class TestScanSample1(unittest.TestCase):
 
     def setUp(self):
         self.sample_absolute_path = Path(__file__).parent.joinpath("sample")
-        self.codebase_scanner = CodeBaseScanner([self.sample_absolute_path], ["views"], [])
+        self.codebase_scanner = CodeBaseScanner([self.sample_absolute_path], ["views"], [], True)
 
     def test_scan(self):
         expected_functions = [
@@ -65,11 +65,6 @@ class TestScanSample1(unittest.TestCase):
             packages=[]
         )
 
-        for f in self.codebase_scanner.scan().functions:
-            print(f)
-        for f in expected_functions:
-            print(f)
-
         self.assertEqual(self.codebase_scanner.scan().get_fingerprint(config, True), expected.get_fingerprint(config, True))
 
     def test_find_all_py_files(self):
@@ -86,7 +81,7 @@ class TestScanSample3(unittest.TestCase):
 
     def setUp(self):
         self.sample_absolute_path = Path(__file__).parent.joinpath("sample3")
-        self.codebase_scanner = CodeBaseScanner([self.sample_absolute_path], ["polls", "mysite"], ["polls.migrations"])
+        self.codebase_scanner = CodeBaseScanner([self.sample_absolute_path], ["polls", "mysite"], ["polls.migrations"], True)
 
     def test_scan(self):
         codebase = self.codebase_scanner.scan()
@@ -118,9 +113,5 @@ class TestScanSample3(unittest.TestCase):
                     PyFile(codebase_path=Path(self.sample_absolute_path), relative_path=Path("mysite/settings.py")),
                     PyFile(codebase_path=Path(self.sample_absolute_path), relative_path=Path("mysite/urls.py")),
                     PyFile(codebase_path=Path(self.sample_absolute_path), relative_path=Path("mysite/wsgi.py"))]
-
-        print(len(self.codebase_scanner.find_all_py_files()))
-        print(len(expected))
-        print(self.codebase_scanner.find_all_py_files())
 
         self.assertListEqual(self.codebase_scanner.find_all_py_files(), expected)

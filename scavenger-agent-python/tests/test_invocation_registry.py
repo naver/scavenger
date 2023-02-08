@@ -15,4 +15,3 @@ class TestInvocationRegistry(unittest.TestCase):
         invocation_registry.register("b")
         sleep(0.5)
         self.assertSetEqual(set(invocation_registry.get_invocations()[0]), {"b"})
-        invocation_registry.stop_thread_event.set()
