@@ -35,10 +35,8 @@ You can download the latest Scavenger in the following link.
 - Collector, API
     - https://github.com/naver/scavenger/releases
 - Agent
-    - Download
-      the [latest version](https://repo1.maven.org/maven2/com/navercorp/scavenger/scavenger-agent-java/1.0.0/scavenger-agent-java-1.0.0.jar).
-    - scavenger agent is available from [Maven Central](https://search.maven.org/search?q=g:com.navercorp.scavenger%20AND%20a:scavenger-agent-java) using group ID `om.navercorp.scavenger` and artifact ID
-      `scavenger-agent-java`
+    - Download the latest version
+      from [maven central](https://search.maven.org/search?q=g:com.navercorp.scavenger%20AND%20a:scavenger-agent-java)
 
 # Documentation
 
