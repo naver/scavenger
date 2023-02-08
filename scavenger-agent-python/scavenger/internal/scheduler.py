@@ -52,11 +52,11 @@ class Scheduler:
         self.scheduler.start()
 
     def run(self):
-        logging.info("Task is starting")
+        logging.debug("Task is starting")
         self.poll_dynamic_config_if_needed()
         self.publish_code_base_if_needed()
         self.publish_invocation_data_if_needed()
-        logging.info("Task is done")
+        logging.debug("Task is done")
 
     def shutdown(self):
         self.scheduler.shutdown()

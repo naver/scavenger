@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.DEBUG)
 class TestScanSample1(unittest.TestCase):
 
     def setUp(self):
-        self.sample_absolute_path = Path(__file__).parent.joinpath("sample")
+        self.sample_absolute_path = Path(__file__).parent.joinpath("samples").joinpath("flask_sample")
         self.codebase_scanner = CodeBaseScanner([self.sample_absolute_path], ["views"], [], True)
 
     def test_scan(self):
@@ -80,7 +80,7 @@ class TestScanSample1(unittest.TestCase):
 class TestScanSample3(unittest.TestCase):
 
     def setUp(self):
-        self.sample_absolute_path = Path(__file__).parent.joinpath("sample3")
+        self.sample_absolute_path = Path(__file__).parent.joinpath("samples").joinpath("django_sample")
         self.codebase_scanner = CodeBaseScanner([self.sample_absolute_path], ["polls", "mysite"], ["polls.migrations"], True)
 
     def test_scan(self):

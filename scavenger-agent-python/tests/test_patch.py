@@ -12,11 +12,11 @@ logging.basicConfig(level=logging.DEBUG)
 class TestPatcher(unittest.TestCase):
     def test_patch(self):
         invocation_registry = InvocationRegistry()
-        Patcher(["sample2"], ["sample2.exclude_packages"], True, invocation_registry).patch()
+        Patcher(["samples.app_sample"], ["samples.app_sample.exclude_packages"], True, invocation_registry).patch()
         try:
-            from sample2.my_package.myclass import MyClass
-            from sample2.my_package import mymodule, mymodule2
-            from sample2.exclude_packages import exclude_function
+            from samples.app_sample.my_package.myclass import MyClass
+            from samples.app_sample.my_package import mymodule, mymodule2
+            from samples.app_sample.exclude_packages import exclude_function
         except ModuleNotFoundError:
             self.skipTest("# 경로 문제로 파일 단독 테스트만 가능")
             return
@@ -29,13 +29,13 @@ class TestPatcher(unittest.TestCase):
         mymodule2.bazz()
         exclude_function()
         sleep(1)
-        expected = {md5(signature) for signature in {'sample2.my_package.myclass.MyClass.bar()',
-                                                     'sample2.my_package.myclass.MyClass.foo(self)',
-                                                     'sample2.my_package.myclass.MyClass.NestedClass.baz(self, arg1, '
+        expected = {md5(signature) for signature in {'samples.app_sample.my_package.myclass.MyClass.bar()',
+                                                     'samples.app_sample.my_package.myclass.MyClass.foo(self)',
+                                                     'samples.app_sample.my_package.myclass.MyClass.NestedClass.baz(self, arg1, '
                                                      '*args, **kwargs)',
-                                                     'sample2.my_package.myclass.MyClass.NestedClass.bazz()',
-                                                     'sample2.my_package.mymodule.baz()',
-                                                     'sample2.my_package.mymodule2.bazz()'}}
+                                                     'samples.app_sample.my_package.myclass.MyClass.NestedClass.bazz()',
+                                                     'samples.app_sample.my_package.mymodule.baz()',
+                                                     'samples.app_sample.my_package.mymodule2.bazz()'}}
         self.assertSetEqual(set(invocation_registry.get_invocations()[0]), expected)
 
 
