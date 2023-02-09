@@ -4,8 +4,14 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 plugins {
     java
     `maven-publish`
+    signing
     id("com.github.johnrengelman.shadow") version "7.0.0"
     id("io.freefair.lombok") version "6.5.1"
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
 }
 
 tasks.withType<ShadowJar> {
@@ -77,22 +83,66 @@ publishing {
     publications {
         create<MavenPublication>("agent") {
             groupId = "com.navercorp.scavenger"
-            artifactId = "javaagent"
+            artifactId = project.name
             from(components["java"])
+
+            pom {
+                name.set("Scavenger java agent")
+                description.set("Java agent for Scavenger, a runtime dead code analysis tool")
+                url.set("https://github.com/naver/scavenger")
+
+                licenses {
+                    license {
+                        name.set("The Apache License, Version 2.0")
+                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                    }
+                }
+                developers {
+                    developer {
+                        id.set("taeyeon-Kim")
+                        name.set("Taeyeon Kim")
+                        email.set("duszzang@gmail.com")
+                    }
+                    developer {
+                        id.set("dbgsprw")
+                        name.set("Minjeong Yoo")
+                        email.set("dbgsprw@gmail.com")
+                    }
+                    developer {
+                        id.set("kojandy")
+                        name.set("Ohjun Kwon")
+                        email.set("kojandy@gmail.com")
+                    }
+                    developer {
+                        id.set("junoyoon")
+                        name.set("JunHo Yoon")
+                        email.set("junoyoon@gmail.com")
+                    }
+                }
+                scm {
+                    connection.set("scm:git:git:github.com/naver/scavenger.git")
+                    developerConnection.set("scm:git:ssh://github.com/naver/scavenger.git")
+                    url.set("https://github.com/naver/scavenger")
+                }
+            }
         }
     }
     repositories {
         maven {
             credentials {
-                username = ""
-                password = ""
+                username = project.properties["ossrhUsername"].toString()
+                password = project.properties["ossrhPassword"].toString()
             }
-            name = "navercorp"
+            name = "OSSRH"
             url = if (version.toString().endsWith("-SNAPSHOT")) {
-                uri("")
+                uri("https://oss.sonatype.org/content/repositories/snapshots/")
             } else {
-                uri("")
+                uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
             }
         }
     }
+}
+
+signing {
+    sign(publishing.publications["agent"])
 }
