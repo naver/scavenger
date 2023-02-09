@@ -1,3 +1,5 @@
+from urllib.parse import urlparse
+
 import grpc
 import requests
 
@@ -16,7 +18,11 @@ class Client:
                                 timeout=(config.http_connect_timeout_seconds, config.http_read_timeout_seconds))
         collector_url = response.json()["collectorUrl"]
 
-        self.channel = grpc.insecure_channel(collector_url + ":80")
+        if urlparse(collector_url).port is None:
+            self.channel = grpc.insecure_channel(f"{collector_url}:{80}")
+        else:
+            self.channel = grpc.insecure_channel(collector_url)
+
         self.grpc_agent_service = GrpcAgentServiceStub(self.channel)
         self.poll_config_request = GetConfigRequest(
             jvm_uuid=PROCESS_UUID,
