@@ -9,11 +9,9 @@ import com.navercorp.scavenger.repository.InvocationDao
 import com.navercorp.scavenger.repository.JvmDao
 import com.navercorp.scavenger.repository.MethodDao
 import mu.KotlinLogging
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.support.TransactionTemplate
-import java.io.File
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import javax.annotation.PostConstruct
