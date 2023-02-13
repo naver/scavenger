@@ -2,7 +2,7 @@ import ast
 import logging
 import os
 import time
-from _ast import FunctionDef, Module
+from _ast import FunctionDef, Module, Call, Attribute, Name
 from dataclasses import dataclass
 from pathlib import Path
 from typing import List
@@ -23,10 +23,11 @@ class CodeBaseScanner:
     packages: List[str]
     codebase_path_list: List[Path]
 
-    def __init__(self, codebase_path_list: List[Path], packages: List[str], exclude_packages: List[str], exclude_init: bool):
+    def __init__(self, codebase_path_list: List[Path], packages: List[str], exclude_packages: List[str], decorators: List[str], exclude_init: bool):
         self.codebase_path_list = codebase_path_list
         self.packages = packages
         self.exclude_packages = exclude_packages
+        self.decorators = decorators
         self.exclude_init = exclude_init
 
     def scan(self) -> Codebase:  # FIXME CodeBasePublication을 리턴하도록 변경
@@ -60,8 +61,22 @@ class CodeBaseScanner:
             elif isinstance(node, ast.FunctionDef):
                 if self.exclude_init and node.name == '__init__':
                     continue
+
+                if self.decorators and not self.has_decorator(self.get_decorators(node)):
+                    continue
+
                 function_nodes.append(node)
         return function_nodes
+
+    def has_decorator(self, decorators):
+        return sum(1 for decorator in decorators if decorator in self.decorators) >= 1
+
+    @staticmethod
+    def get_decorators(function_def: ast.FunctionDef):
+        decorators = []
+        for decorator in function_def.decorator_list:
+            decorators.append(f"@{get_decorator_from_node(decorator)}")
+        return decorators
 
     @staticmethod
     def function_def_to_function(function: FunctionDef, package: str) -> Function:
@@ -103,3 +118,14 @@ class CodeBaseScanner:
             if not filter_by_exclude_packages(str(absolute_path), exclude_packages):
                 py_files.append(PyFile(codebase_path, absolute_path.relative_to(codebase_path)))
         return py_files
+
+
+def get_decorator_from_node(node):
+    if isinstance(node, Name):
+        return node.id
+    elif isinstance(node, Call):
+        return f"{get_decorator_from_node(node.func)}"
+    elif isinstance(node, Attribute):
+        return f"{get_decorator_from_node(node.value)}.{node.attr}"
+    else:
+        raise logger.warning(f"Unknown decorator type : {node}")

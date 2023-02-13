@@ -13,7 +13,7 @@ class TestScanSample1(unittest.TestCase):
 
     def setUp(self):
         self.sample_absolute_path = Path(__file__).parent.joinpath("samples").joinpath("flask_sample")
-        self.codebase_scanner = CodeBaseScanner([self.sample_absolute_path], ["views"], [], True)
+        self.codebase_scanner = CodeBaseScanner([self.sample_absolute_path], ["views"], [], [], True)
 
     def test_scan(self):
         expected_functions = [
@@ -77,29 +77,47 @@ class TestScanSample1(unittest.TestCase):
         self.assertListEqual(self.codebase_scanner.find_all_py_files(), expected)
 
 
-class TestScanSample3(unittest.TestCase):
+class TestScanAppSample(unittest.TestCase):
 
     def setUp(self):
-        self.sample_absolute_path = Path(__file__).parent.joinpath("samples").joinpath("django_sample")
-        self.codebase_scanner = CodeBaseScanner([self.sample_absolute_path], ["polls", "mysite"], ["polls.migrations"], True)
+        self.sample_absolute_path = Path(__file__).parent.joinpath("samples").joinpath("app_sample")
+        self.codebase_scanner = CodeBaseScanner([self.sample_absolute_path], ["decorator", "my_package"], ["exclude_packages"], ["@deco", "@deco2"],
+                                                True)
 
     def test_scan(self):
         codebase = self.codebase_scanner.scan()
 
-        expected = ["polls.models.Question.__str__", "polls.models.Question.was_published_recently",
-                    "polls.models.Choice.__str__", "polls.tests.create_question",
-                    "polls.tests.QuestionModelTests.test_was_published_recently_with_future_question",
-                    "polls.tests.QuestionModelTests.test_was_published_recently_with_old_question",
-                    "polls.tests.QuestionModelTests.test_was_published_recently_with_recent_question",
-                    "polls.tests.QuestionIndexViewTests.test_no_questions",
-                    "polls.tests.QuestionIndexViewTests.test_past_question",
-                    "polls.tests.QuestionIndexViewTests.test_future_question",
-                    "polls.tests.QuestionIndexViewTests.test_future_question_and_past_question",
-                    "polls.tests.QuestionIndexViewTests.test_two_past_questions",
-                    "polls.tests.QuestionDetailViewTests.test_future_question",
-                    "polls.tests.QuestionDetailViewTests.test_past_question", "polls.views.vote",
-                    "polls.views.IndexView.get_queryset", "polls.views.DetailView.get_queryset"]
+        expected = ["decorator.decorator.decorated_function()", "decorator.decorator.decorated_function2()",
+                    "decorator.decorator.A.a(self)", "decorator.decorator.A.b()",
+                    "decorator.decorator.A.c(cls_)", "decorator.module.bar()"]
         self.assertEqual(len(codebase.functions), len(expected))
+        self.assertSetEqual(set(function.signature for function in codebase.functions), set(expected))
+
+
+class TestScanSample3(unittest.TestCase):
+
+    def setUp(self):
+        self.sample_absolute_path = Path(__file__).parent.joinpath("samples").joinpath("django_sample")
+        self.codebase_scanner = CodeBaseScanner([self.sample_absolute_path], ["polls", "mysite"], ["polls.migrations"], [], True)
+
+    def test_scan(self):
+        codebase = self.codebase_scanner.scan()
+
+        expected = ["polls.models.Question.__str__(self)", "polls.models.Question.was_published_recently(self)",
+                    "polls.models.Choice.__str__(self)", "polls.tests.create_question(question_text, days)",
+                    "polls.tests.QuestionModelTests.test_was_published_recently_with_future_question(self)",
+                    "polls.tests.QuestionModelTests.test_was_published_recently_with_old_question(self)",
+                    "polls.tests.QuestionModelTests.test_was_published_recently_with_recent_question(self)",
+                    "polls.tests.QuestionIndexViewTests.test_no_questions(self)",
+                    "polls.tests.QuestionIndexViewTests.test_past_question(self)",
+                    "polls.tests.QuestionIndexViewTests.test_future_question(self)",
+                    "polls.tests.QuestionIndexViewTests.test_future_question_and_past_question(self)",
+                    "polls.tests.QuestionIndexViewTests.test_two_past_questions(self)",
+                    "polls.tests.QuestionDetailViewTests.test_future_question(self)",
+                    "polls.tests.QuestionDetailViewTests.test_past_question(self)", "polls.views.vote(request, question_id)",
+                    "polls.views.IndexView.get_queryset(self)", "polls.views.DetailView.get_queryset(self)"]
+        self.assertEqual(len(codebase.functions), len(expected))
+        self.assertSetEqual(set(function.signature for function in codebase.functions), set(expected))
 
     def test_find_all_py_files(self):
         expected = [PyFile(codebase_path=Path(self.sample_absolute_path), relative_path=Path("polls/models.py")),
