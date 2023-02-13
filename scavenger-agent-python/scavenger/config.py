@@ -14,6 +14,7 @@ class Config:
     codebase: List[Path]
     packages: List[str]
     exclude_packages: List[str] = field(default_factory=list)
+    decorators: List[str] = field(default_factory=list)
     exclude_init: bool = False
     app_name: str = "missing-appName"
     app_version: str = "unspecified"

@@ -2,7 +2,7 @@ from scavenger.internal.invocation_registry import InvocationRegistry
 from scavenger.internal.patch import Patcher
 
 invocation_registry = InvocationRegistry()
-Patcher(["patch"], [], True, invocation_registry).patch()
+Patcher(["patch"], [], [], True, invocation_registry).patch()
 
 import patch
 import not_patch

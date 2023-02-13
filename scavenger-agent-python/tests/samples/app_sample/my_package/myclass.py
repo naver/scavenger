@@ -6,8 +6,12 @@ class MyClass:
         pass
 
     @staticmethod
-    def bar():
-        pass
+    def static_method(arg):
+        return arg
+
+    @classmethod
+    def class_method(cls):
+        return cls
 
     class NestedClass:
         def baz(self, arg1, *args, **kwargs):

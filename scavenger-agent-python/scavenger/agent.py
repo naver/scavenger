@@ -24,6 +24,7 @@ class Agent:
         self.patcher = Patcher(
             packages=self.config.packages,
             exclude_packages=self.config.exclude_packages,
+            decorators=self.config.decorators,
             exclude_init=self.config.exclude_init,
             invocation_registry=invocation_registry
         )

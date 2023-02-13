@@ -1,5 +1,6 @@
 from .mymodule2 import bazz
 
+
 def foo():
     pass
 

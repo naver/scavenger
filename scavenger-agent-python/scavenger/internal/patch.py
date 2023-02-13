@@ -13,9 +13,11 @@ class Finder(PathFinder):
     packages: List[str]
     exclude_packages: List[str]
 
-    def __init__(self, packages: List[str], exclude_packages: List[str], exclude_init: bool, invocation_registry: InvocationRegistry):
+    def __init__(self, packages: List[str], exclude_packages: List[str], decorators: List[str], exclude_init: bool,
+                 invocation_registry: InvocationRegistry):
         self.packages = packages
         self.exclude_packages = exclude_packages
+        self.decorators = decorators
         self.exclude_init = exclude_init
         self.invocation_registry = invocation_registry
 
@@ -24,7 +26,7 @@ class Finder(PathFinder):
             spec = super().find_spec(fullname, path, target)
 
             if spec and spec.loader and self.patch_required(fullname):
-                loader = CustomLoader(fullname, spec.origin, self.invocation_registry, self.exclude_init)
+                loader = CustomLoader(fullname, spec.origin, self.invocation_registry, self.decorators, self.exclude_init)
                 spec.loader = loader
                 return spec
         except Exception as e:
@@ -47,9 +49,10 @@ class Finder(PathFinder):
 class CustomLoader(SourceFileLoader):
     invocation_registry: InvocationRegistry
 
-    def __init__(self, fullname, origin, invocation_registry, exclude_init):
+    def __init__(self, fullname, origin, invocation_registry, decorators, exclude_init):
         super().__init__(fullname, origin)
         self.invocation_registry = invocation_registry
+        self.decorators = decorators
         self.exclude_init = exclude_init
 
     def exec_module(self, module):
@@ -60,38 +63,66 @@ class CustomLoader(SourceFileLoader):
             logging.warning("Scavenger function patching is Failed. ", e)
 
     def patch_recursively(self, obj):
-        for child_str in dir(obj):
-            child = inspect.getattr_static(obj, child_str)
-
-            is_staticmethod = isinstance(child, staticmethod)
-            if is_staticmethod:
-                child = child.__func__
-
-            if not (getattr(child, "__module__", None) is not None and self.is_target_module(child)):
-                continue
-
-            if inspect.isfunction(child):
-                if self.exclude_init and child_str == '__init__':
+        for key, value in inspect.getmembers(obj):
+            if inspect.isfunction(value) or inspect.ismethod(value):
+                if not self.is_target_module(value):
                     continue
 
-                signature = f"{child.__module__}.{child.__qualname__}{inspect.signature(child)}"
-                setattr(obj, child_str, self.patcher(child, signature, self.invocation_registry, is_staticmethod))
+                if isinstance(inspect.getattr_static(obj, key), classmethod):
+                    value = value.__func__
 
-            elif inspect.isclass(child) and child is not type:
-                self.patch_recursively(child)
+                if self.exclude_init and key == '__init__':
+                    continue
+
+                if self.decorators and not self.has_decorator(self.get_decorators(value)):
+                    continue
+
+                signature = f"{value.__module__}.{value.__qualname__}{inspect.signature(value)}"
+
+                if isinstance(inspect.getattr_static(obj, key), classmethod):
+                    setattr(obj, key, classmethod(self.patch_class_method(value, signature, self.invocation_registry)))
+                elif isinstance(inspect.getattr_static(obj, key), staticmethod):
+                    setattr(obj, key, staticmethod(self.patch(value, signature, self.invocation_registry)))
+                else:
+                    setattr(obj, key, self.patch(value, signature, self.invocation_registry))
+
+            elif inspect.isclass(value) and key != "__class__":
+                if not self.is_target_module(value):
+                    continue
+
+                self.patch_recursively(value)
 
     def is_target_module(self, child: type) -> bool:
         return child.__module__.startswith(self.name)
 
+    def has_decorator(self, decorators):
+        return sum(1 for decorator in decorators if decorator in self.decorators) >= 1
+
     @staticmethod
-    def patcher(function, signature, invocation_registry, is_staticmethod):
+    def patch_class_method(function, signature, invocation_registry):
+        def wrapper(cls, *args, **kwargs):
+            invocation_registry.register(md5(signature))
+            return function(cls, *args, **kwargs)
+
+        return wrapper
+
+    @staticmethod
+    def patch(function, signature, invocation_registry):
         def wrapper(*args, **kwargs):
             invocation_registry.register(md5(signature))
-            if is_staticmethod:
-                args = args[1:]
             return function(*args, **kwargs)
 
         return wrapper
+
+    @staticmethod
+    def get_decorators(func):
+        source = inspect.getsource(func)
+        index = source.find("def ")
+        return [
+            line.strip().split()[0].split("(")[0]
+            for line in source[:index].strip().splitlines()
+            if line.strip()[0] == "@"
+        ]
 
 
 class Patcher:
@@ -100,15 +131,17 @@ class Patcher:
     exclude_packages: List[str]
     store: Dict[str, int]
 
-    def __init__(self, packages: List[str], exclude_packages: List[str], exclude_init: bool, invocation_registry: InvocationRegistry):
+    def __init__(self, packages: List[str], exclude_packages: List[str], decorators: List[str], exclude_init: bool,
+                 invocation_registry: InvocationRegistry):
         self._finder = None
         self.packages = packages
         self.exclude_packages = exclude_packages
+        self.decorators = decorators
         self.exclude_init = exclude_init
         self.invocation_registry = invocation_registry
 
     def patch(self):
-        finder = Finder(self.packages, self.exclude_packages, self.exclude_init, self.invocation_registry)
+        finder = Finder(self.packages, self.exclude_packages, self.decorators, self.exclude_init, self.invocation_registry)
         sys.meta_path.insert(0, finder)
         self._finder = finder
 
