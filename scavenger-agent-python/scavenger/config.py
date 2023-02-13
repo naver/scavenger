@@ -19,7 +19,7 @@ class Config:
     app_version: str = "unspecified"
     environment: str = "<default>"
     async_codebase_scan_mode: bool = False
-    debugMode: bool = False
+    debug_mode: bool = False
     scheduler_initial_delay_seconds: int = 10
     scheduler_interval_seconds: int = 10
     force_interval_seconds: int = 0
