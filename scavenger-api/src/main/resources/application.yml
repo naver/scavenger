@@ -4,6 +4,7 @@ server:
   compression:
     enabled: true
     mime-types: application/json
+  port: 8081
 
 scavenger:
   collector-server-url: ${COLLECTOR_URL}

@@ -2,22 +2,7 @@
 
 --changeset scavenger:1
 
-DROP TABLE IF EXISTS agent_state;
-DROP TABLE IF EXISTS codebase_fingerprints;
-DROP TABLE IF EXISTS jvms;
-DROP TABLE IF EXISTS invocations;
-DROP TABLE IF EXISTS snapshot_application;
-DROP TABLE IF EXISTS applications;
-DROP TABLE IF EXISTS snapshot_environment;
-DROP TABLE IF EXISTS environments;
-DROP TABLE IF EXISTS methods;
-DROP TABLE IF EXISTS snapshot_nodes;
-DROP TABLE IF EXISTS snapshots;
-DROP TABLE IF EXISTS github_mappings;
-DROP TABLE IF EXISTS customers;
-DROP TABLE IF EXISTS leadership;
-
-CREATE TABLE customers
+CREATE TABLE IF NOT EXISTS customers
 (
     id                  BIGINT AUTO_INCREMENT PRIMARY KEY,
     name                VARCHAR(100) NOT NULL,
@@ -30,7 +15,7 @@ CREATE TABLE customers
         UNIQUE (licenseKey)
 ) COLLATE = utf8mb4_0900_as_cs;
 
-CREATE TABLE agent_state
+CREATE TABLE IF NOT EXISTS agent_state
 (
     id                 BIGINT AUTO_INCREMENT PRIMARY KEY,
     customerId         BIGINT      NOT NULL,
@@ -45,7 +30,7 @@ CREATE TABLE agent_state
         UNIQUE (customerId, jvmUuid)
 ) COLLATE = utf8mb4_0900_as_cs;
 
-CREATE TABLE applications
+CREATE TABLE IF NOT EXISTS applications
 (
     id         BIGINT AUTO_INCREMENT PRIMARY KEY,
     customerId BIGINT       NOT NULL,
@@ -58,7 +43,7 @@ CREATE TABLE applications
         UNIQUE (customerId, id)
 ) COLLATE = utf8mb4_0900_as_cs;
 
-CREATE TABLE codebase_fingerprints
+CREATE TABLE IF NOT EXISTS codebase_fingerprints
 (
     id                  BIGINT AUTO_INCREMENT PRIMARY KEY,
     customerId          BIGINT       NOT NULL,
@@ -71,7 +56,7 @@ CREATE TABLE codebase_fingerprints
         UNIQUE (customerId, applicationId, codeBaseFingerprint)
 ) COLLATE = utf8mb4_0900_as_cs;
 
-CREATE TABLE environments
+CREATE TABLE IF NOT EXISTS environments
 (
     id         BIGINT AUTO_INCREMENT PRIMARY KEY,
     customerId BIGINT       NOT NULL,
@@ -86,7 +71,7 @@ CREATE TABLE environments
         UNIQUE (customerId, id)
 ) COLLATE = utf8mb4_0900_as_cs;
 
-CREATE TABLE jvms
+CREATE TABLE IF NOT EXISTS jvms
 (
     id                  BIGINT AUTO_INCREMENT PRIMARY KEY,
     customerId          BIGINT       NOT NULL,
@@ -103,7 +88,7 @@ CREATE TABLE jvms
         UNIQUE (customerId, uuid)
 ) COLLATE = utf8mb4_0900_as_cs;
 
-CREATE TABLE methods
+CREATE TABLE IF NOT EXISTS methods
 (
     id               BIGINT AUTO_INCREMENT PRIMARY KEY,
     customerId       BIGINT       NOT NULL,
@@ -122,7 +107,7 @@ CREATE TABLE methods
     INDEX ix_methods_signaturehash_identity (customerId, signatureHash)
 ) COLLATE = utf8mb4_0900_as_cs;
 
-CREATE TABLE invocations
+CREATE TABLE IF NOT EXISTS invocations
 (
     id               BIGINT AUTO_INCREMENT PRIMARY KEY,
     customerId       BIGINT                          NOT NULL,
@@ -138,7 +123,7 @@ CREATE TABLE invocations
     CONSTRAINT ix_invocations_identity UNIQUE (customerId, applicationId, environmentId, signatureHash)
 ) COLLATE = utf8mb4_0900_as_cs;
 
-CREATE TABLE snapshots
+CREATE TABLE IF NOT EXISTS snapshots
 (
     id                    BIGINT AUTO_INCREMENT PRIMARY KEY,
     createdAt             TIMESTAMP     NOT NULL DEFAULT CURRENT_TIMESTAMP(),
@@ -150,7 +135,7 @@ CREATE TABLE snapshots
     excludeAbstract       TINYINT(1)    NULL
 ) COLLATE = utf8mb4_0900_as_cs;
 
-CREATE TABLE snapshot_application
+CREATE TABLE IF NOT EXISTS snapshot_application
 (
     snapshotId    BIGINT NOT NULL,
     applicationId BIGINT NOT NULL,
@@ -159,7 +144,7 @@ CREATE TABLE snapshot_application
     PRIMARY KEY (customerId, snapshotId, applicationId)
 ) COLLATE = utf8mb4_0900_as_cs;
 
-CREATE TABLE snapshot_environment
+CREATE TABLE IF NOT EXISTS snapshot_environment
 (
     snapshotId    BIGINT NOT NULL,
     environmentId BIGINT NOT NULL,
@@ -168,7 +153,7 @@ CREATE TABLE snapshot_environment
     PRIMARY KEY (customerId, snapshotId, environmentId)
 ) COLLATE = utf8mb4_0900_as_cs;
 
-CREATE TABLE snapshot_nodes
+CREATE TABLE IF NOT EXISTS snapshot_nodes
 (
     id                  BIGINT AUTO_INCREMENT PRIMARY KEY,
     snapshotId          BIGINT        NOT NULL,
@@ -181,7 +166,7 @@ CREATE TABLE snapshot_nodes
     type                VARCHAR(100)  NULL
 ) COLLATE = utf8mb4_0900_as_cs;
 
-CREATE TABLE `github_mappings`
+CREATE TABLE IF NOT EXISTS `github_mappings`
 (
     id         BIGINT AUTO_INCREMENT PRIMARY KEY,
     customerId BIGINT       NOT NULL,
@@ -192,7 +177,7 @@ CREATE TABLE `github_mappings`
         UNIQUE (customerId, package)
 ) COLLATE = utf8mb4_0900_as_cs;
 
-CREATE TABLE `leadership` (
+CREATE TABLE IF NOT EXISTS `leadership` (
     anchor      TINYINT(3) unsigned NOT NULL PRIMARY KEY,
     memberId   VARCHAR(128)   NOT NULL,
     lastSeenActive TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
