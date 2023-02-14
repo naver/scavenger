@@ -170,6 +170,24 @@ files = [
 ]
 
 [[package]]
+name = "dataclass-builder"
+version = "1.2.0"
+description = "Create instances of dataclasses with the builder pattern."
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "dataclass-builder-1.2.0.tar.gz", hash = "sha256:9efc8e8e4411419efbe082b61086d3d97801c2a42c48b5c5bda6e05fbb8543c2"},
+    {file = "dataclass_builder-1.2.0-py3-none-any.whl", hash = "sha256:1979b82542a54a320a50663595d3959035f294b1d623f677654fd0bd587142b8"},
+]
+
+[package.extras]
+checks = ["flake8 (>=3.7.7)", "flake8-bugbear", "mypy", "pydocstyle"]
+dev = ["black", "flake8 (>=3.7.7)", "flake8-bugbear", "isort", "mypy", "packaging", "pydocstyle", "pytest", "pytest-cov", "pytest-mock", "sphinx (>=1.7)", "sphinxcontrib-apidoc", "twine"]
+docs = ["packaging", "sphinx (>=1.7)", "sphinxcontrib-apidoc"]
+tests = ["pytest", "pytest-cov", "pytest-mock"]
+
+[[package]]
 name = "grpcio"
 version = "1.51.1"
 description = "HTTP/2-based RPC framework"
@@ -298,6 +316,22 @@ files = [
     {file = "idna-3.4-py3-none-any.whl", hash = "sha256:90b77e79eaa3eba6de819a0c442c0b4ceefc341a7a2ab77d7562bf49f425c5c2"},
     {file = "idna-3.4.tar.gz", hash = "sha256:814f528e8dead7d329833b91c5faa87d60bf71824cd12a7530b5526063d02cb4"},
 ]
+
+[[package]]
+name = "path"
+version = "16.6.0"
+description = "A module wrapper for os.path"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "path-16.6.0-py3-none-any.whl", hash = "sha256:30fcdc78febebc7b8732dea1bd7393eed8e1fff9add6791af75a29909508f31b"},
+    {file = "path-16.6.0.tar.gz", hash = "sha256:bea3816e1d54f4e33aac78d2031a0b0ed2f95e69db85b45d51f17df97071da69"},
+]
+
+[package.extras]
+docs = ["furo", "jaraco.packaging (>=9)", "jaraco.tidelift (>=1.4)", "rst.linker (>=1.9)", "sphinx (>=3.5)"]
+testing = ["appdirs", "flake8 (<5)", "packaging", "pygments", "pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=1.3)", "pytest-flake8", "pytest-mypy (>=0.9.1)", "pywin32"]
 
 [[package]]
 name = "protobuf"
@@ -455,4 +489,4 @@ socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.7"
-content-hash = "ab2152cd6ea36b784d072aa192aab2bb6fa4ec5d2399e98825889976a2d567d6"
+content-hash = "947b27204adffcc21dbdf1461209292309bccc12734d304df3be4fa0e00a4ba9"

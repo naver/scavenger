@@ -1,5 +1,4 @@
 import unittest
-from pathlib import Path
 
 from scavenger.config import Config
 from scavenger.internal.model import Codebase, Function
@@ -21,7 +20,7 @@ class TestModel(unittest.TestCase):
             api_key="",
             app_name="",
             environment="",
-            codebase=[Path("a")],
+            codebase=["a"],
             packages=["b"]
         )
         fingerprint = codebase.get_fingerprint(config)

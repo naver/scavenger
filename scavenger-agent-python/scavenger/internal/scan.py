@@ -20,17 +20,15 @@ class PyFile:
 
 
 class CodeBaseScanner:
-    packages: List[str]
-    codebase_path_list: List[Path]
 
-    def __init__(self, codebase_path_list: List[Path], packages: List[str], exclude_packages: List[str], decorators: List[str], exclude_init: bool):
-        self.codebase_path_list = codebase_path_list
+    def __init__(self, codebase: List[str], packages: List[str], exclude_packages: List[str], decorators: List[str], exclude_init: bool):
+        self.codebase_path_list = [Path(codebase_path) for codebase_path in codebase]
         self.packages = packages
         self.exclude_packages = exclude_packages
         self.decorators = decorators
         self.exclude_init = exclude_init
 
-    def scan(self) -> Codebase:  # FIXME CodeBasePublication을 리턴하도록 변경
+    def scan(self) -> Codebase:
         logger.info("Codebase scanning is starting.")
         start: int = time.perf_counter_ns()
         functions: List[Function] = []

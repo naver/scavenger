@@ -12,7 +12,7 @@ logging.basicConfig(level=logging.DEBUG)
 class TestScanSample1(unittest.TestCase):
 
     def setUp(self):
-        self.sample_absolute_path = Path(__file__).parent.joinpath("samples").joinpath("flask_sample")
+        self.sample_absolute_path = str(Path(__file__).parent.joinpath("samples").joinpath("flask_sample"))
         self.codebase_scanner = CodeBaseScanner([self.sample_absolute_path], ["views"], [], [], True)
 
     def test_scan(self):
@@ -68,11 +68,11 @@ class TestScanSample1(unittest.TestCase):
         self.assertEqual(self.codebase_scanner.scan().get_fingerprint(config, True), expected.get_fingerprint(config, True))
 
     def test_find_all_py_files(self):
-        expected = [PyFile(codebase_path=self.sample_absolute_path, relative_path=Path("views").joinpath("user.py")),
-                    PyFile(codebase_path=self.sample_absolute_path, relative_path=Path("views").joinpath("dead.py")),
-                    PyFile(codebase_path=self.sample_absolute_path,
+        expected = [PyFile(codebase_path=Path(self.sample_absolute_path), relative_path=Path("views").joinpath("user.py")),
+                    PyFile(codebase_path=Path(self.sample_absolute_path), relative_path=Path("views").joinpath("dead.py")),
+                    PyFile(codebase_path=Path(self.sample_absolute_path),
                            relative_path=Path("views").joinpath("__init__.py")),
-                    PyFile(codebase_path=self.sample_absolute_path, relative_path=Path("views").joinpath("live.py"))]
+                    PyFile(codebase_path=Path(self.sample_absolute_path), relative_path=Path("views").joinpath("live.py"))]
 
         self.assertListEqual(self.codebase_scanner.find_all_py_files(), expected)
 
@@ -80,7 +80,7 @@ class TestScanSample1(unittest.TestCase):
 class TestScanAppSample(unittest.TestCase):
 
     def setUp(self):
-        self.sample_absolute_path = Path(__file__).parent.joinpath("samples").joinpath("app_sample")
+        self.sample_absolute_path = str(Path(__file__).parent.joinpath("samples").joinpath("app_sample"))
         self.codebase_scanner = CodeBaseScanner([self.sample_absolute_path], ["decorator", "my_package"], ["exclude_packages"], ["@deco", "@deco2"],
                                                 True)
 
@@ -97,7 +97,7 @@ class TestScanAppSample(unittest.TestCase):
 class TestScanSample3(unittest.TestCase):
 
     def setUp(self):
-        self.sample_absolute_path = Path(__file__).parent.joinpath("samples").joinpath("django_sample")
+        self.sample_absolute_path = str(Path(__file__).parent.joinpath("samples").joinpath("django_sample"))
         self.codebase_scanner = CodeBaseScanner([self.sample_absolute_path], ["polls", "mysite"], ["polls.migrations"], [], True)
 
     def test_scan(self):

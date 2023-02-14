@@ -12,6 +12,8 @@ protobuf = "^4.21.12"
 requests = "^2.28.2"
 apscheduler = "^3.10.0"
 grpcio = "^1.51.1"
+path = "^16.6.0"
+dataclass-builder = "^1.2.0"
 
 [tool.poetry.group.dev.dependencies]
 grpcio-tools = "^1.51.1"

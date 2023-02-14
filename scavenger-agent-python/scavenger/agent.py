@@ -1,6 +1,7 @@
 import logging
 
 from scavenger.config import Config
+from scavenger.internal.banner import Banner
 from scavenger.internal.client import Client
 from scavenger.internal.invocation_registry import InvocationRegistry
 from scavenger.internal.patch import Patcher
@@ -36,7 +37,7 @@ class Agent:
         )
 
     def start(self):
-        logger.info("Scavenger agent is starting.")
+        Banner(self.config).print()
 
         codebase = None
         if not self.config.async_codebase_scan_mode:
