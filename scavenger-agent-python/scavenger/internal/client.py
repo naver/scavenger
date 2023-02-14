@@ -1,5 +1,3 @@
-from urllib.parse import urlparse
-
 import grpc
 import requests
 
@@ -17,8 +15,7 @@ class Client:
         response = requests.get(f"{config.server_url}/javaagent/v5/initConfig?licenseKey={config.api_key}",
                                 timeout=(config.http_connect_timeout_seconds, config.http_read_timeout_seconds))
         collector_url = response.json()["collectorUrl"]
-
-        if urlparse(collector_url).port is None:
+        if ":" not in collector_url:
             self.channel = grpc.insecure_channel(f"{collector_url}:{80}")
         else:
             self.channel = grpc.insecure_channel(collector_url)
