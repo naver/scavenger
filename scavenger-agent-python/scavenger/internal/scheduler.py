@@ -65,7 +65,7 @@ class Scheduler:
             self.publish_code_base_if_needed()
 
             self.invocation_data_publisher_state.schedule_now()
-            self.publish_code_base_if_needed()
+            self.publish_invocation_data_if_needed()
 
     def poll_dynamic_config_if_needed(self):
         if self.poll_state.is_due_time():
