@@ -131,5 +131,4 @@ class TestScanSample3(unittest.TestCase):
                     PyFile(codebase_path=Path(self.sample_absolute_path), relative_path=Path("mysite/settings.py")),
                     PyFile(codebase_path=Path(self.sample_absolute_path), relative_path=Path("mysite/urls.py")),
                     PyFile(codebase_path=Path(self.sample_absolute_path), relative_path=Path("mysite/wsgi.py"))]
-
         self.assertListEqual(self.codebase_scanner.find_all_py_files(), expected)

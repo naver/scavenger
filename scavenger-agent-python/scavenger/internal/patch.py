@@ -25,8 +25,8 @@ class Finder(PathFinder):
         try:
             spec = super().find_spec(fullname, path, target)
 
-            if spec and spec.loader and self.patch_required(fullname):
-                loader = CustomLoader(fullname, spec.origin, self.invocation_registry, self.decorators, self.exclude_init)
+            if spec and spec.loader and isinstance(spec.loader, SourceFileLoader) and self.patch_required(fullname):
+                loader = ScavengerSourceFileLoader(fullname, spec.origin, self.invocation_registry, self.decorators, self.exclude_init)
                 spec.loader = loader
                 return spec
         except Exception as e:
@@ -46,7 +46,7 @@ class Finder(PathFinder):
                 return True
 
 
-class CustomLoader(SourceFileLoader):
+class ScavengerSourceFileLoader(SourceFileLoader):
     invocation_registry: InvocationRegistry
 
     def __init__(self, fullname, origin, invocation_registry, decorators, exclude_init):
@@ -116,7 +116,11 @@ class CustomLoader(SourceFileLoader):
 
     @staticmethod
     def get_decorators(func):
-        source = inspect.getsource(func)
+        try:
+            source = inspect.getsource(func)
+        except TypeError as e:
+            logging.warning(f"Function inspection error : {func}")
+            return []
         index = source.find("def ")
         return [
             line.strip().split()[0].split("(")[0]
