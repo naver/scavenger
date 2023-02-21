@@ -38,14 +38,20 @@ To change the http(default 9090) and grpc(default 8080) ports used by Collector,
 - `server.port`: Tomcat uses 9090 by default
 - `grpc.server.port`: grpc uses 8080 by default
 
-Collector provide `local` profile.</br>
+The collector provides two profiles: `h2` and `local`(default) </br>
 profile enables `spring.profiles.active` and enables the below configuration.</br>
-The collector uses H2 in its local profile. If you've built your own MySQL, you can change the four settings below.
-
 - `spring.datasource.url`
 - `spring.datasource.username`
 - `spring.datasource.password`
 - `spring.datasource.driver-class-name`
+
+The collector uses in-memory H2 in `local` profile. </br>
+This means that the data is initialised every time the collector application starts.</br>
+If you want to work around this using file mode, you can enable the `h2` profile.
+- `java -jar -Dspring.profiles.active=h2 scavenger-collector-boot.jar`
+
+If you've built your own MySQL, you can change the four settings below.
+- TBD
 
 If you changed `grpc.server.port`, you must also change the settings below to the same value as `grpc.server.port`.
 
@@ -79,18 +85,24 @@ You can override any configuration values with `-D` option.
 
 - `java -jar scavenger-api-boot.jar`
 
-To change the http(default 8080) ports used by API, you can change the settings below.
+To change the http(default 8081) ports used by API, you can change the settings below.
 
-- `server.port`: Tomcat uses 8080 by default
+- `server.port`: Tomcat uses 8081 by default
 
-Collector provide `local` profile.</br>
+The API provides two profiles: `h2` and `local`(default) </br>
 profile enables `spring.profiles.active` and enables the below configuration.</br>
-The collector uses H2 in its local profile. If you've built your own MySQL, you can change the four settings below.
-
 - `spring.datasource.url`
 - `spring.datasource.username`
 - `spring.datasource.password`
 - `spring.datasource.driver-class-name`
+
+The API uses in-memory H2 in `local` profile. </br>
+This means that the data is initialised every time the API application starts, and the data is independent of the collector because it is using a different h2 than the collector. </br>
+If you have enabled the h2 profile on the collector to work around this, you can enable the h2 profile on the API as well.
+- `java -jar -Dspring.profiles.active=h2 scavenger-api-boot.jar`
+
+If you've built your own MySQL, you can change the four settings below.
+- TBD
 
 ##### When Building Manually
 

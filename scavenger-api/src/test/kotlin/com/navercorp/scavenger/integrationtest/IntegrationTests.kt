@@ -88,7 +88,7 @@ class IntegrationTests {
             )
         )
         `Assert POST status code`("/api/customers/$customerId/snapshots/$snapshotId/refresh", null)
-        `Assert DELETE status code`("/api/customers/$customerId/snapshots/$snapshotId")
+        `Assert DELETE status code`("/api/customers/$customerId/snapshots/3")
     }
 
     @Test
