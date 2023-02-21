@@ -1,6 +1,5 @@
 package com.navercorp.scavenger.config
 
-import com.linecorp.armeria.common.SessionProtocol
 import com.linecorp.armeria.server.ServerBuilder
 import com.linecorp.armeria.server.grpc.GrpcService
 import com.linecorp.armeria.server.healthcheck.HealthChecker
@@ -37,8 +36,7 @@ class ArmeriaConfiguration(val grpcAgentController: GrpcAgentController) {
     @Bean
     fun armeriaServiceInitializer(tomcatService: TomcatService): ArmeriaServerConfigurator {
         return ArmeriaServerConfigurator { serviceBuilder: ServerBuilder ->
-            serviceBuilder.port(8080, SessionProtocol.HTTP)
-                .service("prefix:/", tomcatService)
+            serviceBuilder.service("prefix:/", tomcatService)
                 .service(GrpcService.builder()
                     .addService(grpcAgentController)
                     .addExceptionMapping(IllegalArgumentException::class.java, Status.INVALID_ARGUMENT)

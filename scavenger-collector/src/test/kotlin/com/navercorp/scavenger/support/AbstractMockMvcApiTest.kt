@@ -14,7 +14,7 @@ import org.springframework.web.context.WebApplicationContext
 import java.io.PrintWriter
 import java.io.StringWriter
 
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class AbstractMockMvcApiTest {
 
     @BeforeEach

@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Transactional
 @Nested
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DisplayName("LicenseService class")
 class LicenseServiceTest {
     @Autowired

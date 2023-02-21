@@ -6,7 +6,6 @@ import com.navercorp.scavenger.model.GrpcAgentServiceGrpc
 import com.navercorp.scavenger.model.GrpcAgentServiceGrpc.GrpcAgentServiceBlockingStub
 import com.navercorp.scavenger.model.InvocationDataPublication
 import com.navercorp.scavenger.service.AgentService
-import com.navercorp.scavenger.service.OperationService
 import com.navercorp.scavenger.support.AbstractMockMvcApiTest
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -23,14 +22,11 @@ class GrpcAgentControllerTest : AbstractMockMvcApiTest() {
     @Autowired
     lateinit var agentService: AgentService
 
-    @Autowired
-    lateinit var operationService: OperationService
-
     lateinit var stub: GrpcAgentServiceBlockingStub
 
     @BeforeEach
     fun setUp() {
-        val grpcAgentController = GrpcAgentController(agentService, operationService)
+        val grpcAgentController = GrpcAgentController(agentService)
         stub = GrpcAgentServiceGrpc.newBlockingStub(grpcCleanupExtension.addService(grpcAgentController))
     }
 

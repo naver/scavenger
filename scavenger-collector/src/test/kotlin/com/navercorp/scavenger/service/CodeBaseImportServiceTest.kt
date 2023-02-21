@@ -24,7 +24,7 @@ import java.time.Instant
 
 @Transactional
 @Nested
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DisplayName("CodeBaseImportService class")
 class CodeBaseImportServiceTest {
     @Autowired
