@@ -66,14 +66,14 @@ public class ElementMatcherBuilder {
         ElementMatcher.Junction<MethodDescription> matcher = any();
 
         if (config.isExcludeConstructors()) {
-            matcher.and(not(isConstructor()));
+            matcher = matcher.and(not(isConstructor()));
         }
 
         if (config.isExcludeGetterSetter()) {
             ElementMatcher.Junction<MethodDescription> kotlinComponent
                 = takesNoArguments().and(not(returns(TypeDescription.VOID))).and(nameMatches("component\\d+"));
 
-            matcher.and(not(
+            matcher = matcher.and(not(
                 isGetter().or(isSetter()).or(kotlinComponent)
             ));
         }
