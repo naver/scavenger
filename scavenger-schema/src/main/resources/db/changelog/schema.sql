@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS agent_state
     jvmUuid            VARCHAR(40) NOT NULL,
     createdAt          TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP(),
     lastPolledAt       TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP(),
-    nextPollExpectedAt TIMESTAMP   NOT NULL DEFAULT '0000-00-00 00:00:00',
+    nextPollExpectedAt TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP(),
     timestamp          TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP() ON UPDATE CURRENT_TIMESTAMP(),
     enabled            TINYINT(1)  NOT NULL,
 
@@ -81,7 +81,7 @@ CREATE TABLE IF NOT EXISTS jvms
     uuid                VARCHAR(40)  NOT NULL,
     codeBaseFingerprint VARCHAR(200) NULL,
     createdAt           TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP(),
-    publishedAt         TIMESTAMP    NOT NULL DEFAULT '0000-00-00 00:00:00',
+    publishedAt         TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP(),
     hostname            VARCHAR(255) NOT NULL,
 
     CONSTRAINT ix_jvms_uuid
@@ -103,8 +103,7 @@ CREATE TABLE IF NOT EXISTS methods
     garbage          TINYINT(1) NOT NULL DEFAULT 0,
 
     CONSTRAINT ix_methods_id_identity UNIQUE (customerId, id),
-    CONSTRAINT ix_methods_signaturehash_identity UNIQUE (customerId, signatureHash),
-    INDEX ix_methods_signaturehash_identity (customerId, signatureHash)
+    CONSTRAINT ix_methods_signaturehash_identity UNIQUE (customerId, signatureHash)
 ) COLLATE = utf8mb4_0900_as_cs;
 
 CREATE TABLE IF NOT EXISTS invocations
@@ -182,5 +181,3 @@ CREATE TABLE IF NOT EXISTS `leadership` (
     memberId   VARCHAR(128)   NOT NULL,
     lastSeenActive TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) COLLATE = utf8mb4_0900_as_cs;
-
-
