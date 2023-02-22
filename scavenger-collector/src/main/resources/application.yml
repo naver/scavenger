@@ -32,6 +32,7 @@ scavenger:
   publish-interval-seconds: 120
   retry-interval-seconds: 120
 
+# Turn off the HTTP endpoint and creates a WebApplicationContext.
 server:
   port: -1
 
