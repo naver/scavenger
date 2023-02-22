@@ -28,4 +28,4 @@ server:
 armeria:
   ports:
     - port: 0
-      protocol: HTTP
+      protocols: HTTP

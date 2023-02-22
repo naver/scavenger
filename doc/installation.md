@@ -4,10 +4,10 @@
 
 - Scavenger is a combination of various server components(API, Frontend, Collector) and agent component.
   To install scavenger, you need JDK 11 or latest version.
-- Scavenger uses 3 ports. if some ports are blocked by your firewall, you should ask the network admin to open the
+- Scavenger uses 2 ports. if some ports are blocked by your firewall, you should ask the network admin to open the
   following ports in the firewall.
   These ports can be configured by the configuration.
-    - Agent: Any ===> Collector: This is dependent on your tomcat configuration. By default, it is set as 9090.
+    - Agent: Any ===> Collector: This is dependent on your tomcat configuration. By default, it is set as 8080.
     - Agent: Any ===> Collector: This is dependent on your grpc configuration. By default, it is set as 8080.
     - API: This is dependent on your tomcat configuration. By default, it is set as 8081.
 
@@ -31,12 +31,7 @@ Start Collector using the following command.
 
 You can override any configuration values with `-D` option.
 
-- `java -jar -Dgrpc.server.port=8080 scavenger-collector-boot.jar`
-
-To change the http(default 9090) and grpc(default 8080) ports used by Collector, you can change the settings below.
-
-- `server.port`: Tomcat uses 9090 by default
-- `grpc.server.port`: grpc uses 8080 by default
+- `java -Dspring.profiles.active=h2 -jar scavenger-collector-boot.jar`
 
 The collector provides two profiles: `h2` and `local`(default) </br>
 profile enables `spring.profiles.active` and enables the below configuration.</br>
@@ -48,14 +43,10 @@ profile enables `spring.profiles.active` and enables the below configuration.</b
 The collector uses in-memory H2 in `local` profile. </br>
 This means that the data is initialised every time the collector application starts.</br>
 If you want to work around this using file mode, you can enable the `h2` profile.
-- `java -jar -Dspring.profiles.active=h2 scavenger-collector-boot.jar`
+- `java -Dspring.profiles.active=h2 -jar scavenger-collector-boot.jar`
 
 If you've built your own MySQL, you can change the four settings below.
 - TBD
-
-If you changed `grpc.server.port`, you must also change the settings below to the same value as `grpc.server.port`.
-
-- `scavenger.grpc-direct-access-port`
 
 ##### When Building Manually
 
@@ -99,7 +90,7 @@ profile enables `spring.profiles.active` and enables the below configuration.</b
 The API uses in-memory H2 in `local` profile. </br>
 This means that the data is initialised every time the API application starts, and the data is independent of the collector because it is using a different h2 than the collector. </br>
 If you have enabled the h2 profile on the collector to work around this, you can enable the h2 profile on the API as well.
-- `java -jar -Dspring.profiles.active=h2 scavenger-api-boot.jar`
+- `java -Dspring.profiles.active=h2 -jar scavenger-api-boot.jar`
 
 If you've built your own MySQL, you can change the four settings below.
 - TBD

@@ -8,4 +8,4 @@ spring:
     enabled: false
 
 scavenger:
-  collector-server-url: http://localhost:9090
+  collector-server-url: http://localhost:8080

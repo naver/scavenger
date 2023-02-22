@@ -13,7 +13,6 @@ import io.codekvast.javaagent.model.v4.GetConfigRequest4
 import io.codekvast.javaagent.model.v4.GetConfigResponse4
 import io.codekvast.javaagent.model.v4.InitConfigResponse4
 import mu.KotlinLogging
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -26,8 +25,6 @@ import javax.servlet.http.HttpServletRequest
 @RestController
 class AgentController(
     val agentService: AgentService,
-    @Value("\${grpc.server.port:8080}") val grpcServerPort: String,
-    @Value("\${scavenger.proxy-port:}") val proxyPort: String,
 ) {
     val logger = KotlinLogging.logger {}
 
@@ -45,7 +42,7 @@ class AgentController(
     fun grpcInitConfig(@RequestParam licenseKey: String, request: HttpServletRequest): InitConfigResponse {
         logger.info { "init config requested from grpc client ${request.remoteAddr} with licenseKey: $licenseKey" }
         val splitUrl = request.requestURL.split("/")
-        val grpcBaseUrl = splitUrl[2].split(":")[0] + if (proxyPort.isEmpty()) ":$grpcServerPort" else ":$proxyPort"
+        val grpcBaseUrl = "${splitUrl[2].split(":")[0]}:8080"
         return InitConfigResponse.newBuilder()
             .setCollectorUrl(grpcBaseUrl)
             .build()
