@@ -31,7 +31,10 @@ Start Collector using the following command.
 
 You can override any configuration values with `-D` option.
 
-- `java -Dspring.profiles.active=h2 -jar scavenger-collector-boot.jar`
+- `java -Darmeria.ports[0].port=8080 -jar scavenger-collector-boot.jar`
+  
+To change the http(default 8080) and grpc(default 8080) ports used by Collector, you can change the settings below.
+ - `-Darmeria.ports[0].port`: http, grpc uses 8080 by default
 
 The collector provides two profiles: `h2` and `local`(default) </br>
 profile enables `spring.profiles.active` and enables the below configuration.</br>
