@@ -21,7 +21,7 @@ import java.time.temporal.ChronoUnit
 
 @Transactional
 @Nested
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DisplayName("GarbageCollectService class")
 class GarbageCollectServiceTest {
     @Autowired

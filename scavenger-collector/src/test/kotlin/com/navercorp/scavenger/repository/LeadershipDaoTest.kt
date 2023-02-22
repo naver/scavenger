@@ -8,7 +8,7 @@ import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
 
 @Transactional
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class LeadershipDaoTest {
 
     @Autowired

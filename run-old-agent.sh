@@ -4,6 +4,6 @@
 ./gradlew build -p scavenger-demo -x test
 
 java -Dscavenger.configuration=./scavenger-demo/scavenger.conf  \
-     -javaagent:$(find scavenger-old-agent-java/build/libs/scavenger-old-agent-java-4.0-*.jar | head -1) \
+     -javaagent:$(find scavenger-old-agent-java/build/libs/scavenger-old-agent-java-*.jar | tail -1) \
      -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005 \
-     -jar ./scavenger-demo/build/libs/scavenger-demo-1.0.1-SNAPSHOT.jar
+     -jar $(find scavenger-demo/build/libs/scavenger-demo-*.jar | tail -1)

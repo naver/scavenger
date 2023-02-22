@@ -20,7 +20,7 @@ import kotlin.properties.Delegates
 
 @Transactional
 @Nested
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 @DisplayName("CommonImportService class")
 class CommonImportServiceTest {
     @Autowired

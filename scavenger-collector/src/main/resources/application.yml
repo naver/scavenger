@@ -32,10 +32,11 @@ scavenger:
   publish-interval-seconds: 120
   retry-interval-seconds: 120
 
-grpc:
-  server:
-    max-inbound-message-size: 10485760
-    port: 8080
-
+# Turn off the HTTP endpoint and creates a WebApplicationContext.
 server:
-  port: 9090
+  port: -1
+
+armeria:
+  ports:
+    - port: 8080
+      protocol: HTTP

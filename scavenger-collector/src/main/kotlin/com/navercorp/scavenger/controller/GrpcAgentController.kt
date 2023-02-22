@@ -9,14 +9,12 @@ import com.navercorp.scavenger.model.InvocationDataPublication
 import com.navercorp.scavenger.model.ProtoPublication
 import com.navercorp.scavenger.model.PublicationResponse
 import com.navercorp.scavenger.service.AgentService
-import com.navercorp.scavenger.service.OperationService
 import mu.KotlinLogging
-import net.devh.boot.grpc.server.service.GrpcService
+import org.springframework.stereotype.Controller
 
-@GrpcService
+@Controller
 class GrpcAgentController(
     val agentService: AgentService,
-    val operationService: OperationService,
 ) : GrpcAgentServiceGrpcKt.GrpcAgentServiceCoroutineImplBase() {
     val logger = KotlinLogging.logger {}
 

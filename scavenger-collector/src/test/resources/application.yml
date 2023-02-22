@@ -20,8 +20,12 @@ scavenger:
   poll-interval-seconds: 60
   publish-interval-seconds: 60
   retry-interval-seconds: 60
+  diagnosis-directory: ./tmp
 
-# disable external server
-grpc:
-  server:
-    port: -1
+server:
+  port: -1
+
+armeria:
+  ports:
+    - port: 0
+      protocol: HTTP
