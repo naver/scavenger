@@ -48,8 +48,8 @@ If you want to work around this using file mode, you can enable the `h2` profile
 
 If you've built your own MySQL, follow the steps below.
 1. Install MySQL Server using the official [MySQL guide](https://dev.mysql.com/doc/refman/8.0/en/installing.html).
-2. Logging Into MySQL Server.
-3. Creating MySQL Database.
+2. Log into MySQL Server.
+3. Create MySQL Database.
     ```sql
     CREATE DATABASE scavenger;
     ```
@@ -107,8 +107,8 @@ If you've built your own MySQL, follow the steps below.
 > If you have already deployed MySQL when installing collector, you can skip ahead to step 4.
 
 1. Install MySQL Server using the official [MySQL guide](https://dev.mysql.com/doc/refman/8.0/en/installing.html).
-2. Logging Into MySQL Server.
-3. Creating MySQL Database.
+2. Log into MySQL Server.
+3. Create MySQL Database.
     ```sql
     CREATE DATABASE scavenger;
     ```
