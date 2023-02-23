@@ -26,7 +26,7 @@ public class Config {
     private String location = null;
 
     private String apiKey = "";
-    private String serverUrl = "http://localhost:9090";
+    private String serverUrl = "http://localhost:8080";
     private String appName = "missing-appName";
     private List<String> codeBase;
     private List<String> packages;
