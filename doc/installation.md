@@ -37,19 +37,25 @@ To change the http(default 8080) and grpc(default 8080) ports used by Collector,
  - `-Darmeria.port`: http, grpc uses 8080 by default
 
 The collector provides two profiles: `h2` and `local`(default) </br>
-profile enables `spring.profiles.active` and enables the below configuration.</br>
-- `spring.datasource.url`
-- `spring.datasource.username`
-- `spring.datasource.password`
-- `spring.datasource.driver-class-name`
+The profile can be enabled with `spring.profiles.active` configuration.</br>
 
 The collector uses in-memory H2 in `local` profile. </br>
 This means that the data is initialised every time the collector application starts.</br>
 If you want to work around this using file mode, you can enable the `h2` profile.
 - `java -Dspring.profiles.active=h2 -jar scavenger-collector-boot.jar`
 
-If you've built your own MySQL, you can change the four settings below.
-- TBD
+If you've built your own MySQL, follow the steps below.
+1. Install MySQL Server using the official [MySQL guide](https://dev.mysql.com/doc/refman/8.0/en/installing.html).
+2. Log into MySQL Server.
+3. Create MySQL Database.
+    ```sql
+    CREATE DATABASE scavenger;
+    ```
+4. Use the `-D` option to set the following four properties.
+    - `spring.datasource.url={mysql url}`
+    - `spring.datasource.username={mysql user name}`
+    - `spring.datasource.password={mysql password}`
+    - `spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver`
 
 ##### When Building Manually
 
@@ -71,7 +77,7 @@ Start API using the following command.
 When you start the API, you need to set the value `scavenger.collector-server-url` with the `-D` option so that the API
 knows the collector's url.
 
-- e.g) `java -Dscavenger.collector-server-url=http://localhost:8080 -jar scavenger-api-boot.jar`
+- e.g) `java -Dscavenger.collector-server-url=http://localhost:9090 -jar scavenger-api-boot.jar`
 
 #### Configuration
 
@@ -84,19 +90,27 @@ To change the http(default 8081) ports used by API, you can change the settings 
 - `server.port`: Tomcat uses 8081 by default
 
 The API provides two profiles: `h2` and `local`(default) </br>
-profile enables `spring.profiles.active` and enables the below configuration.</br>
-- `spring.datasource.url`
-- `spring.datasource.username`
-- `spring.datasource.password`
-- `spring.datasource.driver-class-name`
+The profile can be enabled with `spring.profiles.active` configuration.</br>
 
 The API uses in-memory H2 in `local` profile. </br>
 This means that the data is initialised every time the API application starts, and the data is independent of the collector because it is using a different h2 than the collector. </br>
 If you have enabled the h2 profile on the collector to work around this, you can enable the h2 profile on the API as well.
 - `java -Dspring.profiles.active=h2 -jar scavenger-api-boot.jar`
 
-If you've built your own MySQL, you can change the four settings below.
-- TBD
+If you've built your own MySQL, follow the steps below.
+> If you have already deployed MySQL when installing collector, you can skip ahead to step 4.
+
+1. Install MySQL Server using the official [MySQL guide](https://dev.mysql.com/doc/refman/8.0/en/installing.html).
+2. Log into MySQL Server.
+3. Create MySQL Database.
+    ```sql
+    CREATE DATABASE scavenger;
+    ```
+4. Use the `-D` option to set the following four properties.
+    - `spring.datasource.url={mysql url}`
+    - `spring.datasource.username={mysql user name}`
+    - `spring.datasource.password={mysql password}`
+    - `spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver`
 
 ##### When Building Manually
 
