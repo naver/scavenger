@@ -38,5 +38,5 @@ server:
 
 armeria:
   ports:
-    - port: 8080
+    - port: ${armeria.port:8080}
       protocols: HTTP
