@@ -2,6 +2,25 @@
 
 *(본 Agent는 베타 버전으로 현재 개발 환경에서만의 사용을 권장하며 상용 환경에서의 사용을 권장하지 않습니다.)* Scavenger Agent의 Python 버전으로, Agent가 아닌 [Server Component](../doc/installation.md)는 사전에 준비되어야 합니다.
 
+## 개발 가이드
+
+Scavenger Agent Python은 패키지 관리자로 [Poetry](https://python-poetry.org/)를 이용합니다.
+
+- 의존성 설치
+```sh
+$ poetry install
+```
+- 테스트
+```sh
+$ poetry run python -m unittest
+```
+- 빌드
+```sh
+$ poetry build
+```
+
+자세한 내용은 [Poetry Docs](https://python-poetry.org/docs/)를 참고해주세요.
+
 ## 에이전트 설치 가이드
 
 ### 전제조건
@@ -11,7 +30,7 @@
 ### 설치
 
 ```
-pip install scavenger-agent-python --save
+$ pip install scavenger-agent-python --save
 ```
 ### 설정
 
