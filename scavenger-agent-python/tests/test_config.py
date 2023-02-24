@@ -1,3 +1,4 @@
+import pathlib
 import unittest
 
 from scavenger.config import Config
@@ -5,7 +6,7 @@ from scavenger.config import Config
 
 class TestBanner(unittest.TestCase):
     def test_load_config(self):
-        config = Config.load_config()
+        config = Config.load_config(str(pathlib.Path(__file__).parent.joinpath("scavenger.conf")))
         self.assertEqual(config.api_key, "test_api_key")
         self.assertEqual(config.server_url, "test_server_url2")
         self.assertEqual(config.codebase, ["ax"])
