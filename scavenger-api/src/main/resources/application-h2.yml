@@ -1,11 +1,9 @@
 spring:
   datasource:
-    url: jdbc:h2:tcp://localhost:9091/file:~/.scavenger
+    url: jdbc:h2:tcp://localhost:9091/~/.scavenger/.scavenger;MODE=MySQL;DB_CLOSE_DELAY=-1;CASE_INSENSITIVE_IDENTIFIERS=TRUE
     username: scavenger
     password: scavenger
     driver-class-name: org.h2.Driver
-  liquibase:
-    enabled: false
 
 scavenger:
   collector-server-url: http://localhost:8080
