@@ -14,6 +14,7 @@ Before looking at the user guide, install the Collector, API.
 ## Create a workspace
 
 ![create-workspace.png](image/create-workspace.png)
+
 Connect to `http://{API host}:8081/scavenger`.
 
 1. Click the `Create workspace` button in the bottom left corner.
