@@ -41,10 +41,8 @@ class AgentController(
     @GetMapping(V5_INIT_CONFIG, produces = [MediaType.APPLICATION_JSON_VALUE])
     fun grpcInitConfig(@RequestParam licenseKey: String, request: HttpServletRequest): InitConfigResponse {
         logger.info { "init config requested from grpc client ${request.remoteAddr} with licenseKey: $licenseKey" }
-        val splitUrl = request.requestURL.split("/")
-        val collectorUrl = "${splitUrl[0]}//${splitUrl[2]}"
         return InitConfigResponse.newBuilder()
-            .setCollectorUrl(collectorUrl)
+            .setCollectorUrl(request.requestURL.split("/")[2])
             .build()
     }
 
