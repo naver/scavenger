@@ -24,7 +24,7 @@ Connect to `http://{API host}:8081/scavenger`.
 ## Create a configuration file
 
 * When using the Scavenger Agent, you need a configuration file for what settings you want the agent to run with.
-* scavenger provides a feature to create a configuration file to make it easier to set up the agent.
+* Scavenger provides a feature to create a configuration file to make it easier to set up the agent.
 
 ![configuration-button.png](image/configuration-button.png)
 
@@ -33,15 +33,15 @@ Connect to `http://{API host}:8081/scavenger`.
 ![create-configuration.png](image/create-configuration.png)
 
 * When the `Create scavenger configuration file` modal appears
-    1. set the configuration.
+    1. Set the configuration.
     2. Click the `Download` button to download the configuration.
 * For a detailed overview of the configuration, please refer
   to [the Configuration guide](https://github.com/naver/scavenger/blob/develop/doc/installation.md#configuration-2).
 
 ## Create Snapshot
 
-Based on the information gathered by the scavenger collector, we take a snapshot to see the invocation history of a method after a specific moment in
-time, as if we were dumping memory.
+Based on the information gathered by the scavenger collector, you can take a snapshot to see the invocation history of a method after a specific moment in
+time like heap dump.
 
 ![create-snapshot.png](image/create-snapshot.png)
 
