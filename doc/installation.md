@@ -119,9 +119,9 @@ You can modify default configuration values or add new profiles under `scavenger
 ## Install Agent
 
 ## Build Agent
-
-Download Agent from the following link.
-주소 추가 예정
+- Download the latest version from
+  https://repo1.maven.org/maven2/com/navercorp/scavenger/scavenger-agent-java/{VERSION}/scavenger-agent-java-{VERSION}.jar
+    * You can find out what latest VERSION is in [maven central](https://search.maven.org/search?q=g:com.navercorp.scavenger%20AND%20a:scavenger-agent-java)
 
 > You can also build it yourself. <br/>
 > 1. Build Scavenger manually from the Git clone.
