@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "scavenger-agent-python"
+version = "0.1.2"
+description = ""
+authors = ["dbgsprw <dbgsprw@gmail.com>"]
+readme = "README.md"
+packages = [{ include = "scavenger" }]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+protobuf = "^4.21.12"
+requests = "^2.28.2"
+apscheduler = "^3.10.0"
+grpcio = "^1.51.1"
+path = "^16.6.0"
+dataclass-builder = "^1.2.0"
+
+[tool.poetry.group.dev.dependencies]
+grpcio-tools = "^1.51.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
