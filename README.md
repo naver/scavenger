@@ -48,7 +48,7 @@ You can find the installation guide at the following link.
 
 You can find the user guide at the following location link.
 
-- TBD
+- https://github.com/naver/scavenger/blob/develop/doc/user-guide.md
 
 # Contribution?
 
