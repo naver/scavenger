@@ -7,6 +7,7 @@ import com.navercorp.scavenger.model.GrpcAgentServiceGrpc.GrpcAgentServiceBlocki
 import com.navercorp.scavenger.model.InvocationDataPublication
 import com.navercorp.scavenger.service.AgentService
 import com.navercorp.scavenger.support.AbstractMockMvcApiTest
+import com.navercorp.scavenger.support.GrpcCleanupExtension
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
