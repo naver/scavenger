@@ -18,7 +18,6 @@ import javax.servlet.http.HttpServletResponse
 import kotlin.io.path.getLastModifiedTime
 import kotlin.io.path.isDirectory
 import kotlin.io.path.name
-import kotlin.streams.toList
 
 @RequestMapping("/diag")
 @Controller
