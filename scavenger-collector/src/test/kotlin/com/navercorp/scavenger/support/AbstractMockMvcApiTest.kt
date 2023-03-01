@@ -14,7 +14,10 @@ import org.springframework.web.context.WebApplicationContext
 import java.io.PrintWriter
 import java.io.StringWriter
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest(
+    webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
+    properties = [ "spring.datasource.url=jdbc:h2:mem:mockmvc;MODE=MySQL;DB_CLOSE_DELAY=-1;CASE_INSENSITIVE_IDENTIFIERS=TRUE" ]
+)
 class AbstractMockMvcApiTest {
 
     @BeforeEach
