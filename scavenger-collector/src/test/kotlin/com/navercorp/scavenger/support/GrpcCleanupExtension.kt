@@ -1,4 +1,4 @@
-package com.navercorp.scavenger.controller
+package com.navercorp.scavenger.support
 
 import io.grpc.BindableService
 import io.grpc.ManagedChannel
