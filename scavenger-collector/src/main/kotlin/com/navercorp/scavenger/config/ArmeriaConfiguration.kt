@@ -9,12 +9,14 @@ import com.navercorp.scavenger.controller.GrpcAgentController
 import com.navercorp.scavenger.exception.LicenseKeyNotFoundException
 import io.grpc.Status
 import org.apache.catalina.connector.Connector
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.web.embedded.tomcat.TomcatWebServer
 import org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
+@ConditionalOnProperty(name = ["armeria.server-enabled"], havingValue = "true", matchIfMissing = true)
 class ArmeriaConfiguration(val grpcAgentController: GrpcAgentController) {
 
     fun getConnector(applicationContext: ServletWebServerApplicationContext): Connector {

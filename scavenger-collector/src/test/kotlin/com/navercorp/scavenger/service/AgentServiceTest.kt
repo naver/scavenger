@@ -31,7 +31,7 @@ import java.io.ObjectOutputStream
 
 @Transactional
 @Nested
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest
 @DisplayName("AgentService class")
 class AgentServiceTest {
     @Autowired

@@ -15,10 +15,5 @@ scavenger:
   retry-interval-seconds: 60
   diagnosis-directory: ./tmp
 
-server:
-  port: -1
-
 armeria:
-  ports:
-    - port: 0
-      protocols: HTTP
+  server-enabled: false
