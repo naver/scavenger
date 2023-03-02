@@ -13,7 +13,7 @@ import java.time.Instant
 
 @Transactional
 @Nested
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest
 @DisplayName("IntervalService class")
 class IntervalServiceTest {
     @Autowired

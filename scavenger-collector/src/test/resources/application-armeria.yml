@@ -1,0 +1,8 @@
+server:
+  port: -1
+
+armeria:
+  server-enabled: true
+  ports:
+    - port: 0
+      protocols: HTTP

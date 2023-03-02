@@ -9,7 +9,8 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest
+@Transactional
 class JvmDaoTest {
     @Autowired
     private lateinit var sut: JvmDao
@@ -18,7 +19,6 @@ class JvmDaoTest {
     private val environmentId: Long = 11000023250
 
     @BeforeEach
-    @Transactional
     fun setup() {
         val instant = Instant.now().minusSeconds(60)
         val param = JvmUpsertParam(
@@ -59,13 +59,11 @@ class JvmDaoTest {
     }
 
     @Test
-    @Transactional
     fun findAllByCustomerId() {
         assertThat(sut.findAllByCustomerId(2)).isNotEmpty
     }
 
     @Test
-    @Transactional
     fun deleteGarbagePublishedBefore() {
         sut.deleteGarbagePublishedBefore(2, Instant.now())
         assertThat(sut.findByCustomerIdAndUuid(2, "d0dfa3c2-809c-428f-b501-7419196d91c5")).isNull()

@@ -7,6 +7,7 @@ import mu.KotlinLogging
 import org.junit.jupiter.api.BeforeEach
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.web.servlet.MvcResult
 import org.springframework.test.web.servlet.ResultHandler
 import org.springframework.test.web.servlet.result.PrintingResultHandler
@@ -14,7 +15,11 @@ import org.springframework.web.context.WebApplicationContext
 import java.io.PrintWriter
 import java.io.StringWriter
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest(
+    webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT,
+    properties = ["spring.datasource.url=jdbc:h2:mem:mockmvc;MODE=MySQL;DB_CLOSE_DELAY=-1;CASE_INSENSITIVE_IDENTIFIERS=TRUE"]
+)
+@ActiveProfiles(value = ["local", "armeria"])
 class AbstractMockMvcApiTest {
 
     @BeforeEach

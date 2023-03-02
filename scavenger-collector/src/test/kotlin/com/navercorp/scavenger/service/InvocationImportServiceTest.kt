@@ -19,7 +19,7 @@ import java.time.temporal.ChronoUnit
 
 @Transactional
 @Nested
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest
 @DisplayName("InvocationImportService class")
 class InvocationImportServiceTest {
     @Autowired
