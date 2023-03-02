@@ -9,7 +9,6 @@ import com.navercorp.scavenger.service.AgentService
 import com.navercorp.scavenger.support.AbstractMockMvcApiTest
 import com.navercorp.scavenger.support.GrpcCleanupExtension
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
@@ -95,13 +94,5 @@ class GrpcAgentControllerTest : AbstractMockMvcApiTest() {
 
         // then
         assertThat(response.status).isEqualTo("OK")
-    }
-
-    companion object {
-        @AfterAll
-        @JvmStatic
-        internal fun afterAll() {
-
-        }
     }
 }
