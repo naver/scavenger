@@ -9,10 +9,7 @@ plugins {
     id("io.freefair.lombok") version "6.5.1"
     id("com.github.johnrengelman.shadow") version "7.0.0"
     id("org.unbroken-dome.test-sets") version "4.0.0"
-    id("com.palantir.git-version") version "0.15.0"
 }
-
-val gitVersion: groovy.lang.Closure<String> by extra
 
 repositories {
     mavenCentral()
