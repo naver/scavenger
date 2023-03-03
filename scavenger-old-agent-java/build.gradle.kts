@@ -19,15 +19,9 @@ repositories {
 }
 
 dependencies {
-    var okhttp3Version = "3.14.9"
-    var aspectjVersion = "1.9.7"
-    var guavaVersion = "30.1.1-jre"
-
-    if (project.hasProperty("jdk7")) {
-        okhttp3Version = "3.12.13"
-        aspectjVersion = "1.9.2"
-        guavaVersion = "20.0"
-    }
+    val okhttp3Version = "3.12.13"
+    val aspectjVersion = "1.9.2"
+    val guavaVersion = "20.0"
 
     implementation(project(":scavenger-old-model"))
     implementation("com.google.code.gson:gson:2.8.9")
@@ -149,21 +143,7 @@ tasks.named<Test>("integrationTest") {
 
     systemProperty("integrationTest.codekvastAgent", tasks.shadowJar.get().outputs.files.asPath)
     systemProperty("integrationTest.classpath", "build/classes/java/integrationTest:$integrationTestRuntimeClasspath")
-    if (project.hasProperty("jdk7")) {
-        systemProperty(
-            "integrationTest.javaPaths",
-            """
-            ${javaPath(7)}
-            """
-        )
-    } else {
-        systemProperty(
-            "integrationTest.javaPaths",
-            """
-            ${javaPath(17)}
-            """
-        )
-    }
+    systemProperty("integrationTest.javaPaths", javaPath(7))
 }
 
 publishing {
