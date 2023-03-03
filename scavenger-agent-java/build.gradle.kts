@@ -58,9 +58,9 @@ repositories {
 
 dependencies {
     implementation(project(":scavenger-model"))
-    implementation("net.bytebuddy:byte-buddy:1.12.6")
-    implementation("org.ow2.asm:asm:9.2")
-    implementation("org.ow2.asm:asm-tree:9.2")
+    implementation("net.bytebuddy:byte-buddy:1.12.23")
+    implementation("org.ow2.asm:asm:9.4")
+    implementation("org.ow2.asm:asm-tree:9.4")
     implementation("com.squareup.okhttp3:okhttp:3.14.9")
     implementation("com.google.protobuf:protobuf-java-util:${property("protobufVersion")}")
     implementation("io.grpc:grpc-stub:${property("grpcVersion")}")
