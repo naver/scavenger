@@ -6,7 +6,7 @@ plugins {
     `maven-publish`
     signing
     id("com.github.johnrengelman.shadow") version "7.0.0"
-    id("io.freefair.lombok") version "6.5.1"
+    id("io.freefair.lombok") version "6.6.3"
 }
 
 java {

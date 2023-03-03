@@ -8,7 +8,7 @@ import com.google.protobuf.gradle.protoc
 plugins {
     java
     idea
-    kotlin("jvm") version "1.6.10"
+    kotlin("jvm") version "1.8.10"
     id("com.google.protobuf") version "0.8.18"
 }
 
