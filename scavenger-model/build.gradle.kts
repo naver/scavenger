@@ -22,6 +22,10 @@ dependencies {
     implementation("io.grpc:grpc-kotlin-stub:${property("grpcKotlinVersion")}")
     implementation("io.grpc:grpc-protobuf:${property("grpcVersion")}")
     implementation("javax.annotation:javax.annotation-api:1.3.2")
+
+    testImplementation("org.junit.jupiter:junit-jupiter-api:5.7.2")
+    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.7.2")
+    testImplementation("org.assertj:assertj-core:3.22.0")
 }
 
 tasks.withType<JavaCompile> {
