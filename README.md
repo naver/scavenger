@@ -23,7 +23,7 @@ Scavenger provides more sophisticated and clear UI and elaborate the instrumenta
 * Analyze runtime dead code with no code changes.
 * Support JVM based languages.
     * Agent for Java 1.7 is officially not supported any more.
-        * However, if you can not avoid, please use old agent.
+        * However, if you cannot avoid, please use the old agent.
 * Provide a web-based interface for project management, invocation snapshot, and project dashboard.
 * Supports MySQL, Vitess, and H2 as databases.
 
