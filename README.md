@@ -23,8 +23,7 @@ Scavenger provides more sophisticated and clear UI and elaborate the instrumenta
 * Analyze runtime dead code with no code changes.
 * Support JVM based languages.
     * Agent for Java 1.7 is officially not supported any more.
-        * However, if you can not avoid, please
-          use [old agent](https://repo1.maven.org/maven2/com/navercorp/scavenger/scavenger-old-agent-java/1.0.0/scavenger-old-agent-java-1.0.0.jar)
+        * However, if you cannot avoid, please use the old agent.
 * Provide a web-based interface for project management, invocation snapshot, and project dashboard.
 * Supports MySQL, Vitess, and H2 as databases.
 
@@ -32,13 +31,16 @@ Scavenger provides more sophisticated and clear UI and elaborate the instrumenta
 
 You can download the latest Scavenger in the following link.
 
-- Collector, API
-    - https://github.com/naver/scavenger/releases
-- Agent
-    - Download the latest version from
+* Collector, API
+    * https://github.com/naver/scavenger/releases
+* Agent
+    * Download the latest version from
       https://repo1.maven.org/maven2/com/navercorp/scavenger/scavenger-agent-java/{VERSION}/scavenger-agent-java-{VERSION}.jar
         * You can find out what latest VERSION is
           in [maven central](https://search.maven.org/search?q=g:com.navercorp.scavenger%20AND%20a:scavenger-agent-java)
+> old agent java (support java 1.7)
+> * Download the latest version from https://repo1.maven.org/maven2/com/navercorp/scavenger/scavenger-old-agent-java/{VERSION}/scavenger-old-agent-java-{VERSION}.jar
+>   *  You can find out what latest VERSION is in [maven central](https://search.maven.org/search?q=g:com.navercorp.scavenger%20AND%20a:scavenger-old-agent-java)
 
 # Documentation
 

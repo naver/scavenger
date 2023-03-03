@@ -155,7 +155,7 @@ publishing {
 
             pom {
                 name.set("Scavenger java agent for jdk7 support")
-                description.set("Java agent for jdk support of Scavenger, a runtime dead code analysis tool")
+                description.set("Java agent for jdk7 support of Scavenger, a runtime dead code analysis tool")
                 url.set("https://github.com/naver/scavenger")
 
                 licenses {
