@@ -1,6 +1,6 @@
 package com.navercorp.scavenger.repository
 
-import com.navercorp.scavenger.entity.Agent
+import com.navercorp.scavenger.entity.AgentEntity
 import com.navercorp.scavenger.spring.DelegatableJdbcRepository
 import org.springframework.data.jdbc.repository.query.Modifying
 import org.springframework.data.jdbc.repository.query.Query
@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 
 @Repository
-interface AgentRepository : DelegatableJdbcRepository<Agent, String> {
+interface AgentRepository : DelegatableJdbcRepository<AgentEntity, String> {
     @Query(
         """
             SELECT
@@ -30,7 +30,7 @@ interface AgentRepository : DelegatableJdbcRepository<Agent, String> {
                 agent_state.customerId = :customerId
         """
     )
-    fun findAgentsByCustomerId(@Param("customerId") customerId: Long): List<Agent>
+    fun findAgentsByCustomerId(@Param("customerId") customerId: Long): List<AgentEntity>
 
     @Modifying
     @Query("DELETE FROM agent_state WHERE customerId = :customerId")

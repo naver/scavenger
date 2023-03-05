@@ -6,7 +6,7 @@ import org.springframework.data.relational.core.mapping.Table
 import java.time.Instant
 
 @Table("methods")
-data class Method(
+data class MethodEntity(
     @Id
     val id: Long = 0,
 

@@ -1,6 +1,6 @@
 package com.navercorp.scavenger.repository
 
-import com.navercorp.scavenger.entity.Invocation
+import com.navercorp.scavenger.entity.InvocationEntity
 import com.navercorp.scavenger.param.InvocationUpsertParam
 import io.codekvast.javaagent.model.v4.SignatureStatus4
 import org.assertj.core.api.Assertions.assertThat
@@ -56,7 +56,7 @@ class InvocationDaoTest {
     fun countInvocationsByCustomerIdAndApplicationIdAndEnvironmentId() {
         assertThat(sut.hasNotInvokedInvocation(customerId, applicationId, environmentId)).isFalse()
         sut.insert(
-            Invocation(
+            InvocationEntity(
                 id = 10000L,
                 customerId = customerId,
                 applicationId = applicationId,

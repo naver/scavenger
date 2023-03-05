@@ -1,6 +1,6 @@
 package com.navercorp.scavenger.repository
 
-import com.navercorp.scavenger.entity.Invocation
+import com.navercorp.scavenger.entity.InvocationEntity
 import com.navercorp.scavenger.param.InvocationUpsertParam
 import com.navercorp.scavenger.repository.sql.InvocationSql
 import com.navercorp.spring.data.jdbc.plus.sql.provider.EntityJdbcProvider
@@ -78,7 +78,7 @@ class InvocationDao(
                 .addValue("customerId", customerId)
                 .addValue("applicationId", applicationId)
                 .addValue("environmentId", environmentId),
-            Invocation::class.java
+            InvocationEntity::class.java
         ).isPresent
     }
 }

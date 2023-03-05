@@ -1,8 +1,8 @@
 package com.navercorp.scavenger.service
 
-import com.navercorp.scavenger.entity.AgentState
-import com.navercorp.scavenger.entity.CodeBaseFingerprint
-import com.navercorp.scavenger.entity.Jvm
+import com.navercorp.scavenger.entity.AgentStateEntity
+import com.navercorp.scavenger.entity.CodeBaseFingerprintEntity
+import com.navercorp.scavenger.entity.JvmEntity
 import com.navercorp.scavenger.repository.AgentStateDao
 import com.navercorp.scavenger.repository.CodeBaseFingerprintDao
 import com.navercorp.scavenger.repository.InvocationDao
@@ -47,15 +47,15 @@ class GarbageCollectServiceTest {
     @Nested
     @DisplayName("if expired agent state exists")
     inner class ExpiredAgentStateAndJvm {
-        private lateinit var expiredJvm: Jvm
-        private lateinit var expiredAgentState: AgentState
+        private lateinit var expiredJvmEntity: JvmEntity
+        private lateinit var expiredAgentState: AgentStateEntity
         val now = Instant.now()
         val ago = now.minus(600 + IntervalService.Companion.GC_DEAD_MARGIN_MINUTES * 60, ChronoUnit.SECONDS)
 
         @BeforeEach
         fun prepareExpiredAgentState() {
             expiredAgentState = agentStateDao.insert(
-                AgentState(
+                AgentStateEntity(
                     customerId = customerId,
                     jvmUuid = "uuid",
                     createdAt = ago,
@@ -65,8 +65,8 @@ class GarbageCollectServiceTest {
                     enabled = true,
                 )
             )
-            expiredJvm = jvmDao.insert(
-                Jvm(
+            expiredJvmEntity = jvmDao.insert(
+                JvmEntity(
                     customerId = customerId,
                     applicationId = 1,
                     environmentId = 1,
@@ -78,7 +78,7 @@ class GarbageCollectServiceTest {
                 )
             )
 
-            assertThat(jvmDao.findById(expiredJvm.id)).isPresent
+            assertThat(jvmDao.findById(expiredJvmEntity.id)).isPresent
             assertThat(agentStateDao.findById(expiredAgentState.id)).isPresent
         }
 
@@ -87,7 +87,7 @@ class GarbageCollectServiceTest {
         fun sweepAgentStates_removeWhenAgentExpired() {
             sut.sweepAgentStatesAndJvms(customerId, now.plusSeconds(3000))
             assertThat(agentStateDao.findById(expiredAgentState.id)).isEmpty
-            assertThat(jvmDao.findById(expiredJvm.id)).isEmpty
+            assertThat(jvmDao.findById(expiredJvmEntity.id)).isEmpty
         }
 
         @Test
@@ -95,7 +95,7 @@ class GarbageCollectServiceTest {
         fun sweepAgentStates_notRemoveWhenAgentExpired() {
             sut.sweepAgentStatesAndJvms(customerId, now)
             assertThat(agentStateDao.findById(expiredAgentState.id)).isNotEmpty
-            assertThat(jvmDao.findById(expiredJvm.id)).isNotEmpty
+            assertThat(jvmDao.findById(expiredJvmEntity.id)).isNotEmpty
         }
     }
 
@@ -112,12 +112,12 @@ class GarbageCollectServiceTest {
                 codeBaseFingerprintDao.deleteById(it.id)
             }
 
-            val finger = CodeBaseFingerprint(codeBaseFingerprint = "finger1", applicationId = 1, customerId = customerId, publishedAt = ago)
+            val finger = CodeBaseFingerprintEntity(codeBaseFingerprint = "finger1", applicationId = 1, customerId = customerId, publishedAt = ago)
             for (i in 1..3) {
                 codeBaseFingerprintDao.insert(finger.copy(codeBaseFingerprint = "finger$i"))
             }
 
-            val jvm = Jvm(
+            val jvmEntity = JvmEntity(
                 customerId = customerId,
                 applicationId = 1,
                 environmentId = 1,
@@ -129,7 +129,7 @@ class GarbageCollectServiceTest {
             )
 
             for (i in 1..3) {
-                jvmDao.insert(jvm.copy(uuid = "jvmUuid$i", codeBaseFingerprint = "finger$i"))
+                jvmDao.insert(jvmEntity.copy(uuid = "jvmUuid$i", codeBaseFingerprint = "finger$i"))
             }
         }
 

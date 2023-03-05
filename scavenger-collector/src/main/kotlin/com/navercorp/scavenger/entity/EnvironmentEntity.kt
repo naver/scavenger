@@ -6,7 +6,7 @@ import org.springframework.data.relational.core.mapping.Table
 import java.time.Instant
 
 @Table("environments")
-data class Environment(
+data class EnvironmentEntity(
     @Id
     val id: Long = 0,
 

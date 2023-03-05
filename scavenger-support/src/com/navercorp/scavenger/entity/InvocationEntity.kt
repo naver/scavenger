@@ -7,7 +7,7 @@ import org.springframework.data.relational.core.mapping.Table
 import java.time.Instant
 
 @Table("invocations")
-class Invocation(
+class InvocationEntity(
     @Id
     val id: Long,
 
