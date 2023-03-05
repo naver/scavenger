@@ -104,9 +104,14 @@ tasks.withType<Test> {
 }
 
 val javaPath = { version: Int ->
-    "$version:" + javaToolchains.launcherFor {
-        languageVersion.set(JavaLanguageVersion.of(version))
-    }.get().executablePath
+        try {
+            "$version:" + javaToolchains.launcherFor {
+                languageVersion.set(JavaLanguageVersion.of(version))
+            }.get().executablePath
+        } catch (e : Exception) {
+            logger.warn("The scavenger old agent should be built on JDK1.7. But it does not exist in this build", e)
+            ""
+        }
 }
 
 testSets {
