@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 import lombok.Getter;
 
 import com.navercorp.scavenger.util.HashGenerator;
+import com.navercorp.scavenger.util.Signatures;
 
 public class MethodRegistry {
     public static final String SYNTHETIC_SIGNATURE_HASH = "";
@@ -14,13 +15,11 @@ public class MethodRegistry {
     @Getter
     private final Map<String, String> byteBuddySignatureToHash = new ConcurrentHashMap<>();
 
-    private static final Pattern SYNTHETIC_SIGNATURE_PATTERN = Pattern.compile(".*\\$\\$(Enhancer|FastClass)BySpringCGLIB\\$\\$.*");
-
     public String getHash(String byteBuddySignature, boolean legacyCompatibilityMode) {
         String hash = this.byteBuddySignatureToHash.get(byteBuddySignature);
 
         if (hash == null) {
-            if (SYNTHETIC_SIGNATURE_PATTERN.matcher(byteBuddySignature).matches()) {
+            if (Signatures.containsSyntheticPattern(byteBuddySignature)) {
                 hash = SYNTHETIC_SIGNATURE_HASH;
             } else {
                 String signature = extractSignature(byteBuddySignature);

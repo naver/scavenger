@@ -47,7 +47,7 @@ class CustomerService(
 
     fun getCustomerByName(groupId: String, customerName: String): CustomerDto {
         return customerRepository.findByNameAndGroupId(customerName, groupId)
-            .orElseThrow { throw EmptyResultDataAccessException(1) }
+            .orElseThrow { EmptyResultDataAccessException(1) }
             .let {
                 CustomerDto.from(it)
             }
