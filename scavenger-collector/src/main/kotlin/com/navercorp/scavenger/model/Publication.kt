@@ -6,12 +6,12 @@ import com.navercorp.scavenger.dto.CommonImportResultDto
 import com.navercorp.scavenger.dto.InvocationImportDto
 import com.navercorp.scavenger.exception.UnknownPublicationException
 import com.navercorp.scavenger.util.HashGenerator
-import com.navercorp.scavenger.util.Signatures
 import io.codekvast.javaagent.model.v4.CodeBasePublication4
 import io.codekvast.javaagent.model.v4.CommonPublicationData4
 import io.codekvast.javaagent.model.v4.InvocationDataPublication4
 import java.io.InputStream
 import java.io.ObjectInputStream
+import java.util.regex.Pattern
 
 sealed interface Publication {
     fun getCommonImportDto(customerId: Long): CommonImportDto
@@ -107,7 +107,7 @@ sealed class LegacyPublication private constructor(val commonData: CommonPublica
         override fun getCodeBaseImportDto(commonImportResultDto: CommonImportResultDto): CodeBaseImportDto =
             with(commonImportResultDto) {
                 val entries = pub.entries
-                    .filterNot { Signatures.containsSyntheticPattern(it.signature) }
+                    .filterNot { syntheticSignaturePattern.matcher(it.signature).matches() }
                     .map {
                         CodeBaseImportDto.CodeBaseEntry(
                             declaringType = it.methodSignature.declaringType,
@@ -140,12 +140,16 @@ sealed class LegacyPublication private constructor(val commonData: CommonPublica
                     applicationId = applicationId,
                     environmentId = environmentId,
                     invocations = pub.invocations
-                        .filterNot { Signatures.containsSyntheticPattern(it) }
+                        .filterNot { syntheticSignaturePattern.matcher(it).matches() }
                         .map { HashGenerator.Md5.from(it) }
                         .sorted(),
                     invokedAtMillis = pub.recordingIntervalStartedAtMillis,
                 )
             }
+    }
+
+    companion object {
+        val syntheticSignaturePattern: Pattern = Pattern.compile(".*\\.\\.(Enhancer|FastClass)BySpringCGLIB\\.\\..*")
     }
 }
 
