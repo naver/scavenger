@@ -48,7 +48,7 @@ public class InvocationRegistryTest {
 
             @Test
             @DisplayName("it contains hash")
-            public void containsHash() {
+            void containsHash() {
                 assertThat(getInvocations())
                     .extracting(InvocationDataPublication.InvocationDataEntry::getHash)
                     .containsOnly(hash);
@@ -68,7 +68,7 @@ public class InvocationRegistryTest {
 
             @Test
             @DisplayName("it contains only one hash")
-            public void containsHashOnce() {
+            void containsHashOnce() {
                 assertThat(getInvocations())
                     .extracting(InvocationDataPublication.InvocationDataEntry::getHash)
                     .containsOnlyOnce(hash);
@@ -86,13 +86,13 @@ public class InvocationRegistryTest {
 
             @Test
             @DisplayName("it returns empty collection")
-            public void empty() {
+            void empty() {
                 assertThat(getInvocations()).isEmpty();
             }
 
             @Test
             @DisplayName("it fills in commonData")
-            public void commonData() {
+            void commonData() {
                 assertThat(sut.getPublication(config, codeBaseFingerprint).getCommonData().getCodeBaseFingerprint())
                     .isEqualTo(codeBaseFingerprint);
             }
@@ -110,7 +110,7 @@ public class InvocationRegistryTest {
 
             @Test
             @DisplayName("it returns collection containing hash")
-            public void containsHash() {
+            void containsHash() {
                 assertThat(getInvocations())
                     .extracting(InvocationDataPublication.InvocationDataEntry::getHash)
                     .containsOnly(hash);
@@ -118,14 +118,14 @@ public class InvocationRegistryTest {
 
             @Test
             @DisplayName("it clears registry")
-            public void clear() {
+            void clear() {
                 getInvocations();
                 assertThat(getInvocations()).isEmpty();
             }
 
             @Test
             @DisplayName("it fills in commonData")
-            public void commonData() {
+            void commonData() {
                 assertThat(sut.getPublication(config, codeBaseFingerprint).getCommonData().getCodeBaseFingerprint())
                     .isEqualTo(codeBaseFingerprint);
             }
@@ -145,7 +145,7 @@ public class InvocationRegistryTest {
 
             @Test
             @DisplayName("it only returns invocations after last getPublication")
-            public void alternating() {
+            void alternating() {
                 assertThat(getInvocations())
                     .extracting(InvocationDataPublication.InvocationDataEntry::getHash)
                     .containsOnly(hash);

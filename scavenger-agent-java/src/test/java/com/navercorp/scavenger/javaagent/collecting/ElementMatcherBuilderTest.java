@@ -69,20 +69,20 @@ public class ElementMatcherBuilderTest {
 
             @Test
             @DisplayName("it returns true for types prefixed by the given package")
-            public void prefixed() {
+            void prefixed() {
                 assertThat(matcher.matches(withClazzNameWithPackage("com.example.demo.Clazz"))).isTrue();
                 assertThat(matcher.matches(withClazzNameWithPackage("com.example.demo.included.Clazz"))).isTrue();
             }
 
             @Test
             @DisplayName("it returns false for empty string")
-            public void emptyString() {
+            void emptyString() {
                 assertThat(matcher.matches(withClazzNameWithPackage(""))).isFalse();
             }
 
             @Test
             @DisplayName("it returns false for types not prefixed by the given package")
-            public void notPrefixed() {
+            void notPrefixed() {
                 assertThat(matcher.matches(withClazzNameWithPackage("com.example.Clazz"))).isFalse();
                 assertThat(matcher.matches(withClazzNameWithPackage("com.com.example.demo.Clazz"))).isFalse();
             }
@@ -104,27 +104,27 @@ public class ElementMatcherBuilderTest {
 
             @Test
             @DisplayName("it returns true for types prefixed by first given package")
-            public void firstPackage() {
+            void firstPackage() {
                 assertThat(matcher.matches(withClazzNameWithPackage("com.example.demo.Clazz"))).isTrue();
                 assertThat(matcher.matches(withClazzNameWithPackage("com.example.demo.included.Clazz"))).isTrue();
             }
 
             @Test
             @DisplayName("it returns true for types prefixed by second given package")
-            public void secondPackage() {
+            void secondPackage() {
                 assertThat(matcher.matches(withClazzNameWithPackage("com.example.test.Clazz"))).isTrue();
                 assertThat(matcher.matches(withClazzNameWithPackage("com.example.test.included.Clazz"))).isTrue();
             }
 
             @Test
             @DisplayName("it returns false for empty string")
-            public void emptyString() {
+            void emptyString() {
                 assertThat(matcher.matches(withClazzNameWithPackage(""))).isFalse();
             }
 
             @Test
             @DisplayName("it returns false for types not prefixed by either packages")
-            public void notPrefixed() {
+            void notPrefixed() {
                 assertThat(matcher.matches(withClazzNameWithPackage("com.example.Clazz"))).isFalse();
                 assertThat(matcher.matches(withClazzNameWithPackage("com.com.example.demo.Clazz"))).isFalse();
             }
@@ -147,27 +147,27 @@ public class ElementMatcherBuilderTest {
 
             @Test
             @DisplayName("it returns true for types prefixed by the given packages")
-            public void prefixed() {
+            void prefixed() {
                 assertThat(matcher.matches(withClazzNameWithPackage("com.example.demo.Clazz"))).isTrue();
                 assertThat(matcher.matches(withClazzNameWithPackage("com.example.demo.included.Clazz"))).isTrue();
             }
 
             @Test
             @DisplayName("it returns false for empty string")
-            public void emptyString() {
+            void emptyString() {
                 assertThat(matcher.matches(withClazzNameWithPackage(""))).isFalse();
             }
 
             @Test
             @DisplayName("it returns false for types prefixed by the excludePackages")
-            public void excludedPackages() {
+            void excludedPackages() {
                 assertThat(matcher.matches(withClazzNameWithPackage("com.example.demo.excluded.Clazz"))).isFalse();
                 assertThat(matcher.matches(withClazzNameWithPackage("com.example.demo.excluded.test.Clazz"))).isFalse();
             }
 
             @Test
             @DisplayName("it returns false for types not prefixed by the given packages")
-            public void notPrefixed() {
+            void notPrefixed() {
                 assertThat(matcher.matches(withClazzNameWithPackage("com.com.example.demo.Clazz"))).isFalse();
             }
         }
@@ -189,7 +189,7 @@ public class ElementMatcherBuilderTest {
 
             @Test
             @DisplayName("it returns true for packages prefixed by the given option")
-            public void matchingPackages() {
+            void matchingPackages() {
                 assertThat(matcher.matches(
                     withAnnotations("com.example.demo.Clazz", "com.example.annotation")
                 )).isTrue();
@@ -200,7 +200,7 @@ public class ElementMatcherBuilderTest {
 
             @Test
             @DisplayName("it returns true for packages that has extra annotations")
-            public void extraAnnotation() {
+            void extraAnnotation() {
                 assertThat(matcher.matches(
                     withAnnotations(
                         "com.example.demo.Clazz",
@@ -211,7 +211,7 @@ public class ElementMatcherBuilderTest {
 
             @Test
             @DisplayName("it returns false for packages not prefixed by the given option")
-            public void notPrefixed() {
+            void notPrefixed() {
                 assertThat(matcher.matches(
                     withAnnotations("com.example.Clazz", "com.example.annotation")
                 )).isFalse();
@@ -219,7 +219,7 @@ public class ElementMatcherBuilderTest {
 
             @Test
             @DisplayName("it returns false for packages not annotated with given annotation")
-            public void notExact() {
+            void notExact() {
                 assertThat(matcher.matches(
                     withAnnotations("com.example.demo.Clazz", "com.com.example.annotation")
                 )).isFalse();
@@ -227,7 +227,7 @@ public class ElementMatcherBuilderTest {
 
             @Test
             @DisplayName("it returns false for packages with annotation prefixed by the given annotation")
-            public void prefixedAnnotation() {
+            void prefixedAnnotation() {
                 assertThat(matcher.matches(
                     withAnnotations("com.example.demo.Clazz", "com.example.annotation.test")
                 )).isFalse();
@@ -252,7 +252,7 @@ public class ElementMatcherBuilderTest {
 
             @Test
             @DisplayName("it returns true for matching packages and annotations")
-            public void matched() {
+            void matched() {
                 assertThat(matcher.matches(
                     withAnnotations("com.example.demo.Clazz", "com.example.annotation")
                 )).isTrue();
@@ -272,7 +272,7 @@ public class ElementMatcherBuilderTest {
 
             @Test
             @DisplayName("it returns true for additional packages without annotations")
-            public void additionalPackageWithoutAnnotation() {
+            void additionalPackageWithoutAnnotation() {
                 assertThat(matcher.matches(
                     withClazzNameWithPackage("com.example.demo.additional..Clazz")
                 )).isTrue();
@@ -280,7 +280,7 @@ public class ElementMatcherBuilderTest {
 
             @Test
             @DisplayName("it returns false for unmatched type")
-            public void unmatched() {
+            void unmatched() {
                 assertThat(matcher.matches(
                     withAnnotations("com.example.Clazz", "com.example.annotation")
                 )).isFalse();
@@ -314,25 +314,25 @@ public class ElementMatcherBuilderTest {
 
             @Test
             @DisplayName("it returns true for protected methods")
-            public void protectedMethods() {
+            void protectedMethods() {
                 assertThat(matcher.matches(withModifiers(Opcodes.ACC_PROTECTED))).isTrue();
             }
 
             @Test
             @DisplayName("it returns false for public methods")
-            public void publicMethods() {
+            void publicMethods() {
                 assertThat(matcher.matches(withModifiers(Opcodes.ACC_PUBLIC))).isTrue();
             }
 
             @Test
             @DisplayName("it returns false for private methods")
-            public void privateMethods() {
+            void privateMethods() {
                 assertThat(matcher.matches(withModifiers(Opcodes.ACC_PRIVATE))).isFalse();
             }
 
             @Test
             @DisplayName("it returns false for package-private methods")
-            public void packagePrivateMethods() {
+            void packagePrivateMethods() {
                 assertThat(matcher.matches(withModifiers(0))).isFalse();
             }
         }
