@@ -1,11 +1,11 @@
-name: Build and Test
+name: CI
 
 on:
   pull_request:
     branches: [ develop, main ]
 
 jobs:
-  test:
+  Build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -30,4 +30,5 @@ jobs:
         if: always()
         with:
           report_individual_runs: true
+          check_name: "Scavenger Test Results"
           junit_files: "**/build/test-results/**/*.xml"
