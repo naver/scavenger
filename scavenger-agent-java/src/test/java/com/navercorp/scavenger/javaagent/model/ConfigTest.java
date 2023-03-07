@@ -19,7 +19,7 @@ public class ConfigTest {
     @ParameterizedTest
     @MethodSource("mandatoryKeys")
     @DisplayName("should be disabled when mandatory value is not provided")
-    public void isEnabledCheck(String excludedKey) {
+    void isEnabledCheck(String excludedKey) {
         // given
         Stream<String> keysWithoutExcludedKey = mandatoryKeys().stream()
             .filter(key -> !key.equals(excludedKey));
