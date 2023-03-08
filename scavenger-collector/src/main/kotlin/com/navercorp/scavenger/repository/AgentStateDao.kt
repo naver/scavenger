@@ -1,6 +1,6 @@
 package com.navercorp.scavenger.repository
 
-import com.navercorp.scavenger.entity.AgentState
+import com.navercorp.scavenger.entity.AgentStateEntity
 import com.navercorp.scavenger.repository.sql.AgentStateSql
 import com.navercorp.spring.data.jdbc.plus.sql.provider.EntityJdbcProvider
 import org.springframework.stereotype.Repository
@@ -16,13 +16,13 @@ class AgentStateDao(
     AgentStateRepository by agentStateRepository {
     private val sql: AgentStateSql = super.sqls(::AgentStateSql)
 
-    fun findGarbageLastPolledAtBefore(customerId: Long, lastPolledAt: Instant): List<AgentState> {
+    fun findGarbageLastPolledAtBefore(customerId: Long, lastPolledAt: Instant): List<AgentStateEntity> {
         return select(
             sql.selectGarbageLastPolledAtBefore(),
             mapParameterSource()
                 .addValue("customerId", customerId)
                 .addValue("lastPolledAt", lastPolledAt),
-            AgentState::class.java
+            AgentStateEntity::class.java
         )
     }
 
@@ -55,7 +55,7 @@ class AgentStateDao(
 
         if (updatedRow == 0) {
             save(
-                AgentState(
+                AgentStateEntity(
                     customerId = customerId,
                     jvmUuid = jvmUuid,
                     lastPolledAt = thisPollAt,

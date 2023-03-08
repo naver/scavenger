@@ -1,7 +1,7 @@
 package com.navercorp.scavenger.service
 
 import com.navercorp.scavenger.dto.GithubMappingDto
-import com.navercorp.scavenger.entity.GithubMapping
+import com.navercorp.scavenger.entity.GithubMappingEntity
 import com.navercorp.scavenger.repository.GithubMappingRepository
 import org.springframework.stereotype.Service
 
@@ -13,8 +13,8 @@ class GithubMappingService(val githubMappingRepository: GithubMappingRepository)
     }
 
     fun createGithubMapping(customerId: Long, basePackage: String, url: String): GithubMappingDto {
-        val githubMapping = GithubMapping(customerId = customerId, basePackage = basePackage, url = url)
-        return githubMappingRepository.insert(githubMapping).let {
+        val githubMappingEntity = GithubMappingEntity(customerId = customerId, basePackage = basePackage, url = url)
+        return githubMappingRepository.insert(githubMappingEntity).let {
             GithubMappingDto.from(it)
         }
     }

@@ -1,8 +1,8 @@
 package com.navercorp.scavenger.service
 
 import com.navercorp.scavenger.dto.CodeBaseImportDto
-import com.navercorp.scavenger.entity.CodeBaseFingerprint
-import com.navercorp.scavenger.entity.Method
+import com.navercorp.scavenger.entity.CodeBaseFingerprintEntity
+import com.navercorp.scavenger.entity.MethodEntity
 import com.navercorp.scavenger.repository.CodeBaseFingerprintDao
 import com.navercorp.scavenger.repository.InvocationDao
 import com.navercorp.scavenger.repository.MethodDao
@@ -128,7 +128,7 @@ class CodeBaseImportServiceTest {
             @BeforeEach
             fun importCodeBaseFingerprint() {
                 codeBaseFingerprintDao.insert(
-                    CodeBaseFingerprint(
+                    CodeBaseFingerprintEntity(
                         customerId = customerId,
                         applicationId = applicationId,
                         codeBaseFingerprint = codeBaseFingerprint,
@@ -339,7 +339,7 @@ class CodeBaseImportServiceTest {
             fun insertIncompleteEntries() {
                 entries
                     .map {
-                        Method(
+                        MethodEntity(
                             customerId = customerId,
                             createdAt = publishedAt,
                             garbage = false,
@@ -436,7 +436,7 @@ class CodeBaseImportServiceTest {
             fun insertNewMethodWithoutInvocation() {
                 methodDao.insertAll(
                     entries.map {
-                        Method(customerId = customerId, garbage = false, signatureHash = it.signatureHash)
+                        MethodEntity(customerId = customerId, garbage = false, signatureHash = it.signatureHash)
                     }.toMutableList()
                 )
             }

@@ -1,6 +1,6 @@
 package com.navercorp.scavenger.repository
 
-import com.navercorp.scavenger.entity.Method
+import com.navercorp.scavenger.entity.MethodEntity
 import com.navercorp.scavenger.param.MethodUpsertParam
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -49,7 +49,7 @@ class MethodDaoTest {
         sut.batchUpsert(listOf(param1, param2))
 
         sut.insert(
-            Method(
+            MethodEntity(
                 customerId = 2,
                 createdAt = instant.minus(1, ChronoUnit.HOURS),
                 garbage = true,

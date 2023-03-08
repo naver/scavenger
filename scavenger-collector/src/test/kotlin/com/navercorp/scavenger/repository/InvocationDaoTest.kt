@@ -1,6 +1,6 @@
 package com.navercorp.scavenger.repository
 
-import com.navercorp.scavenger.entity.Invocation
+import com.navercorp.scavenger.entity.InvocationEntity
 import com.navercorp.scavenger.param.InvocationUpsertParam
 import io.codekvast.javaagent.model.v4.SignatureStatus4
 import org.assertj.core.api.Assertions.assertThat
@@ -54,9 +54,9 @@ class InvocationDaoTest {
 
     @Test
     fun countInvocationsByCustomerIdAndApplicationIdAndEnvironmentId() {
-        assertThat(sut.hasNotInvokedInvocation(customerId, applicationId, environmentId)).isFalse()
+        assertThat(sut.hasNotInvokedInvocation(customerId, applicationId, environmentId)).isFalse
         sut.insert(
-            Invocation(
+            InvocationEntity(
                 id = 10000L,
                 customerId = customerId,
                 applicationId = applicationId,
@@ -64,11 +64,11 @@ class InvocationDaoTest {
                 signatureHash = "111",
                 invokedAtMillis = 1,
                 createdAt = Instant.now(),
-                status = SignatureStatus4.NOT_INVOKED,
+                status = SignatureStatus4.NOT_INVOKED.name,
                 lastSeenAtMillis = 10,
                 timestamp = Instant.now()
             )
         )
-        assertThat(sut.hasNotInvokedInvocation(customerId, applicationId, environmentId)).isTrue()
+        assertThat(sut.hasNotInvokedInvocation(customerId, applicationId, environmentId)).isTrue
     }
 }

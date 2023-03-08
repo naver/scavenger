@@ -4,7 +4,7 @@ import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
 
 @Table("snapshot_application")
-data class ApplicationRef(
+data class ApplicationRefEntity(
     @Column("applicationId")
     val applicationId: Long,
 

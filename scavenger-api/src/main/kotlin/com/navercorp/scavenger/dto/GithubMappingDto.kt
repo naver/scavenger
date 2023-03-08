@@ -1,6 +1,6 @@
 package com.navercorp.scavenger.dto
 
-import com.navercorp.scavenger.entity.GithubMapping
+import com.navercorp.scavenger.entity.GithubMappingEntity
 
 data class GithubMappingDto(
     val id: Long,
@@ -9,8 +9,8 @@ data class GithubMappingDto(
     val url: String
 ) {
     companion object {
-        fun from(githubMapping: GithubMapping): GithubMappingDto {
-            return githubMapping.run {
+        fun from(githubMappingEntity: GithubMappingEntity): GithubMappingDto {
+            return githubMappingEntity.run {
                 GithubMappingDto(checkNotNull(id), customerId, basePackage, url)
             }
         }

@@ -6,22 +6,13 @@ import org.springframework.data.relational.core.mapping.Table
 import java.time.Instant
 
 @Table("agent_state")
-data class Agent(
+data class AgentEntity(
     @Id
     @Column("id")
-    val id: Long,
+    val id: Long = 0,
 
     @Column("jvmUuid")
     val jvmUuid: String,
-
-    @Column("createdAt")
-    val createdAt: Instant,
-
-    @Column("lastPolledAt")
-    val lastPolledAt: Instant,
-
-    @Column("nextPollExpectedAt")
-    val nextPollExpectedAt: Instant,
 
     @Column("hostname")
     val hostname: String,
@@ -33,5 +24,15 @@ data class Agent(
     val applicationName: String,
 
     @Column("environmentName")
-    val environmentName: String
+    val environmentName: String,
+
+    @Column("createdAt")
+    val createdAt: Instant,
+
+    @Column("lastPolledAt")
+    val lastPolledAt: Instant,
+
+    @Column("nextPollExpectedAt")
+    val nextPollExpectedAt: Instant,
+
 )
