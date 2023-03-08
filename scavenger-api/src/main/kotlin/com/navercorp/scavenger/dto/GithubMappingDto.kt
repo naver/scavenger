@@ -9,10 +9,8 @@ data class GithubMappingDto(
     val url: String
 ) {
     companion object {
-        fun from(githubMappingEntity: GithubMappingEntity): GithubMappingDto {
-            return githubMappingEntity.run {
-                GithubMappingDto(checkNotNull(id), customerId, basePackage, url)
-            }
+        fun from(entity: GithubMappingEntity): GithubMappingDto {
+            return GithubMappingDto(entity.id, entity.customerId, entity.basePackage, entity.url)
         }
     }
 }

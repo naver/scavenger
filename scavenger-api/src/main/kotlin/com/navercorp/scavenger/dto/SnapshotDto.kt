@@ -1,7 +1,5 @@
 package com.navercorp.scavenger.dto
 
-import com.navercorp.scavenger.entity.ApplicationRefEntity
-import com.navercorp.scavenger.entity.EnvironmentRefEntity
 import com.navercorp.scavenger.entity.SnapshotEntity
 import java.time.Instant
 
@@ -17,19 +15,17 @@ data class SnapshotDto(
 ) {
 
     companion object {
-        fun from(snapshotEntity: SnapshotEntity): SnapshotDto {
-            return snapshotEntity.run {
-                SnapshotDto(
-                    checkNotNull(id),
-                    customerId,
-                    name,
-                    createdAt,
-                    applications.map { obj: ApplicationRefEntity -> obj.applicationId },
-                    environments.map { obj: EnvironmentRefEntity -> obj.environmentId },
-                    filterInvokedAtMillis,
-                    packages
-                )
-            }
+        fun from(entity: SnapshotEntity): SnapshotDto {
+            return SnapshotDto(
+                entity.id,
+                entity.customerId,
+                entity.name,
+                entity.createdAt,
+                entity.applications.map { it.applicationId },
+                entity.environments.map { it.environmentId },
+                entity.filterInvokedAtMillis,
+                entity.packages
+            )
         }
     }
 }

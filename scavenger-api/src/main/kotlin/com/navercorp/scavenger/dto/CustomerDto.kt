@@ -7,11 +7,8 @@ data class CustomerDto(
     val name: String
 ) {
     companion object {
-        fun from(customerEntity: CustomerEntity): CustomerDto {
-            return CustomerDto(
-                id = requireNotNull(customerEntity.id),
-                name = customerEntity.name
-            )
+        fun from(entity: CustomerEntity): CustomerDto {
+            return CustomerDto(id = entity.id, name = entity.name)
         }
     }
 }
