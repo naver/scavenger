@@ -47,14 +47,14 @@ public class CodeBaseScannerBlogTest {
 
             @Test
             @DisplayName("it finds all methods")
-            public void scanAllMethod() throws IOException {
+            void scanAllMethod() throws IOException {
                 assertThat(scanner.scan().getMethods())
                     .hasSizeGreaterThan(9000).hasSizeLessThan(10000);
             }
 
             @Test
             @DisplayName("it returns same codeBaseFingerprint for every scan")
-            public void codeBaseFingerprint() throws IOException {
+            void codeBaseFingerprint() throws IOException {
                 String expectedFingerprint = scanner.scan().getCodeBaseFingerprint();
 
                 assertThat(scanner.scan().getCodeBaseFingerprint())

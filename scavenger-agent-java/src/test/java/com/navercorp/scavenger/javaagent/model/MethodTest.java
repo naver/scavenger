@@ -12,7 +12,7 @@ class MethodTest {
         Method method = new Method(
             "name", Visibility.PRIVATE, "static", false, false, "packageName.declaringType", "int a,int wow", "name(int a, int wow)"
         );
-        assertThat(method.toCodeBaseEntry()).satisfies((it) -> {
+        assertThat(method.toCodeBaseEntry()).satisfies(it -> {
             assertThat(it.getDeclaringType()).isEqualTo("packageName.declaringType");
             assertThat(it.getMethodName()).isEqualTo("name");
             assertThat(it.getVisibility()).isEqualTo("private");
@@ -23,7 +23,7 @@ class MethodTest {
         });
 
         Method method2 = new Method(null, Visibility.PRIVATE, null, false, false, "", "int a,int wow", null);
-        assertThat(method2.toCodeBaseEntry()).satisfies((it) -> {
+        assertThat(method2.toCodeBaseEntry()).satisfies(it -> {
             assertThat(it.getDeclaringType()).isEqualTo("");
             assertThat(it.getMethodName()).isEqualTo("");
             assertThat(it.getVisibility()).isEqualTo("private");
