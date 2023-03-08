@@ -111,19 +111,19 @@ public class SchedulerTest {
 
             @Test
             @DisplayName("it polls dynamic config")
-            public void pollConfig() {
+            void pollConfig() {
                 verify(publisher).pollDynamicConfig();
             }
 
             @Test
             @DisplayName("it published codebase")
-            public void publishCodeBase() {
+            void publishCodeBase() {
                 verify(publisher).publishCodeBase(any());
             }
 
             @Test
             @DisplayName("it publishes invocation data")
-            public void publishInvocationData() {
+            void publishInvocationData() {
                 verify(publisher).publishInvocationData(any());
             }
         }
@@ -140,19 +140,19 @@ public class SchedulerTest {
 
             @Test
             @DisplayName("it polls dynamic config")
-            public void pollConfig() {
+            void pollConfig() {
                 verify(publisher).pollDynamicConfig();
             }
 
             @Test
             @DisplayName("it publishes codebase")
-            public void publishCodeBase() {
+            void publishCodeBase() {
                 verify(publisher).publishCodeBase(any());
             }
 
             @Test
             @DisplayName("it publishes invocation")
-            public void doesNotPublishInvocationData() {
+            void doesNotPublishInvocationData() {
                 verify(publisher).publishInvocationData(any());
             }
         }
@@ -172,7 +172,7 @@ public class SchedulerTest {
 
             @Test
             @DisplayName("it only polls dynamic config")
-            public void onlyPollConfig() {
+            void onlyPollConfig() {
                 verify(publisher).pollDynamicConfig();
                 verifyNoMoreInteractions(publisher);
             }
@@ -199,13 +199,13 @@ public class SchedulerTest {
 
             @Test
             @DisplayName("it runs codebase scan only once")
-            public void scanOnce() throws IOException {
+            void scanOnce() throws IOException {
                 verify(codeBaseScannerMock, times(1)).scan();
             }
 
             @Test
             @DisplayName("it tries to publish codebase three times")
-            public void publishThreeTimes() {
+            void publishThreeTimes() {
                 verify(publisher, times(3)).publishCodeBase(any());
             }
         }
@@ -237,13 +237,13 @@ public class SchedulerTest {
 
             @Test
             @DisplayName("it runs getPublication only once")
-            public void getOnce() {
+            void getOnce() {
                 verify(registry, atMostOnce()).getPublication(any(), anyString());
             }
 
             @Test
             @DisplayName("it tries to publish codebase three times")
-            public void publishThreeTimes() {
+            void publishThreeTimes() {
                 verify(publisher, times(3)).publishInvocationData(any());
             }
         }
@@ -264,7 +264,7 @@ public class SchedulerTest {
 
             @Test
             @DisplayName("it should not publish anything")
-            public void publishCodeBase() {
+            void publishCodeBase() {
                 verifyNoInteractions(publisher);
             }
         }
@@ -293,19 +293,19 @@ public class SchedulerTest {
 
             @Test
             @DisplayName("it polls dynamic config")
-            public void pollConfig() {
+            void pollConfig() {
                 verify(publisher).pollDynamicConfig();
             }
 
             @Test
             @DisplayName("it publishes last invocations before shutdown")
-            public void lastInvocations() {
+            void lastInvocations() {
                 verify(publisher, times(2)).publishInvocationData(any());
             }
 
             @Test
             @DisplayName("it does not publish additional codebase")
-            public void codeBasePublishedOnlyOnce() {
+            void codeBasePublishedOnlyOnce() {
                 verify(publisher, atMostOnce()).publishCodeBase(any());
             }
         }

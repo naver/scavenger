@@ -34,7 +34,7 @@ public class MethodRegistryTest {
 
             @Test
             @DisplayName("it returns cached value")
-            public void cached() {
+            void cached() {
                 assertThat(sut.getHash(signature, false)).isEqualTo(expected);
             }
         }
@@ -46,7 +46,7 @@ public class MethodRegistryTest {
 
             @Test
             @DisplayName("it returns empty string")
-            public void returnNull() {
+            void returnNull() {
                 assertThat(sut.getHash(cglibSignature, false))
                     .isEqualTo("");
             }

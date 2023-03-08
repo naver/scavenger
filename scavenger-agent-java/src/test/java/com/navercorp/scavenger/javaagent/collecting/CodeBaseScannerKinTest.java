@@ -52,7 +52,7 @@ public class CodeBaseScannerKinTest {
 
             @Test
             @DisplayName("it finds all methods")
-            public void scanAllMethod() throws IOException {
+            void scanAllMethod() throws IOException {
                 CodeBase scan = scanner.scan();
                 List<Method> methods = scan.getMethods();
                 methods.forEach(method -> System.out.println(method.getSignature()));
@@ -60,7 +60,7 @@ public class CodeBaseScannerKinTest {
 
             @Test
             @DisplayName("it returns same codeBaseFingerprint for every scan")
-            public void codeBaseFingerprint() throws IOException {
+            void codeBaseFingerprint() throws IOException {
                 String expectedFingerprint = scanner.scan().getCodeBaseFingerprint();
 
                 assertThat(scanner.scan().getCodeBaseFingerprint())

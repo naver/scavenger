@@ -45,14 +45,14 @@ public class CodeBaseScannerTest {
 
             @Test
             @DisplayName("it finds correct number of methods")
-            public void scanAllMethod() throws IOException {
+            void scanAllMethod() throws IOException {
                 List<Method> actual = scanner.scan().getMethods();
                 assertThat(actual).hasSize(64);
             }
 
             @Test
             @DisplayName("it returns same codeBaseFingerprint for every scan")
-            public void codeBaseFingerprint() throws IOException {
+            void codeBaseFingerprint() throws IOException {
                 String expected = scanner.scan().getCodeBaseFingerprint();
                 assertThat(scanner.scan().getCodeBaseFingerprint())
                     .isEqualTo(expected);
@@ -70,7 +70,7 @@ public class CodeBaseScannerTest {
 
             @Test
             @DisplayName("it does not contain constructor")
-            public void scanFilterConstructor() throws IOException {
+            void scanFilterConstructor() throws IOException {
                 List<Method> actual = scanner.scan().getMethods();
                 assertThat(actual).map(Method::isConstructor).containsOnly(false);
             }
@@ -87,7 +87,7 @@ public class CodeBaseScannerTest {
 
             @Test
             @DisplayName("it finds correct number of methods")
-            public void scanFilterVisibility() throws IOException {
+            void scanFilterVisibility() throws IOException {
                 List<Method> actual = scanner.scan().getMethods();
                 assertThat(actual).hasSize(65);
             }
@@ -105,7 +105,7 @@ public class CodeBaseScannerTest {
 
             @Test
             @DisplayName("it finds correct number of methods")
-            public void scanFilterExcludedPackages() throws IOException {
+            void scanFilterExcludedPackages() throws IOException {
                 List<Method> actual = scanner.scan().getMethods();
                 assertThat(actual).allSatisfy(e -> assertThat(e.getSignature()).doesNotContain("com.example.demo.additional"));
             }
@@ -123,7 +123,7 @@ public class CodeBaseScannerTest {
 
             @Test
             @DisplayName("it finds correct number of methods")
-            public void scanFilterAnnotation() throws IOException {
+            void scanFilterAnnotation() throws IOException {
                 List<Method> actual = scanner.scan().getMethods();
                 assertThat(actual).allSatisfy(each -> assertThat(each.getDeclaringType()).contains("Controller"));
             }
@@ -141,7 +141,7 @@ public class CodeBaseScannerTest {
 
                 @Test
                 @DisplayName("it finds correct number of methods")
-                public void scanFilterAdditionalPackage() throws IOException {
+                void scanFilterAdditionalPackage() throws IOException {
                     List<Method> actual = scanner.scan().getMethods();
                     assertThat(actual).hasSize(19);
                 }
@@ -160,7 +160,7 @@ public class CodeBaseScannerTest {
 
             @Test
             @DisplayName("it finds correct number of methods")
-            public void scanFilterGetterSetter() throws IOException {
+            void scanFilterGetterSetter() throws IOException {
                 List<Method> actual = scanner.scan().getMethods();
                 assertThat(actual).hasSize(50);
             }
@@ -177,7 +177,7 @@ public class CodeBaseScannerTest {
 
             @Test
             @DisplayName("it finds methods successfully")
-            public void scanRecursively() throws IOException {
+            void scanRecursively() throws IOException {
                 List<Method> actual = scanner.scan().getMethods();
                 assertThat(actual).isNotEmpty();
             }
