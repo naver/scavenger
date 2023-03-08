@@ -8,8 +8,8 @@ data class ApplicationDto(
 ) {
 
     companion object {
-        fun from(applicationEntity: ApplicationEntity): ApplicationDto {
-            return ApplicationDto(applicationEntity.id, applicationEntity.name)
+        fun from(entity: ApplicationEntity): ApplicationDto {
+            return ApplicationDto(entity.id, entity.name)
         }
     }
 }

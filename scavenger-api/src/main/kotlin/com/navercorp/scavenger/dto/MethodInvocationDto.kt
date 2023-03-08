@@ -9,11 +9,8 @@ data class MethodInvocationDto(
 ) {
 
     companion object {
-        fun from(methodInvocationEntity: MethodInvocationEntity): MethodInvocationDto {
-            return MethodInvocationDto(
-                methodInvocationEntity.signature,
-                methodInvocationEntity.invokedAtMillis
-            )
+        fun from(entity: MethodInvocationEntity): MethodInvocationDto {
+            return MethodInvocationDto(entity.signature, entity.invokedAtMillis)
         }
     }
 }

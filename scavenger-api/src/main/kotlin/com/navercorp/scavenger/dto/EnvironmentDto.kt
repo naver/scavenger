@@ -8,8 +8,8 @@ data class EnvironmentDto(
 ) {
 
     companion object {
-        fun from(environmentEntity: EnvironmentEntity): EnvironmentDto {
-            return EnvironmentDto(environmentEntity.id, environmentEntity.name)
+        fun from(entity: EnvironmentEntity): EnvironmentDto {
+            return EnvironmentDto(entity.id, entity.name)
         }
     }
 }

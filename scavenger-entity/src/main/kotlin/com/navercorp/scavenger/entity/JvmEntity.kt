@@ -23,6 +23,9 @@ data class JvmEntity(
     @Column("uuid")
     val uuid: String,
 
+    @Column("hostname")
+    val hostname: String,
+
     @Column("codeBaseFingerprint")
     val codeBaseFingerprint: String?,
 
@@ -32,6 +35,4 @@ data class JvmEntity(
     @Column("publishedAt")
     val publishedAt: Instant,
 
-    @Column("hostname")
-    val hostname: String,
 )
