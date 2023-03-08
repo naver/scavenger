@@ -89,7 +89,6 @@ public class Method {
             .map(it -> new Method(classNode, it, legacyCompatibilityMode));
     }
 
-    //    private Method(String name, Visibility visibility, String modifiers, boolean isAbstract, boolean isGetterSetter, String declaringType, String parameterTypes, String signature) {
     @VisibleForTesting
     public static Method createTestMethod() {
         return new Method("hello", Visibility.PRIVATE, "", false, false, "Wow", "", "hello()");

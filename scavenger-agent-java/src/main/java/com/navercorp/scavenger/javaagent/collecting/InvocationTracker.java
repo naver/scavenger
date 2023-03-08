@@ -46,7 +46,7 @@ public class InvocationTracker {
         Advice advice = Advice.to(InvocationTracker.class);
         AgentBuilder transform = new AgentBuilder.Default(new ByteBuddy().with(TypeValidation.DISABLED))
             .type(matcherBuilder.buildClassMatcher())
-            .transform((builder, typeDescription, classLoader, module) ->
+            .transform((builder, typeDescription, classLoader, module, protectionDomain) ->
                 builder.visit(advice.on(matcherBuilder.buildMethodMatcher(typeDescription)))
             );
         if (isDebugMode()) {
