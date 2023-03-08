@@ -1,6 +1,6 @@
 package com.navercorp.scavenger.repository
 
-import com.navercorp.scavenger.entity.CodeBaseFingerprint
+import com.navercorp.scavenger.entity.CodeBaseFingerprintEntity
 import com.navercorp.scavenger.repository.sql.CodeBaseFingerPrintSql
 import com.navercorp.spring.data.jdbc.plus.sql.provider.EntityJdbcProvider
 import org.springframework.stereotype.Repository
@@ -14,10 +14,10 @@ class CodeBaseFingerprintDao(
     CodeBaseFingerprintRepository by codeBaseFingerprintRepository {
     private val sql = super.sqls(::CodeBaseFingerPrintSql)
 
-    fun updatePublishedAt(codeBaseFingerprint: CodeBaseFingerprint) {
+    fun updatePublishedAt(codeBaseFingerprintEntity: CodeBaseFingerprintEntity) {
         update(
             sql.updatePublishedAt(),
-            beanParameterSource(codeBaseFingerprint)
+            beanParameterSource(codeBaseFingerprintEntity)
         )
     }
 

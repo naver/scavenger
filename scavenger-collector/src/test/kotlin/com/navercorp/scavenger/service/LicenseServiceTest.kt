@@ -1,6 +1,6 @@
 package com.navercorp.scavenger.service
 
-import com.navercorp.scavenger.entity.Customer
+import com.navercorp.scavenger.entity.CustomerEntity
 import com.navercorp.scavenger.exception.LicenseKeyNotFoundException
 import com.navercorp.scavenger.repository.CustomerDao
 import org.assertj.core.api.Assertions.assertThat
@@ -49,49 +49,49 @@ class LicenseServiceTest {
         @DisplayName("if key is found")
         inner class KnownKey {
             private val licenseKey = "asdfasdf"
-            private lateinit var customer: Customer
+            private lateinit var customerEntity: CustomerEntity
 
             @BeforeEach
             fun insertCustomerWithKey() {
-                customer = customerDao.insert(
-                    Customer(name = "test", licenseKey = licenseKey)
+                customerEntity = customerDao.insert(
+                    CustomerEntity(name = "test", licenseKey = licenseKey)
                 )
             }
 
             @Test
             @DisplayName("it returns customer")
             fun check_returnCustomerWhenKnownKey() {
-                assertThat(sut.check(licenseKey)).isEqualTo(customer)
+                assertThat(sut.check(licenseKey)).isEqualTo(customerEntity)
             }
         }
 
         @Nested
         @DisplayName("if key is cached")
         inner class CachedKey {
-            private lateinit var customer: Customer
+            private lateinit var customerEntity: CustomerEntity
 
             @BeforeEach
             fun checkLicenseKeyAndDelete() {
-                customer = customerDao.insert(
-                    Customer(name = "test", licenseKey = "licenseKey")
+                customerEntity = customerDao.insert(
+                    CustomerEntity(name = "test", licenseKey = "licenseKey")
                 )
-                sut.check(customer.licenseKey)
-                customerDao.delete(customer)
+                sut.check(customerEntity.licenseKey)
+                customerDao.delete(customerEntity)
             }
 
             @Test
             @DisplayName("it returns cached value")
             fun check_returnCachedValueWhenCachedKey() {
-                assertThat(sut.check(customer.licenseKey))
-                    .isEqualTo(customer)
+                assertThat(sut.check(customerEntity.licenseKey))
+                    .isEqualTo(customerEntity)
             }
 
             @Test
             @DisplayName("it throws LicenseKeyNotFoundException after eviction")
             fun check_throwExceptionAfterEvictionWhenCachedKey() {
-                cacheManager.getCache("license")!!.evict(customer.licenseKey)
+                cacheManager.getCache("license")!!.evict(customerEntity.licenseKey)
                 assertThrows<LicenseKeyNotFoundException> {
-                    sut.check(customer.licenseKey)
+                    sut.check(customerEntity.licenseKey)
                 }
             }
         }

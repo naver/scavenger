@@ -1,6 +1,6 @@
 package com.navercorp.scavenger.service
 
-import com.navercorp.scavenger.entity.Customer
+import com.navercorp.scavenger.entity.CustomerEntity
 import com.navercorp.scavenger.exception.LicenseKeyNotFoundException
 import com.navercorp.scavenger.repository.CustomerDao
 import org.springframework.cache.annotation.Cacheable
@@ -11,7 +11,7 @@ class LicenseService(
     val customerDao: CustomerDao
 ) {
     @Cacheable(LICENSE_CACHE)
-    fun check(licenseKey: String): Customer {
+    fun check(licenseKey: String): CustomerEntity {
         return customerDao.findByLicenseKey(licenseKey) ?: run {
             throw LicenseKeyNotFoundException()
         }

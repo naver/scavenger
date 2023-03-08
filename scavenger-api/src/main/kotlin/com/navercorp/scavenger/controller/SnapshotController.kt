@@ -1,7 +1,7 @@
 package com.navercorp.scavenger.controller
 
 import com.navercorp.scavenger.dto.SnapshotDto
-import com.navercorp.scavenger.entity.SnapshotNode
+import com.navercorp.scavenger.entity.SnapshotNodeEntity
 import com.navercorp.scavenger.service.SnapshotNodeService
 import com.navercorp.scavenger.service.SnapshotService
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -45,7 +45,7 @@ class SnapshotController(
         @PathVariable customerId: Long,
         @PathVariable snapshotId: Long,
         @RequestParam parent: String
-    ): List<SnapshotNode> {
+    ): List<SnapshotNodeEntity> {
         return snapshotNodeService.readSnapshotNode(customerId, snapshotId, parent)
     }
 
@@ -87,7 +87,7 @@ class SnapshotController(
         @PathVariable snapshotId: Long,
         @RequestParam signature: String,
         @RequestParam(required = false) snapshotNodeId: Long?
-    ): List<SnapshotNode> {
+    ): List<SnapshotNodeEntity> {
         return snapshotNodeService.getSnapshotNodesBySignatureContaining(
             customerId,
             snapshotId,

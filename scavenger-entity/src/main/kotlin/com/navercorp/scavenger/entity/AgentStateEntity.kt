@@ -5,23 +5,30 @@ import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
 import java.time.Instant
 
-@Table("codebase_fingerprints")
-data class CodeBaseFingerprint(
+@Table("agent_state")
+data class AgentStateEntity(
     @Id
+    @Column("id")
     val id: Long = 0,
 
     @Column("customerId")
     val customerId: Long,
 
-    @Column("applicationId")
-    val applicationId: Long,
-
-    @Column("codeBaseFingerprint")
-    val codeBaseFingerprint: String,
+    @Column("jvmUuid")
+    val jvmUuid: String,
 
     @Column("createdAt")
     val createdAt: Instant = Instant.now(),
 
-    @Column("publishedAt")
-    val publishedAt: Instant
+    @Column("lastPolledAt")
+    val lastPolledAt: Instant,
+
+    @Column("nextPollExpectedAt")
+    val nextPollExpectedAt: Instant,
+
+    @Column("timestamp")
+    val timestamp: Instant = Instant.now(),
+
+    @Column("enabled")
+    val enabled: Boolean,
 )

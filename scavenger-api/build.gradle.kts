@@ -21,6 +21,7 @@ repositories {
 }
 
 dependencies {
+    implementation(project(":scavenger-entity"))
     implementation(project(":scavenger-schema"))
     implementation(kotlin("stdlib-jdk8"))
     implementation("org.springframework.boot:spring-boot-starter")

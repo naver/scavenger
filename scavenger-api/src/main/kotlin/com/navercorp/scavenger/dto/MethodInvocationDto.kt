@@ -1,6 +1,6 @@
 package com.navercorp.scavenger.dto
 
-import com.navercorp.scavenger.entity.MethodInvocation
+import com.navercorp.scavenger.entity.MethodInvocationEntity
 
 data class MethodInvocationDto(
     val signature: String,
@@ -9,10 +9,10 @@ data class MethodInvocationDto(
 ) {
 
     companion object {
-        fun from(methodInvocation: MethodInvocation): MethodInvocationDto {
+        fun from(methodInvocationEntity: MethodInvocationEntity): MethodInvocationDto {
             return MethodInvocationDto(
-                methodInvocation.signature,
-                methodInvocation.invokedAtMillis
+                methodInvocationEntity.signature,
+                methodInvocationEntity.invokedAtMillis
             )
         }
     }

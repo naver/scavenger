@@ -6,8 +6,9 @@ import org.springframework.data.relational.core.mapping.Table
 import java.time.Instant
 
 @Table("jvms")
-data class Jvm(
+data class JvmEntity(
     @Id
+    @Column("id")
     val id: Long = 0,
 
     @Column("customerId")

@@ -18,6 +18,7 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":scavenger-entity"))
     implementation(project(":scavenger-model"))
     implementation(project(":scavenger-old-model"))
     implementation(project(":scavenger-schema"))

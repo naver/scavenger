@@ -1,8 +1,8 @@
 package com.navercorp.scavenger.service
 
-import com.navercorp.scavenger.entity.MethodInvocation
-import com.navercorp.scavenger.entity.Snapshot
-import com.navercorp.scavenger.entity.SnapshotNode
+import com.navercorp.scavenger.entity.MethodInvocationEntity
+import com.navercorp.scavenger.entity.SnapshotEntity
+import com.navercorp.scavenger.entity.SnapshotNodeEntity
 import com.navercorp.scavenger.repository.SnapshotNodeDao
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -12,20 +12,20 @@ import org.springframework.util.AntPathMatcher
 class SnapshotNodeService(
     private val snapshotNodeDao: SnapshotNodeDao
 ) {
-    fun readSnapshotNode(customerId: Long, snapshotId: Long, parent: String): List<SnapshotNode> {
+    fun readSnapshotNode(customerId: Long, snapshotId: Long, parent: String): List<SnapshotNodeEntity> {
         return snapshotNodeDao.findAllByCustomerIdAndSnapshotIdAndParent(customerId, snapshotId, parent)
     }
 
     @Transactional
-    fun createAndSaveSnapshotNodes(snapshot: Snapshot, methodInvocations: List<MethodInvocation>) {
-        val filteredMethodInvocations = filterByPackagesAntMatch(methodInvocations, snapshot.packages.trim())
+    fun createAndSaveSnapshotNodes(snapshotEntity: SnapshotEntity, methodInvocationEntities: List<MethodInvocationEntity>) {
+        val filteredMethodInvocations = filterByPackagesAntMatch(methodInvocationEntities, snapshotEntity.packages.trim())
 
         val root = Node("", Node.Type.ROOT)
         filteredMethodInvocations.forEach {
             updateCountGraph(
                 current = root,
                 elements = splitSignature(it),
-                isUsed = it.invokedAtMillis > 0 && it.invokedAtMillis >= snapshot.filterInvokedAtMillis,
+                isUsed = it.invokedAtMillis > 0 && it.invokedAtMillis >= snapshotEntity.filterInvokedAtMillis,
                 invokedAtMillis = it.invokedAtMillis
             )
         }
@@ -33,8 +33,8 @@ class SnapshotNodeService(
         serializeGraphAddToNodes(
             currentNode = root,
             parentNode = root,
-            snapshotId = checkNotNull(snapshot.id) { "node 저장은 Snaptshot 저장 이후에 일어나므로 id는 null일 수 없음" },
-            customerId = checkNotNull(snapshot.customerId) { "customer ID는 null일 수 없음" }
+            snapshotId = checkNotNull(snapshotEntity.id) { "node 저장은 Snaptshot 저장 이후에 일어나므로 id는 null일 수 없음" },
+            customerId = checkNotNull(snapshotEntity.customerId) { "customer ID는 null일 수 없음" }
         ).chunked(BATCH_CHUNK_SIZE).forEach {
             snapshotNodeDao.saveAllSnapshotNodes(it)
         }
@@ -49,25 +49,25 @@ class SnapshotNodeService(
         snapshotId: Long,
         signature: String,
         snapshotNodeId: Long? = null
-    ): List<SnapshotNode> {
+    ): List<SnapshotNodeEntity> {
         return snapshotNodeDao.selectAllBySignatureContaining(customerId, snapshotId, signature, snapshotNodeId)
     }
 
     private fun filterByPackagesAntMatch(
-        methodInvocations: List<MethodInvocation>,
+        methodInvocationEntities: List<MethodInvocationEntity>,
         packages: String
-    ): List<MethodInvocation> {
+    ): List<MethodInvocationEntity> {
         if (packages.isEmpty()) {
-            return methodInvocations
+            return methodInvocationEntities
         }
         val antPathMatcher = AntPathMatcher(".")
         val patterns = packages.replace(" ", "").split(",")
-        return methodInvocations
-            .filter { methodInvocation: MethodInvocation ->
+        return methodInvocationEntities
+            .filter { methodInvocationEntity: MethodInvocationEntity ->
                 patterns.any { pattern: String ->
                     antPathMatcher.match(
                         pattern,
-                        methodInvocation.signature.replace("$", ".")
+                        methodInvocationEntity.signature.replace("$", ".")
                     )
                 }
             }
@@ -112,14 +112,14 @@ class SnapshotNodeService(
     * "a.b.c.d(e, f)" to ["a", "b", "c", "d(e, f)"]
     * "a.b.c.D(e, f)" to ["a", "b", "c", "D", "D(e, f)"]
     */
-    private fun splitSignature(methodInvocation: MethodInvocation): List<String> {
-        val (nameOnlySignature, arguments) = methodInvocation.signature.split("(", limit = 2)
+    private fun splitSignature(methodInvocationEntity: MethodInvocationEntity): List<String> {
+        val (nameOnlySignature, arguments) = methodInvocationEntity.signature.split("(", limit = 2)
 
         val elements = nameOnlySignature.split(*DELIMITERS)
             .filterNot { it == "" }
             .toMutableList()
 
-        if (isConstructor(methodInvocation)) {
+        if (isConstructor(methodInvocationEntity)) {
             elements.add(elements.last())
         }
 
@@ -127,8 +127,8 @@ class SnapshotNodeService(
         return elements
     }
 
-    private fun isConstructor(methodInvocation: MethodInvocation): Boolean {
-        return methodInvocation.methodName == "<init>"
+    private fun isConstructor(methodInvocationEntity: MethodInvocationEntity): Boolean {
+        return methodInvocationEntity.methodName == "<init>"
     }
 
     private fun getType(parent: Node, signature: String): Node.Type {
@@ -151,7 +151,7 @@ class SnapshotNodeService(
         parentNode: Node,
         snapshotId: Long,
         customerId: Long
-    ): List<SnapshotNode> {
+    ): List<SnapshotNodeEntity> {
         if (currentNode.type != Node.Type.ROOT && currentNode.signatureChildMap.size == 1) {
             val child = currentNode.signatureChildMap.values.first()
             if (child.type == Node.Type.PACKAGE) {
@@ -167,7 +167,7 @@ class SnapshotNodeService(
             return descendants
         }
 
-        return descendants + SnapshotNode(
+        return descendants + SnapshotNodeEntity(
             snapshotId = snapshotId,
             signature = currentNode.signature,
             lastInvokedAtMillis = currentNode.lastInvokedAtMillis,
