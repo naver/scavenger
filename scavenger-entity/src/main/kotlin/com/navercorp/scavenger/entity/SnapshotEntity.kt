@@ -28,17 +28,8 @@ data class SnapshotEntity(
     val packages: String = "",
 
     @MappedCollection(idColumn = "snapshotId")
-    val applications: MutableSet<ApplicationRefEntity> = mutableSetOf(),
+    val applications: Set<ApplicationRefEntity>,
 
     @MappedCollection(idColumn = "snapshotId")
-    val environments: MutableSet<EnvironmentRefEntity> = mutableSetOf()
-) {
-
-    fun addApplication(applicationId: Long) {
-        applications.add(ApplicationRefEntity(applicationId, this.customerId, id))
-    }
-
-    fun addEnvironment(environmentId: Long) {
-        environments.add(EnvironmentRefEntity(environmentId, this.customerId, id))
-    }
-}
+    val environments: Set<EnvironmentRefEntity>,
+)
