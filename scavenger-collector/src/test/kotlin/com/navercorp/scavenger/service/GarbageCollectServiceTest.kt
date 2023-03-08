@@ -170,6 +170,9 @@ class GarbageCollectServiceTest {
             min = allLiveFingerprints.minByOrNull { it.createdAt }?.createdAt ?: Instant.now()
             methodDao.update(methods[0].copy(lastSeenAtMillis = min?.minusMillis(weekAgo)?.toEpochMilli()))
             methodDao.update(methods[1].copy(lastSeenAtMillis = min?.minusMillis(weekAgo)?.toEpochMilli()))
+            methodDao.update(methods[2].copy(lastSeenAtMillis = min?.toEpochMilli()))
+            methodDao.update(methods[3].copy(lastSeenAtMillis = min?.toEpochMilli()))
+            methodDao.update(methods[4].copy(lastSeenAtMillis = min?.toEpochMilli()))
         }
 
         @Test

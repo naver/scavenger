@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Properties;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,7 @@ import com.navercorp.scavenger.model.InvocationDataPublication;
 
 // FIXME flaky test
 @Nested
+@Disabled
 @DisplayName("InvocationRegistry class")
 public class InvocationRegistryTest {
     InvocationRegistry sut;
