@@ -37,11 +37,10 @@ class SnapshotService(
             customerId = customerId,
             createdAt = Instant.now(),
             filterInvokedAtMillis = filterInvokedAtMillis,
-            packages = packages
+            packages = packages,
+            applications = applicationIdList.map { ApplicationRefEntity(it, customerId, 0) }.toSet(),
+            environments = environmentIdList.map { EnvironmentRefEntity(it, customerId, 0) }.toSet(),
         )
-        applicationIdList.forEach { applicationId: Long -> snapshotEntity.addApplication(applicationId) }
-        environmentIdList.forEach { environmentId: Long -> snapshotEntity.addEnvironment(environmentId) }
-
         return proxy(this).saveSnapshotWithLimit(snapshotEntity).let {
             snapshotNodeService.createAndSaveSnapshotNodes(it, methodInvocations)
             SnapshotDto.from(it)
