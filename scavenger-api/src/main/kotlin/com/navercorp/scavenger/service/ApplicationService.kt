@@ -2,7 +2,7 @@ package com.navercorp.scavenger.service
 
 import com.navercorp.scavenger.dto.ApplicationDetailDto
 import com.navercorp.scavenger.dto.ApplicationDto
-import com.navercorp.scavenger.entity.Application
+import com.navercorp.scavenger.entity.ApplicationEntity
 import com.navercorp.scavenger.repository.ApplicationRepository
 import com.navercorp.scavenger.repository.InvocationRepository
 import com.navercorp.scavenger.repository.JvmRepository
@@ -25,19 +25,19 @@ class ApplicationService(
     fun getApplicationsDetail(customerId: Long): List<ApplicationDetailDto> {
         val applications = applicationRepository.findByCustomerId(customerId)
         return applications
-            .map { application: Application ->
-                val applicationId = application.id
+            .map { applicationEntity: ApplicationEntity ->
+                val applicationId = applicationEntity.id
                 val jvmCount = jvmRepository.countByCustomerIdAndApplicationId(customerId, applicationId)
                 val invocationCount = invocationRepository.countByCustomerIdAndApplicationId(customerId, applicationId)
                 val snapshotCount = snapshotApplicationRepository.countByCustomerIdAndApplicationId(customerId, applicationId)
 
                 ApplicationDetailDto(
                     id = applicationId,
-                    name = application.name,
+                    name = applicationEntity.name,
                     jvmCount = jvmCount,
                     invocationCount = invocationCount,
                     snapshotCount = snapshotCount,
-                    createdAt = application.createdAt
+                    createdAt = applicationEntity.createdAt
                 )
             }
     }

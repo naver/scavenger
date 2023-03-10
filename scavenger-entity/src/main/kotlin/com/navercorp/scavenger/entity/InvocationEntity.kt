@@ -1,15 +1,15 @@
 package com.navercorp.scavenger.entity
 
-import io.codekvast.javaagent.model.v4.SignatureStatus4
 import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
 import java.time.Instant
 
 @Table("invocations")
-class Invocation(
+data class InvocationEntity(
     @Id
-    val id: Long,
+    @Column("id")
+    val id: Long = 0,
 
     @Column("customerId")
     val customerId: Long,
@@ -27,7 +27,7 @@ class Invocation(
     val invokedAtMillis: Long,
 
     @Column("status")
-    val status: SignatureStatus4,
+    val status: String,
 
     @Column("createdAt")
     val createdAt: Instant,

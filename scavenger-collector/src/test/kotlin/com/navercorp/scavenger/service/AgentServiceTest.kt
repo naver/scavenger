@@ -1,6 +1,6 @@
 package com.navercorp.scavenger.service
 
-import com.navercorp.scavenger.entity.Customer
+import com.navercorp.scavenger.entity.CustomerEntity
 import com.navercorp.scavenger.exception.LicenseKeyMismatchException
 import com.navercorp.scavenger.exception.LicenseKeyNotFoundException
 import com.navercorp.scavenger.exception.UnknownPublicationException
@@ -49,10 +49,11 @@ class AgentServiceTest {
     @MockBean
     lateinit var operationService: OperationService
 
-    fun createCustomer(customerId: Long = 42, licenseKey: String = "random-apiKey") = Customer(
+    fun createCustomer(customerId: Long = 42, licenseKey: String = "random-apiKey") = CustomerEntity(
         id = customerId,
         name = "test",
-        licenseKey = licenseKey
+        licenseKey = licenseKey,
+        groupId = "0"
     )
 
     @Nested

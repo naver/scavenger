@@ -1,7 +1,7 @@
 package com.navercorp.scavenger.service
 
 import com.navercorp.scavenger.dto.CodeBaseImportDto
-import com.navercorp.scavenger.entity.CodeBaseFingerprint
+import com.navercorp.scavenger.entity.CodeBaseFingerprintEntity
 import com.navercorp.scavenger.param.InvocationUpsertParam
 import com.navercorp.scavenger.param.MethodUpsertParam
 import com.navercorp.scavenger.repository.CodeBaseFingerprintDao
@@ -86,7 +86,7 @@ class CodeBaseImportService(
         } else {
             try {
                 codeBaseFingerprintDao.insert(
-                    CodeBaseFingerprint(
+                    CodeBaseFingerprintEntity(
                         customerId = customerId,
                         applicationId = applicationId,
                         codeBaseFingerprint = codeBaseFingerprint,

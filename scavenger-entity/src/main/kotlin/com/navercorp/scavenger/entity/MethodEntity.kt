@@ -6,7 +6,7 @@ import org.springframework.data.relational.core.mapping.Table
 import java.time.Instant
 
 @Table("methods")
-data class Method(
+data class MethodEntity(
     @Id
     val id: Long = 0,
 
@@ -18,6 +18,9 @@ data class Method(
 
     @Column("signature")
     val signature: String? = null,
+
+    @Column("signatureHash")
+    val signatureHash: String,
 
     @Column("createdAt")
     val createdAt: Instant = Instant.now(),
@@ -36,8 +39,4 @@ data class Method(
 
     @Column("garbage")
     val garbage: Boolean,
-
-    @Column("signatureHash")
-    val signatureHash: String
-
 )

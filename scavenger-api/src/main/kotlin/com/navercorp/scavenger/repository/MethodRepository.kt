@@ -1,6 +1,6 @@
 package com.navercorp.scavenger.repository
 
-import com.navercorp.scavenger.entity.Method
+import com.navercorp.scavenger.entity.MethodEntity
 import com.navercorp.scavenger.spring.DelegatableJdbcRepository
 import org.springframework.data.jdbc.repository.query.Modifying
 import org.springframework.data.jdbc.repository.query.Query
@@ -8,7 +8,7 @@ import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 
 @Repository
-interface MethodRepository : DelegatableJdbcRepository<Method, String> {
+interface MethodRepository : DelegatableJdbcRepository<MethodEntity, String> {
     @Query("SELECT count(DISTINCT signatureHash) FROM methods WHERE customerId = :customerId AND garbage = FALSE")
     fun countMethodSignatureHashByCustomerId(@Param("customerId") customerId: Long): Int
 

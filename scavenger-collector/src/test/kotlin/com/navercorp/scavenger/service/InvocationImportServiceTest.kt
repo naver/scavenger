@@ -2,7 +2,7 @@ package com.navercorp.scavenger.service
 
 import com.navercorp.scavenger.dto.CodeBaseImportDto
 import com.navercorp.scavenger.dto.InvocationImportDto
-import com.navercorp.scavenger.entity.Method
+import com.navercorp.scavenger.entity.MethodEntity
 import com.navercorp.scavenger.repository.InvocationDao
 import com.navercorp.scavenger.repository.MethodDao
 import io.codekvast.javaagent.model.v4.SignatureStatus4
@@ -62,7 +62,7 @@ class InvocationImportServiceTest {
         }
     )
 
-    private fun getAffectedMethods(): List<Method> {
+    private fun getAffectedMethods(): List<MethodEntity> {
         val methods = methodDao.findAllByCustomerIdAndSignatureHashIn(sample.customerId, sample.invocations)
         println(methods)
         return methods
@@ -86,7 +86,7 @@ class InvocationImportServiceTest {
                 assertThat(getAffectedInvocations())
                     .allSatisfy {
                         assertThat(it.invokedAtMillis).isEqualTo(0)
-                        assertThat(it.status).isEqualTo(SignatureStatus4.NOT_INVOKED)
+                        assertThat(it.status).isEqualTo(SignatureStatus4.NOT_INVOKED.name)
                     }
             }
 
@@ -118,7 +118,7 @@ class InvocationImportServiceTest {
 
                 assertThat(getAffectedInvocations())
                     .allSatisfy {
-                        assertThat(it.status).isEqualTo(SignatureStatus4.INVOKED)
+                        assertThat(it.status).isEqualTo(SignatureStatus4.INVOKED.name)
                     }
             }
         }
@@ -134,7 +134,7 @@ class InvocationImportServiceTest {
 
                 assertThat(getAffectedInvocations())
                     .allSatisfy {
-                        assertThat(it.status).isEqualTo(SignatureStatus4.INVOKED)
+                        assertThat(it.status).isEqualTo(SignatureStatus4.INVOKED.name)
                     }
             }
 
@@ -181,7 +181,7 @@ class InvocationImportServiceTest {
 
                 assertThat(getAffectedInvocations())
                     .allSatisfy {
-                        assertThat(it.status).isEqualTo(SignatureStatus4.INVOKED)
+                        assertThat(it.status).isEqualTo(SignatureStatus4.INVOKED.name)
                     }
             }
         }

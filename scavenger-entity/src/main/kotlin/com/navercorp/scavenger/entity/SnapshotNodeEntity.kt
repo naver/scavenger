@@ -5,9 +5,10 @@ import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
 
 @Table("snapshot_nodes")
-data class SnapshotNode(
+data class SnapshotNodeEntity(
     @Id
-    val id: Long? = null,
+    @Column("id")
+    val id: Long = 0,
 
     @Column("snapshotId")
     val snapshotId: Long,

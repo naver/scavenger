@@ -1,12 +1,12 @@
 package com.navercorp.scavenger.service
 
-import com.navercorp.scavenger.entity.Agent
+import com.navercorp.scavenger.entity.AgentEntity
 import com.navercorp.scavenger.repository.AgentRepository
 import org.springframework.stereotype.Service
 
 @Service
 class AgentService(val agentRepository: AgentRepository) {
-    fun getAgents(customerId: Long): List<Agent> {
+    fun getAgents(customerId: Long): List<AgentEntity> {
         return agentRepository.findAgentsByCustomerId(customerId)
     }
 }

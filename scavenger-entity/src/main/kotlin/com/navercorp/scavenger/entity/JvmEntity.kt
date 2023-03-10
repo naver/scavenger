@@ -6,8 +6,9 @@ import org.springframework.data.relational.core.mapping.Table
 import java.time.Instant
 
 @Table("jvms")
-data class Jvm(
+data class JvmEntity(
     @Id
+    @Column("id")
     val id: Long = 0,
 
     @Column("customerId")
@@ -22,6 +23,9 @@ data class Jvm(
     @Column("uuid")
     val uuid: String,
 
+    @Column("hostname")
+    val hostname: String,
+
     @Column("codeBaseFingerprint")
     val codeBaseFingerprint: String?,
 
@@ -31,6 +35,4 @@ data class Jvm(
     @Column("publishedAt")
     val publishedAt: Instant,
 
-    @Column("hostname")
-    val hostname: String,
 )

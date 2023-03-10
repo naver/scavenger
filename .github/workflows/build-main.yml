@@ -1,8 +1,8 @@
-name: CI
+name: Main Build
 
 on:
   pull_request:
-    branches: [ develop, main ]
+    branches: [ main ]
 
 jobs:
   Build:

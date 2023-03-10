@@ -1,9 +1,9 @@
 package com.navercorp.scavenger.service
 
 import com.navercorp.scavenger.dto.SnapshotDto
-import com.navercorp.scavenger.entity.ApplicationRef
-import com.navercorp.scavenger.entity.EnvironmentRef
-import com.navercorp.scavenger.entity.Snapshot
+import com.navercorp.scavenger.entity.ApplicationRefEntity
+import com.navercorp.scavenger.entity.EnvironmentRefEntity
+import com.navercorp.scavenger.entity.SnapshotEntity
 import com.navercorp.scavenger.exception.SnapshotCountExceeded
 import com.navercorp.scavenger.repository.MethodInvocationRepository
 import com.navercorp.scavenger.repository.SnapshotApplicationDao
@@ -32,17 +32,16 @@ class SnapshotService(
         packages: String
     ): SnapshotDto {
         val methodInvocations = methodInvocationRepository.findMethodInvocations(customerId, applicationIdList, environmentIdList)
-        val snapshot = Snapshot(
+        val snapshotEntity = SnapshotEntity(
             name = name,
             customerId = customerId,
             createdAt = Instant.now(),
             filterInvokedAtMillis = filterInvokedAtMillis,
-            packages = packages
+            packages = packages,
+            applications = applicationIdList.map { ApplicationRefEntity(it, customerId, 0) }.toSet(),
+            environments = environmentIdList.map { EnvironmentRefEntity(it, customerId, 0) }.toSet(),
         )
-        applicationIdList.forEach { applicationId: Long -> snapshot.addApplication(applicationId) }
-        environmentIdList.forEach { environmentId: Long -> snapshot.addEnvironment(environmentId) }
-
-        return proxy(this).saveSnapshotWithLimit(snapshot).let {
+        return proxy(this).saveSnapshotWithLimit(snapshotEntity).let {
             snapshotNodeService.createAndSaveSnapshotNodes(it, methodInvocations)
             SnapshotDto.from(it)
         }
@@ -65,13 +64,13 @@ class SnapshotService(
         snapshotDao.updateSnapshot(snapshot)
 
         snapshotApplicationDao.deleteByCustomerIdAndSnapshotId(existing.customerId, requireNotNull(existing.id))
-        applicationIdList.map { ApplicationRef(applicationId = it, customerId = existing.customerId, snapshotId = existing.id) }.toSet()
+        applicationIdList.map { ApplicationRefEntity(applicationId = it, customerId = existing.customerId, snapshotId = existing.id) }.toSet()
             .let {
                 snapshotApplicationDao.insertAll(it)
             }
 
         snapshotEnvironmentDao.deleteByCustomerIdAndSnapshotId(existing.customerId, requireNotNull(existing.id))
-        environmentIdList.map { EnvironmentRef(environmentId = it, customerId = existing.customerId, snapshotId = existing.id) }.toSet()
+        environmentIdList.map { EnvironmentRefEntity(environmentId = it, customerId = existing.customerId, snapshotId = existing.id) }.toSet()
             .let {
                 snapshotEnvironmentDao.insertAll(it)
             }
@@ -103,12 +102,12 @@ class SnapshotService(
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    fun saveSnapshotWithLimit(snapshot: Snapshot): Snapshot {
-        val snapshots = snapshotDao.findAllByCustomerIdForUpdate(snapshot.customerId)
+    fun saveSnapshotWithLimit(snapshotEntity: SnapshotEntity): SnapshotEntity {
+        val snapshots = snapshotDao.findAllByCustomerIdForUpdate(snapshotEntity.customerId)
         if (snapshots.size >= SNAPSHOT_LIMIT) {
             throw SnapshotCountExceeded()
         }
-        return snapshotDao.insert(snapshot)
+        return snapshotDao.insert(snapshotEntity)
     }
 
     fun listSnapshots(customerId: Long): List<SnapshotDto> {
