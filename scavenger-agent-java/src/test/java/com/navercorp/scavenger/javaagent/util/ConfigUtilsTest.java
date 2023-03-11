@@ -74,7 +74,7 @@ public class ConfigUtilsTest {
 
             @Test
             @DisplayName("it expands variables with braces")
-            void expandVariablesWithBraces() {
+            void expandVariables_with_braces() {
                 String actual = ConfigUtils.expandVariables(
                     props,
                     userVariableName
@@ -120,7 +120,7 @@ public class ConfigUtilsTest {
 
             @Test
             @DisplayName("it prints variable names")
-            void expandVariablesMissing() {
+            void expandVariables_missing() {
                 String actual = ConfigUtils.expandVariables(new Properties(), "foo $missingProp1 bar ${missing.prop2} baz");
 
                 assertThat(actual).isEqualTo("foo $missingProp1 bar ${missing.prop2} baz");
@@ -145,7 +145,7 @@ public class ConfigUtilsTest {
 
             @Test
             @DisplayName("it returns the value")
-            void getIntValuePresent() {
+            void getIntValue_present() {
                 int actual = ConfigUtils.getIntValue(props, "key", 17);
 
                 assertThat(actual).isEqualTo(4711);
@@ -158,7 +158,7 @@ public class ConfigUtilsTest {
 
             @Test
             @DisplayName("it returns the default value")
-            void getIntValueMissing() {
+            void getIntValue_missing() {
                 int actual = ConfigUtils.getIntValue(new Properties(), "key", 17);
 
                 assertThat(actual).isEqualTo(17);
@@ -183,7 +183,7 @@ public class ConfigUtilsTest {
 
             @Test
             @DisplayName("it returns the value")
-            void getBooleanValuePresent() {
+            void getBooleanValue_present() {
                 boolean actual = ConfigUtils.getBooleanValue(props, "key", true);
 
                 assertThat(actual).isFalse();
@@ -196,7 +196,7 @@ public class ConfigUtilsTest {
 
             @Test
             @DisplayName("it returns the default value")
-            void getBooleanValueMissing() {
+            void getBooleanValue_missing() {
                 boolean actual = ConfigUtils.getBooleanValue(new Properties(), "key", true);
 
                 assertThat(actual).isTrue();
@@ -223,7 +223,7 @@ public class ConfigUtilsTest {
 
             @Test
             @DisplayName("it returns system property")
-            void getStringValueSystemPropertiesPriority() {
+            void getStringValue_system_properties_priority() {
                 String actual = ConfigUtils.getStringValue(props, "appVersion", "default-app-version");
 
                 assertThat(actual).isEqualTo("sysprop-appVersion");
@@ -236,7 +236,7 @@ public class ConfigUtilsTest {
 
             @Test
             @DisplayName("it returns null")
-            void getStringValueNull() {
+            void getStringValue_null() {
                 String actual = ConfigUtils.getStringValue(new Properties(), "key", null);
 
                 assertThat(actual).isNull();
@@ -256,7 +256,7 @@ public class ConfigUtilsTest {
 
             @Test
             @DisplayName("it returns null")
-            void getStringValueBlank() {
+            void getStringValue_blank() {
                 String actual = ConfigUtils.getStringValue(props, "key", null);
 
                 assertThat(actual).isNull();
@@ -276,7 +276,7 @@ public class ConfigUtilsTest {
 
             @Test
             @DisplayName("it returns the value")
-            void getStringValuePresent() {
+            void getStringValue_present() {
                 String actual = ConfigUtils.getStringValue(props, "key", "default");
 
                 assertThat(actual).isEqualTo("value");
@@ -301,7 +301,7 @@ public class ConfigUtilsTest {
 
             @Test
             @DisplayName("it returns the value")
-            void getAliasedStringValueAlias() {
+            void getAliasedStringValue_alias() {
                 String actual = ConfigUtils.getAliasedStringValue(props, "alternateKey", "key", "defaultValue");
 
                 assertThat(actual).isEqualTo("value");
@@ -321,7 +321,7 @@ public class ConfigUtilsTest {
 
             @Test
             @DisplayName("it returns the value")
-            void getAliasedStringValuePrimary() {
+            void getAliasedStringValue_primary() {
                 String actual = ConfigUtils.getAliasedStringValue(props, "key", "alternateKey", "defaultValue");
 
                 assertThat(actual).isEqualTo("value");
@@ -341,7 +341,7 @@ public class ConfigUtilsTest {
 
             @Test
             @DisplayName("it returns default value")
-            void getAliasedStringValueMissing() {
+            void getAliasedStringValue_missing() {
                 String actual = ConfigUtils.getAliasedStringValue(props, "key", "alternateKey", "defaultValue");
 
                 assertThat(actual).isEqualTo("defaultValue");
