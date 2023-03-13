@@ -1,6 +1,6 @@
 package com.navercorp.scavenger.dto
 
-import com.navercorp.scavenger.entity.Environment
+import com.navercorp.scavenger.entity.EnvironmentEntity
 
 data class EnvironmentDto(
     val id: Long,
@@ -8,8 +8,8 @@ data class EnvironmentDto(
 ) {
 
     companion object {
-        fun from(environment: Environment): EnvironmentDto {
-            return EnvironmentDto(environment.id, environment.name)
+        fun from(entity: EnvironmentEntity): EnvironmentDto {
+            return EnvironmentDto(entity.id, entity.name)
         }
     }
 }

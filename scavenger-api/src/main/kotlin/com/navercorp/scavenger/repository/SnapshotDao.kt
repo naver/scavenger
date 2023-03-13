@@ -1,6 +1,6 @@
 package com.navercorp.scavenger.repository
 
-import com.navercorp.scavenger.entity.Snapshot
+import com.navercorp.scavenger.entity.SnapshotEntity
 import com.navercorp.scavenger.repository.sql.SnapshotSql
 import com.navercorp.spring.data.jdbc.plus.sql.provider.EntityJdbcProvider
 import com.navercorp.spring.data.jdbc.plus.sql.support.JdbcDaoSupport
@@ -13,10 +13,10 @@ class SnapshotDao(
 ) : JdbcDaoSupport(entityJdbcProvider), SnapshotRepository by snapshotRepository {
     private val sql: SnapshotSql = super.sqls(::SnapshotSql)
 
-    fun updateSnapshot(snapshot: Snapshot) {
+    fun updateSnapshot(snapshotEntity: SnapshotEntity) {
         jdbcOperations.update(
             sql.update(),
-            beanParameterSource(snapshot)
+            beanParameterSource(snapshotEntity)
         )
     }
 }

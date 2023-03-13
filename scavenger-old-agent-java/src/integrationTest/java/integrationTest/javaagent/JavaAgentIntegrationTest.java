@@ -17,6 +17,7 @@ import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.matchesPattern;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
 import java.io.BufferedReader;
@@ -61,7 +62,7 @@ public class JavaAgentIntegrationTest {
         assertNotNull("This test must be started from Gradle", codekvastAgentPath);
         assertNotNull("This test must be started from Gradle", classpath);
         assertNotNull("This test must be started from Gradle", javaPaths);
-
+        assertFalse("This test must be tested with JDK1.7", javaPaths.isEmpty());
         wireMockServer = new WireMockServer(wireMockConfig().dynamicPort());
         wireMockServer.start();
         WireMock.configureFor(wireMockServer.port());
@@ -69,7 +70,9 @@ public class JavaAgentIntegrationTest {
 
     @AfterClass
     public static void afterAll() {
-        wireMockServer.shutdown();
+        if (wireMockServer != null) {
+            wireMockServer.shutdown();
+        }
     }
 
     private static List<String> getJavaVersions() {

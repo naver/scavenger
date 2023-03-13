@@ -1,17 +1,14 @@
 package com.navercorp.scavenger.dto
 
-import com.navercorp.scavenger.entity.Customer
+import com.navercorp.scavenger.entity.CustomerEntity
 
 data class CustomerDto(
     val id: Long,
     val name: String
 ) {
     companion object {
-        fun from(customer: Customer): CustomerDto {
-            return CustomerDto(
-                id = requireNotNull(customer.id),
-                name = customer.name
-            )
+        fun from(entity: CustomerEntity): CustomerDto {
+            return CustomerDto(id = entity.id, name = entity.name)
         }
     }
 }

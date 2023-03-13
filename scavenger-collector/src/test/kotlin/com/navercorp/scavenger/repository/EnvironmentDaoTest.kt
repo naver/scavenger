@@ -8,7 +8,8 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@SpringBootTest
+@Transactional
 class EnvironmentDaoTest {
     @Autowired
     lateinit var sut: EnvironmentDao
@@ -22,7 +23,6 @@ class EnvironmentDaoTest {
     }
 
     @Test
-    @Transactional
     fun upsert() {
         assertThat(sut.upsert(1, "vitess", Instant.now())).isGreaterThanOrEqualTo(0L)
     }

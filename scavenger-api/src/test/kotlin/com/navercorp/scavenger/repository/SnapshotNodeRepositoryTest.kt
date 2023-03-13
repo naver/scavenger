@@ -1,6 +1,6 @@
 package com.navercorp.scavenger.repository
 
-import com.navercorp.scavenger.entity.SnapshotNode
+import com.navercorp.scavenger.entity.SnapshotNodeEntity
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -31,8 +31,8 @@ class SnapshotNodeRepositoryTest {
     @Test
     @Transactional
     fun saveAllSnapshotNodes() {
-        val snapshotNodes = listOf(
-            SnapshotNode(
+        val snapshotNodeEntities = listOf(
+            SnapshotNodeEntity(
                 snapshotId = snapshotId,
                 signature = "com.example.demo.additional.AdditionalService.get()",
                 usedCount = 33,
@@ -42,7 +42,7 @@ class SnapshotNodeRepositoryTest {
                 lastInvokedAtMillis = null,
                 type = "METHOD"
             ),
-            SnapshotNode(
+            SnapshotNodeEntity(
                 snapshotId = snapshotId,
                 signature = "com.example.demo.additional.AdditionalService.WOW.doSth()",
                 usedCount = 33,
@@ -53,7 +53,7 @@ class SnapshotNodeRepositoryTest {
                 type = "METHOD"
             )
         )
-        sut.saveAllSnapshotNodes(snapshotNodes)
+        sut.saveAllSnapshotNodes(snapshotNodeEntities)
 
         val actual =
             sut.findAllByCustomerIdAndSnapshotId(customerId, snapshotId).let { it.subList(it.size - 2, it.size) }

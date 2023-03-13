@@ -1,15 +1,16 @@
 package com.navercorp.scavenger.entity
 
-import org.springframework.data.annotation.Id
 import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
 
-@Table("codebase_fingerprints")
-data class CodeBaseFingerprint(
-    @Id
-    @Column("id")
-    val id: Long,
+@Table("snapshot_environment")
+data class EnvironmentRefEntity(
+    @Column("environmentId")
+    val environmentId: Long,
 
     @Column("customerId")
     val customerId: Long,
+
+    @Column("snapshotId")
+    val snapshotId: Long?
 )

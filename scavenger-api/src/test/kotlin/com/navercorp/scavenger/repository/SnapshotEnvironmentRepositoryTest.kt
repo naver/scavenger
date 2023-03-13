@@ -1,6 +1,6 @@
 package com.navercorp.scavenger.repository
 
-import com.navercorp.scavenger.entity.EnvironmentRef
+import com.navercorp.scavenger.entity.EnvironmentRefEntity
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -37,8 +37,8 @@ class SnapshotEnvironmentRepositoryTest {
     @Transactional
     fun insertAll() {
         val param = listOf(
-            EnvironmentRef(customerId = 0, environmentId = 1, snapshotId = 1),
-            EnvironmentRef(customerId = 0, environmentId = 1, snapshotId = 2)
+            EnvironmentRefEntity(customerId = 0, environmentId = 1, snapshotId = 1),
+            EnvironmentRefEntity(customerId = 0, environmentId = 1, snapshotId = 2)
         ).toSet()
         sut.insertAll(param)
 

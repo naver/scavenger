@@ -266,7 +266,7 @@ public class CodeBase {
         boolean trackAnnotation = !annotations.isEmpty();
         boolean isInAnnotation = startsWithAnyOfCandidate(annotations, signature.getAnnotations());
 
-        boolean result = trackAnnotation & !isInAnnotation;
+        boolean result = trackAnnotation && !isInAnnotation;
 
         FileLogger.log(signature + " ---- ", "/", signature.getAnnotations());
         FileLogger.log("-- isExcludedByAnnotation : ", result);

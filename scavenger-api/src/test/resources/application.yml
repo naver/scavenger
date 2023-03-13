@@ -9,13 +9,6 @@ spring:
     driver-class-name: org.h2.Driver
   profiles:
     active: local
-  liquibase:
-    enabled: false
-  sql:
-    init:
-      continue-on-error: true
-      schema-locations: classpath:/db/changelog/schema.sql
-      data-locations: classpath:/db/changelog/test-data-set.sql
 
 server:
   servlet:

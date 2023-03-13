@@ -4,7 +4,7 @@ import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
 
 @Table("invocations")
-data class MethodInvocation(
+data class MethodInvocationEntity(
     @Column("signature")
     val signature: String,
 

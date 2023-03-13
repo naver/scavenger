@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
-    val kotlinVersion = "1.6.10"
+    val kotlinVersion = "1.8.10"
     val springBootVersion = "2.5.12"
     val springDependencyManagementVersion = "1.0.11.RELEASE"
 
@@ -18,6 +18,7 @@ plugins {
 }
 
 dependencies {
+    implementation(project(":scavenger-entity"))
     implementation(project(":scavenger-model"))
     implementation(project(":scavenger-old-model"))
     implementation(project(":scavenger-schema"))

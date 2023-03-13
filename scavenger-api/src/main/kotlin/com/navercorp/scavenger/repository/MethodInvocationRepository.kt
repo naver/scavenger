@@ -1,13 +1,13 @@
 package com.navercorp.scavenger.repository
 
-import com.navercorp.scavenger.entity.MethodInvocation
+import com.navercorp.scavenger.entity.MethodInvocationEntity
 import com.navercorp.scavenger.spring.DelegatableJdbcRepository
 import org.springframework.data.jdbc.repository.query.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 
 @Repository
-interface MethodInvocationRepository : DelegatableJdbcRepository<MethodInvocation, String> {
+interface MethodInvocationRepository : DelegatableJdbcRepository<MethodInvocationEntity, String> {
     @Query(
         """
             SELECT
@@ -32,5 +32,5 @@ interface MethodInvocationRepository : DelegatableJdbcRepository<MethodInvocatio
         @Param("customerId") customerId: Long,
         @Param("applicationIdList") applicationIdList: List<Long>,
         @Param("environmentIdList") environmentIdList: List<Long>
-    ): List<MethodInvocation>
+    ): List<MethodInvocationEntity>
 }

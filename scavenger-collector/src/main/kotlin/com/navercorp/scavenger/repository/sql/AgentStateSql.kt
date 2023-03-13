@@ -1,6 +1,6 @@
 package com.navercorp.scavenger.repository.sql
 
-import com.navercorp.scavenger.entity.AgentState
+import com.navercorp.scavenger.entity.AgentStateEntity
 import com.navercorp.spring.data.jdbc.plus.sql.support.SqlGeneratorSupport
 
 class AgentStateSql : SqlGeneratorSupport() {
@@ -20,7 +20,7 @@ class AgentStateSql : SqlGeneratorSupport() {
     fun selectGarbageLastPolledAtBefore(): String =
         """
         SELECT
-           ${sql.columns(AgentState::class.java)}
+           ${sql.columns(AgentStateEntity::class.java)}
         FROM
             agent_state
         WHERE

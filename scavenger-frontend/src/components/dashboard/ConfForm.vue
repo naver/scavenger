@@ -7,8 +7,7 @@
       <div class="dialog-header">
         <h4 :id="titleId" :class="titleClass">
           {{ $t("message.dashboard.configuration.title") }}
-          <!-- TODO: 가이드 추가 필요 -->
-          <el-link :underline="false" href="" target="_blank">
+          <el-link :underline="false" href="https://github.com/naver/scavenger/blob/develop/doc/user-guide.md#create-a-configuration-file" target="_blank">
             <font-awesome-icon icon="fa-solid fa-circle-question"/>
           </el-link>
         </h4>

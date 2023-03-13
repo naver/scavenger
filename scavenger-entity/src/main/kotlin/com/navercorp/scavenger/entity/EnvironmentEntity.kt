@@ -5,11 +5,11 @@ import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
 import java.time.Instant
 
-@Table("applications")
-data class Application(
+@Table("environments")
+data class EnvironmentEntity(
     @Id
     @Column("id")
-    val id: Long,
+    val id: Long = 0,
 
     @Column("name")
     val name: String,
@@ -18,5 +18,11 @@ data class Application(
     val customerId: Long,
 
     @Column("createdAt")
-    val createdAt: Instant
+    val createdAt: Instant,
+
+    @Column("updatedAt")
+    val updatedAt: Instant = Instant.now(),
+
+    @Column("enabled")
+    val enabled: Boolean,
 )

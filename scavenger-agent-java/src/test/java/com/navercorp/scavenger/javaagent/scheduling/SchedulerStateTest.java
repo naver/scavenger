@@ -80,13 +80,13 @@ public class SchedulerStateTest {
 
             @Test
             @DisplayName("it makes due after 10 seconds")
-            public void dueAfter10Seconds() {
+            void dueAfter10Seconds() {
                 verifyDueInSeconds(10);
             }
 
             @Test
             @DisplayName("it resets retryIntervalFactor")
-            public void resetRetryFactor() {
+            void resetRetryFactor() {
                 assertThat(sut.getRetryIntervalFactor()).isEqualTo(1);
             }
         }
@@ -109,7 +109,7 @@ public class SchedulerStateTest {
 
             @Test
             @DisplayName("it makes due now")
-            public void dueNow() {
+            void dueNow() {
                 assertThat(sut.isDueTime()).isTrue();
             }
         }
@@ -125,7 +125,7 @@ public class SchedulerStateTest {
 
             @Test
             @DisplayName("it schedules retry with given interval factors")
-            public void intervalFactors() {
+            void intervalFactors() {
                 List<Integer> retryIntervalFactors = Arrays.asList(
                     1, 1, 1, 1, 1, 2, 4, 8, 16, 16
                 );
@@ -153,13 +153,13 @@ public class SchedulerStateTest {
 
             @Test
             @DisplayName("it does not change ongoing due")
-            public void onGoingDue() {
+            void onGoingDue() {
                 verifyDueInSeconds(10);
             }
 
             @Test
             @DisplayName("it changes upcoming due to 20 seconds")
-            public void upcomingDue() {
+            void upcomingDue() {
                 sut.scheduleNext();
                 verifyDueInSeconds(20);
             }
@@ -171,7 +171,7 @@ public class SchedulerStateTest {
 
             @Test
             @DisplayName("it changes ongoing due")
-            public void onGoingDue() {
+            void onGoingDue() {
                 sut.scheduleNext();
                 sut.updateIntervals(5, 5);
                 verifyDueInSeconds(5);
@@ -179,7 +179,7 @@ public class SchedulerStateTest {
 
             @Test
             @DisplayName("it should start immediately when it is first time")
-            public void firstTime() {
+            void firstTime() {
                 sut.updateIntervals(5, 5);
                 verifyDueInSeconds(0);
             }

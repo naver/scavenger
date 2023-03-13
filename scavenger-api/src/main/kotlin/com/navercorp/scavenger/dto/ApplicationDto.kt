@@ -1,6 +1,6 @@
 package com.navercorp.scavenger.dto
 
-import com.navercorp.scavenger.entity.Application
+import com.navercorp.scavenger.entity.ApplicationEntity
 
 data class ApplicationDto(
     val id: Long,
@@ -8,8 +8,8 @@ data class ApplicationDto(
 ) {
 
     companion object {
-        fun from(application: Application): ApplicationDto {
-            return ApplicationDto(application.id, application.name)
+        fun from(entity: ApplicationEntity): ApplicationDto {
+            return ApplicationDto(entity.id, entity.name)
         }
     }
 }

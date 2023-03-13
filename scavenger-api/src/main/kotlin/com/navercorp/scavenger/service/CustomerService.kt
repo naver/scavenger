@@ -1,7 +1,7 @@
 package com.navercorp.scavenger.service
 
 import com.navercorp.scavenger.dto.CustomerDto
-import com.navercorp.scavenger.entity.Customer
+import com.navercorp.scavenger.entity.CustomerEntity
 import com.navercorp.scavenger.repository.AgentRepository
 import com.navercorp.scavenger.repository.ApplicationRepository
 import com.navercorp.scavenger.repository.CodeBaseFingerprintRepository
@@ -47,7 +47,7 @@ class CustomerService(
 
     fun getCustomerByName(groupId: String, customerName: String): CustomerDto {
         return customerRepository.findByNameAndGroupId(customerName, groupId)
-            .orElseThrow { throw EmptyResultDataAccessException(1) }
+            .orElseThrow { EmptyResultDataAccessException(1) }
             .let {
                 CustomerDto.from(it)
             }
@@ -57,7 +57,7 @@ class CustomerService(
         customerRepository.findByNameAndGroupId(customerName, groupId)
             .ifPresent { throw ResponseStatusException(HttpStatus.CONFLICT, "[$customerName] customer name is duplicated") }
 
-        return customerRepository.save(Customer(name = customerName, licenseKey = UUID.randomUUID().toString(), groupId = groupId))
+        return customerRepository.save(CustomerEntity(name = customerName, licenseKey = UUID.randomUUID().toString(), groupId = groupId))
             .let {
                 logger.info { "[${it.id}] ${it.name} customer is created by $userId" }
                 CustomerDto.from(it)

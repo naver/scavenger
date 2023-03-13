@@ -7,10 +7,10 @@ import org.springframework.data.relational.core.mapping.Table
 import java.time.Instant
 
 @Table("snapshots")
-data class Snapshot(
+data class SnapshotEntity(
     @Id
     @Column("id")
-    val id: Long? = null,
+    val id: Long = 0,
 
     @Column("name")
     val name: String,
@@ -28,17 +28,8 @@ data class Snapshot(
     val packages: String = "",
 
     @MappedCollection(idColumn = "snapshotId")
-    val applications: MutableSet<ApplicationRef> = mutableSetOf(),
+    val applications: Set<ApplicationRefEntity>,
 
     @MappedCollection(idColumn = "snapshotId")
-    val environments: MutableSet<EnvironmentRef> = mutableSetOf()
-) {
-
-    fun addApplication(applicationId: Long) {
-        applications.add(ApplicationRef(applicationId, this.customerId, id))
-    }
-
-    fun addEnvironment(environmentId: Long) {
-        environments.add(EnvironmentRef(environmentId, this.customerId, id))
-    }
-}
+    val environments: Set<EnvironmentRefEntity>,
+)

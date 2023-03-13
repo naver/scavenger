@@ -1,6 +1,6 @@
 package com.navercorp.scavenger.repository
 
-import com.navercorp.scavenger.entity.Environment
+import com.navercorp.scavenger.entity.EnvironmentEntity
 import com.navercorp.scavenger.spring.DelegatableJdbcRepository
 import org.springframework.data.jdbc.repository.query.Modifying
 import org.springframework.data.jdbc.repository.query.Query
@@ -8,10 +8,10 @@ import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 
 @Repository
-interface EnvironmentRepository : DelegatableJdbcRepository<Environment, String> {
-    fun findByCustomerId(customerId: Long): List<Environment>
+interface EnvironmentRepository : DelegatableJdbcRepository<EnvironmentEntity, String> {
+    fun findByCustomerId(customerId: Long): List<EnvironmentEntity>
 
-    fun findByCustomerIdAndId(customerId: Long, id: Long): Environment
+    fun findByCustomerIdAndId(customerId: Long, id: Long): EnvironmentEntity
 
     @Modifying
     @Query("DELETE FROM environments WHERE customerId = :customerId AND id = :id")

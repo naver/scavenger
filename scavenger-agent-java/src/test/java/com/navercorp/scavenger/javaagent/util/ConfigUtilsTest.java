@@ -32,7 +32,7 @@ public class ConfigUtilsTest {
 
         @Test
         @DisplayName("should compute scavenger prefixed env var names")
-        public void getEnvVarNameTest() {
+        void getEnvVarNameTest() {
             assertThat(ConfigUtils.getEnvVarName("foo"))
                 .isEqualTo("SCAVENGER_FOO");
 
@@ -47,7 +47,7 @@ public class ConfigUtilsTest {
 
         @Test
         @DisplayName("should compute scavenger prefixed system property names")
-        public void getSystemPropertyNameTest() {
+        void getSystemPropertyNameTest() {
             assertThat(ConfigUtils.getSystemPropertyName("fooBar"))
                 .isEqualTo("scavenger.fooBar");
         }
@@ -74,7 +74,7 @@ public class ConfigUtilsTest {
 
             @Test
             @DisplayName("it expands variables with braces")
-            public void expandVariables_with_braces() {
+            void expandVariables_with_braces() {
                 String actual = ConfigUtils.expandVariables(
                     props,
                     userVariableName
@@ -92,7 +92,7 @@ public class ConfigUtilsTest {
 
             @Test
             @DisplayName("it expands variables without braces")
-            public void expandVariables_without_braces() {
+            void expandVariablesWithoutBraces() {
                 String actual = ConfigUtils.expandVariables(
                     props,
                     userVariableName
@@ -120,7 +120,7 @@ public class ConfigUtilsTest {
 
             @Test
             @DisplayName("it prints variable names")
-            public void expandVariables_missing() {
+            void expandVariables_missing() {
                 String actual = ConfigUtils.expandVariables(new Properties(), "foo $missingProp1 bar ${missing.prop2} baz");
 
                 assertThat(actual).isEqualTo("foo $missingProp1 bar ${missing.prop2} baz");
@@ -145,7 +145,7 @@ public class ConfigUtilsTest {
 
             @Test
             @DisplayName("it returns the value")
-            public void getIntValue_present() {
+            void getIntValue_present() {
                 int actual = ConfigUtils.getIntValue(props, "key", 17);
 
                 assertThat(actual).isEqualTo(4711);
@@ -158,7 +158,7 @@ public class ConfigUtilsTest {
 
             @Test
             @DisplayName("it returns the default value")
-            public void getIntValue_missing() {
+            void getIntValue_missing() {
                 int actual = ConfigUtils.getIntValue(new Properties(), "key", 17);
 
                 assertThat(actual).isEqualTo(17);
@@ -183,7 +183,7 @@ public class ConfigUtilsTest {
 
             @Test
             @DisplayName("it returns the value")
-            public void getBooleanValue_present() {
+            void getBooleanValue_present() {
                 boolean actual = ConfigUtils.getBooleanValue(props, "key", true);
 
                 assertThat(actual).isFalse();
@@ -196,7 +196,7 @@ public class ConfigUtilsTest {
 
             @Test
             @DisplayName("it returns the default value")
-            public void getBooleanValue_missing() {
+            void getBooleanValue_missing() {
                 boolean actual = ConfigUtils.getBooleanValue(new Properties(), "key", true);
 
                 assertThat(actual).isTrue();
@@ -223,7 +223,7 @@ public class ConfigUtilsTest {
 
             @Test
             @DisplayName("it returns system property")
-            public void getStringValue_system_properties_priority() {
+            void getStringValue_system_properties_priority() {
                 String actual = ConfigUtils.getStringValue(props, "appVersion", "default-app-version");
 
                 assertThat(actual).isEqualTo("sysprop-appVersion");
@@ -236,7 +236,7 @@ public class ConfigUtilsTest {
 
             @Test
             @DisplayName("it returns null")
-            public void getStringValue_null() {
+            void getStringValue_null() {
                 String actual = ConfigUtils.getStringValue(new Properties(), "key", null);
 
                 assertThat(actual).isNull();
@@ -256,7 +256,7 @@ public class ConfigUtilsTest {
 
             @Test
             @DisplayName("it returns null")
-            public void getStringValue_blank() {
+            void getStringValue_blank() {
                 String actual = ConfigUtils.getStringValue(props, "key", null);
 
                 assertThat(actual).isNull();
@@ -276,7 +276,7 @@ public class ConfigUtilsTest {
 
             @Test
             @DisplayName("it returns the value")
-            public void getStringValue_present() {
+            void getStringValue_present() {
                 String actual = ConfigUtils.getStringValue(props, "key", "default");
 
                 assertThat(actual).isEqualTo("value");
@@ -301,7 +301,7 @@ public class ConfigUtilsTest {
 
             @Test
             @DisplayName("it returns the value")
-            public void getAliasedStringValue_alias() {
+            void getAliasedStringValue_alias() {
                 String actual = ConfigUtils.getAliasedStringValue(props, "alternateKey", "key", "defaultValue");
 
                 assertThat(actual).isEqualTo("value");
@@ -321,7 +321,7 @@ public class ConfigUtilsTest {
 
             @Test
             @DisplayName("it returns the value")
-            public void getAliasedStringValue_primary() {
+            void getAliasedStringValue_primary() {
                 String actual = ConfigUtils.getAliasedStringValue(props, "key", "alternateKey", "defaultValue");
 
                 assertThat(actual).isEqualTo("value");
@@ -341,7 +341,7 @@ public class ConfigUtilsTest {
 
             @Test
             @DisplayName("it returns default value")
-            public void getAliasedStringValue_missing() {
+            void getAliasedStringValue_missing() {
                 String actual = ConfigUtils.getAliasedStringValue(props, "key", "alternateKey", "defaultValue");
 
                 assertThat(actual).isEqualTo("defaultValue");
@@ -355,7 +355,7 @@ public class ConfigUtilsTest {
 
         @Test
         @DisplayName("should separate colon, semicolon separated values")
-        public void separateValuesTest() {
+        void separateValuesTest() {
             assertThat(ConfigUtils.separateValues("prefix."))
                 .containsExactly("prefix");
 
