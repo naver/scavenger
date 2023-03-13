@@ -8,8 +8,7 @@
               <h3>Scavenger</h3>
               <p>Dead Code Analysis Tool</p>
             </div>
-            <!-- TODO: 가이드 추가 필요 -->
-            <el-link href="" :underline="false">
+            <el-link href="https://github.com/naver/scavenger/blob/develop/doc/user-guide.md" :underline="false" target="_blank">
               <font-awesome-icon icon="fa-solid fa-book"/>&nbsp;Learn more
             </el-link>
           </div>
@@ -176,7 +175,7 @@ export default {
     createCustomer() {
       const params = {
         name: this.configuration.name,
-      }
+      };
 
       this.$http.post("/customers", params)
         .then(res => {
@@ -191,7 +190,8 @@ export default {
           }
         });
       this.dialogTableVisible = false;
+      this.empty = false;
     },
-  }
+  },
 };
 </script>

@@ -5,13 +5,7 @@
   <el-dialog v-model="dialogTableVisible" class="dialog" align-center width="40%" :show-close="false" @open="init()">
     <template #header="{ close, titleId, titleClass }">
       <div class="dialog-header">
-        <h4 :id="titleId" :class="titleClass">
-          {{ $t("message.manage.github.create-title") }}
-          <!-- TODO: 가이드 추가 필요 -->
-          <el-link :underline="false" href="" target="_blank">
-            <font-awesome-icon icon="fa-solid fa-circle-question"/>
-          </el-link>
-        </h4>
+        <h4 :id="titleId" :class="titleClass">{{ $t("message.manage.github.create-title") }}</h4>
         <el-button text @click="close">
           <font-awesome-icon icon="fa-solid fa-xmark"/>
         </el-button>
