@@ -9,8 +9,7 @@
               $t("message.snapshot.form.edit-title", [this.selectedSnapshot.id]) :
               $t("message.snapshot.form.create-title")
           }}
-          <!-- TODO: 가이드 추가 필요 -->
-          <el-link :underline="false" href="" target="_blank">
+          <el-link :underline="false" href="https://github.com/naver/scavenger/blob/develop/doc/user-guide.md#create-snapshot" target="_blank">
             <font-awesome-icon icon="fa-solid fa-circle-question"/>
           </el-link>
         </h4>
