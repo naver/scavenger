@@ -76,11 +76,11 @@ tasks.withType<KotlinCompile> {
 }
 
 tasks.withType<Jar> {
-    archiveFileName.set("${project.name}.jar")
+    archiveFileName.set("${project.name}-${project.version}.jar")
 }
 
 tasks.withType<BootJar> {
-    archiveFileName.set("${project.name}-boot.jar")
+    archiveFileName.set("${project.name}-boot-${project.version}.jar")
 }
 
 repositories {
