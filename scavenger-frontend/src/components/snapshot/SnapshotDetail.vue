@@ -97,7 +97,7 @@ export default {
 
     filterInvokedAtMillisStr() {
       if (this.snapshot.filterInvokedAtMillis === 0) return "-";
-      return new Moment(useStore().snapshots.filterInvokedAtMillis).format("YYYY.MM.DD");
+      return new Moment(this.snapshot.filterInvokedAtMillis).format("YYYY.MM.DD");
     },
 
     createdAtStr() {

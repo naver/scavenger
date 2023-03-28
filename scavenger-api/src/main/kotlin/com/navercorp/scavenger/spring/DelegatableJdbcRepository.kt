@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import java.util.Optional
 
-interface DelegatableJdbcRepository<T, ID> : JdbcRepository<T, ID> {
+interface DelegatableJdbcRepository<T : Any, ID : Any> : JdbcRepository<T, ID> {
     override fun count(): Long
 
     override fun delete(entity: T)
