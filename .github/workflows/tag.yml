@@ -1,0 +1,30 @@
+name: Tag
+
+run-name: Create Tag
+
+on:
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
+
+jobs:
+  if_merged:
+    if: github.event.pull_request.merged == true && startsWith( github.event.pull_request.title, 'release' )
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.RELEASE_ACTIONS_TOKEN }}
+      - name: Extract version
+        run: echo "version=$(echo '${{ github.event.pull_request.title }}' | egrep -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}')" >> $GITHUB_OUTPUT
+        id: extract_version
+      - name: Set git config
+        run: |
+          git config user.name sohyun-ku
+          git config user.email sohyun-ku@nts-corp.com
+          git branch release/${{ steps.extract_version.outputs.version }}
+      - name: Create tag
+        run: ./gradlew :release -Prelease.useAutomaticVersion=true -Prelease.releaseVersion=${{ steps.extract_version.outputs.version }}

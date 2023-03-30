@@ -1,8 +1,12 @@
 name: Release
+
+run-name: Create Release
+
 on:
   push:
-    branches:
-      - 'release/*'
+    tags:
+      - "v*.*.*"
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -14,19 +18,18 @@ jobs:
         with:
           distribution: 'zulu'
           java-version: '11'
+      - name: Extract tag version
+        run: echo "tag=$(echo '${{ github.ref_name }}' | egrep -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}')" >> $GITHUB_OUTPUT
+        id: extract_tag_version
       - name: Build project
         run: ./gradlew assemble
-      - name: Extract version
-        run: echo "version=$(echo '${{ github.event.head_commit.message }}' | egrep -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}')" >> $GITHUB_OUTPUT
-        id: extract_version
       - name: Create Release
         uses: softprops/action-gh-release@v1
         with:
           token: ${{ secrets.RELEASE_ACTIONS_TOKEN }}
-          tag_name: v${{ steps.extract_version.outputs.version }}
           files: |
-            ./scavenger-agent-java/build/libs/scavenger-agent-java-${{ steps.extract_version.outputs.version }}.jar
-            ./scavenger-old-agent-java/build/libs/scavenger-old-agent-java-${{ steps.extract_version.outputs.version }}.jar
-            ./scavenger-api/build/libs/scavenger-api-boot-${{ steps.extract_version.outputs.version }}.jar
-            ./scavenger-collector/build/libs/scavenger-collector-boot-${{ steps.extract_version.outputs.version }}.jar
+            ./scavenger-agent-java/build/libs/scavenger-agent-java-${{ steps.extract_tag_version.outputs.tag }}.jar
+            ./scavenger-old-agent-java/build/libs/scavenger-old-agent-java-${{ steps.extract_tag_version.outputs.tag }}.jar
+            ./scavenger-api/build/libs/scavenger-api-boot-${{ steps.extract_tag_version.outputs.tag }}.jar
+            ./scavenger-collector/build/libs/scavenger-collector-boot-${{ steps.extract_tag_version.outputs.tag }}.jar
           generate_release_notes: true
