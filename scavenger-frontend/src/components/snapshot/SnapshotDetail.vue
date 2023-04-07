@@ -35,6 +35,13 @@
         <span>{{ $t("message.snapshot.filter-invoked-at-millis") }} : {{ filterInvokedAtMillisStr }}</span>
         <span>{{ $t("message.common.created-at") }} : {{ createdAtStr }}</span>
       </div>
+      <div class="snapshot-summary">
+        <span>{{ $t("message.snapshot.export") }} :
+          <el-button plain @click="">
+            {{ $t("message.snapshot.export-methods") }}
+          </el-button>
+        </span>
+      </div>
     </div>
   </div>
 </template>
