@@ -37,7 +37,7 @@
       </div>
       <div class="snapshot-summary">
         <span>{{ $t("message.snapshot.export") }} :
-          <el-button plain @click="">
+          <el-button plain @click="exportMethodInvocation()">
             {{ $t("message.snapshot.export-methods") }}
           </el-button>
         </span>
@@ -334,6 +334,24 @@ export default {
     },
     resizeHorizontal(size) {
       localStorage.setItem("scavenger.snapshot.horizontal-size", size);
+    },
+    exportMethodInvocation() {
+      const fileName = "method-invoke.tsv";
+      this.$http.get(`/customers/${this.customerId}/methods/export?fn=${fileName}`)
+        .then((response) => {
+          var csvFile = new Blob([response.data], {type: 'text/csv'});
+          var downloadLink = document.createElement("a");
+          downloadLink.download = fileName;
+          downloadLink.href = window.URL.createObjectURL(csvFile);
+          downloadLink.style.display = "none";
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+          window.URL.revokeObjectURL(downloadLink.href);
+          document.body.removeChild(downloadLink);
+        })
+        .catch((error) => {
+          console.log(error);
+        })
     },
   },
 };
