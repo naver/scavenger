@@ -73,8 +73,6 @@ export default {
         "filter-invoked-at-millis": "Filter invoked at",
         "edit": "Edit",
         "refresh": "Refresh",
-        "export": "Export",
-        "export-methods" : "Methods",
         "refresh-success": "Snapshot regeneration succeeded.",
         "delete-title": "Are you sure to delete the snapshot?",
         "delete-success": "Snapshot deleted.",
@@ -136,6 +134,10 @@ export default {
           "delete-title": "Are you sure to delete the application({0})? All associated data, such as jvm, snapshots, and invocations will be deleted.",
           "delete-success": "Application deleted."
         }
+      },
+      export: {
+        "export": "Export",
+        "method-invocation": "Method Invocation",
       }
     }
   },
@@ -212,8 +214,6 @@ export default {
         "filter-invoked-at-millis": "처리 기간",
         "edit": "변경",
         "refresh": "재생성",
-        "export": "내보내기",
-        "export-methods" : "메소드 목록",
         "refresh-success": "스냅샷 재생성 완료.",
         "delete-title": "스냅샷을 삭제하시겠습니까?",
         "delete-success": "스냅샷을 삭제했습니다.",
@@ -273,6 +273,10 @@ export default {
           "delete-title": "애플리케이션({0})을 삭제하시겠습니까? jvm, 스냅샷, 호출 기록 등 연관된 모든 데이터가 삭제됩니다.",
           "delete-success": "애플리케이션을 삭제하였습니다."
         }
+      },
+      export: {
+        "export": "내보내기",
+        "method-invocation": "메소드 호출",
       }
     }
   }

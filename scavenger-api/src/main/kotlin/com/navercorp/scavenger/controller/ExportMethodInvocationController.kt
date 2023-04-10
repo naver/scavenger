@@ -15,7 +15,7 @@ class ExportMethodInvocationController(
     private val response: HttpServletResponse,
     private val exportMethodInvocationService: ExportMethodInvocationService
 ) {
-    @GetMapping("/customers/{customerId}/methods/export", produces = ["text/csv"])
+    @GetMapping("/customers/{customerId}/export/method-invocation", produces = ["text/csv"])
     fun listMethodInvocations(
         @PathVariable customerId: Long,
         @RequestParam fn: String
