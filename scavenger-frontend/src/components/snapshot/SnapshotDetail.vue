@@ -37,7 +37,7 @@
       </div>
       <div class="snapshot-summary">
         <span>{{ $t("message.export.export") }} :
-          <el-button plain @click="exportMethodInvocation()">
+          <el-button key="plain" type="" link @click="exportMethodInvocation()">
             {{ $t("message.export.method-invocation") }}
           </el-button>
         </span>
