@@ -37,6 +37,7 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     implementation("mysql:mysql-connector-java")
+    implementation("org.apache.commons:commons-csv:1.10.0")
     implementation("org.apache.commons:commons-lang3")
     implementation("com.h2database:h2:2.1.210")
     implementation("org.liquibase:liquibase-core")
