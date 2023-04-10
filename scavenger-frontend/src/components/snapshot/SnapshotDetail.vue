@@ -36,9 +36,9 @@
         <span>{{ $t("message.common.created-at") }} : {{ createdAtStr }}</span>
       </div>
       <div class="snapshot-summary">
-        <span>{{ $t("message.snapshot.export") }} :
+        <span>{{ $t("message.export.export") }} :
           <el-button plain @click="exportMethodInvocation()">
-            {{ $t("message.snapshot.export-methods") }}
+            {{ $t("message.export.method-invocation") }}
           </el-button>
         </span>
       </div>
@@ -337,7 +337,7 @@ export default {
     },
     exportMethodInvocation() {
       const fileName = "method-invoke.tsv";
-      this.$http.get(`/customers/${this.customerId}/methods/export?fn=${fileName}`)
+      this.$http.get(`/customers/${this.customerId}/export/method-invocation?fn=${fileName}`)
         .then((response) => {
           var csvFile = new Blob([response.data], {type: 'text/csv'});
           var downloadLink = document.createElement("a");
