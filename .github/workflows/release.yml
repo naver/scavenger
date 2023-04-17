@@ -30,6 +30,6 @@ jobs:
           files: |
             ./scavenger-agent-java/build/libs/scavenger-agent-java-${{ steps.extract_tag_version.outputs.tag }}.jar
             ./scavenger-old-agent-java/build/libs/scavenger-old-agent-java-${{ steps.extract_tag_version.outputs.tag }}.jar
-            ./scavenger-api/build/libs/scavenger-api-boot-${{ steps.extract_tag_version.outputs.tag }}.jar
-            ./scavenger-collector/build/libs/scavenger-collector-boot-${{ steps.extract_tag_version.outputs.tag }}.jar
+            ./scavenger-api/build/libs/scavenger-api-${{ steps.extract_tag_version.outputs.tag }}.jar
+            ./scavenger-collector/build/libs/scavenger-collector-${{ steps.extract_tag_version.outputs.tag }}.jar
           generate_release_notes: true

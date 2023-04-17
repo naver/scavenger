@@ -25,13 +25,13 @@ https://github.com/naver/scavenger/releases
 
 Start Collector using the following command.
 
-- e.g) `java -jar scavenger-collector-boot.jar`
+- e.g) `java -jar scavenger-collector.jar`
 
 #### Configuration
 
 You can override any configuration values with `-D` option.
 
-- `java -Darmeria.port=8080 -jar scavenger-collector-boot.jar`
+- `java -Darmeria.port=8080 -jar scavenger-collector.jar`
   
 To change the http(default 8080) and grpc(default 8080) ports used by Collector, you can change the settings below.
  - `-Darmeria.port`: http, grpc uses 8080 by default
@@ -42,7 +42,7 @@ The profile can be enabled with `spring.profiles.active` configuration.</br>
 The collector uses in-memory H2 in `local` profile. </br>
 This means that the data is initialised every time the collector application starts.</br>
 If you want to work around this using file mode, you can enable the `h2` profile.
-- `java -Dspring.profiles.active=h2 -jar scavenger-collector-boot.jar`
+- `java -Dspring.profiles.active=h2 -jar scavenger-collector.jar`
 
 If you've built your own MySQL, follow the steps below.
 1. Install MySQL Server using the official [MySQL guide](https://dev.mysql.com/doc/refman/8.0/en/installing.html).
