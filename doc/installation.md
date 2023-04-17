@@ -36,6 +36,10 @@ You can override any configuration values with `-D` option.
 To change the http(default 8080) and grpc(default 8080) ports used by Collector, you can change the settings below.
  - `-Darmeria.port`: http, grpc uses 8080 by default
 
+To change the default value of 10MB for the max message size of gRPC in Collector, change the setting below.
+ - `-Darmeria.max-message-size`: 10MB by default
+    - Supports `B`, `KB`, `MB`, `GB`, and `TB` units.
+
 The collector provides two profiles: `h2` and `local`(default) </br>
 The profile can be enabled with `spring.profiles.active` configuration.</br>
 
@@ -174,6 +178,10 @@ packages=com.navercorp
 
 - Setting up the agent via `-javaagent:path/to/scavenger-agent.jar`
 - Specify the config file via `-Dscavenger.configuration=path/to/scavenger.conf`
+- To change the default value of 10MB for the max message size of gRPC in agent, change the setting below.
+- `-Dscavenger.max-message-size`
+    - Supports `B`, `KB`, `MB`, `GB`, and `TB` units.
+> **We recommend tuning your codeBase configuration before changing `scavenger.max-message-size`.**
 
 ```bash
 export JAVA_OPTS="$JAVA_OPTS -Dscavenger.configuration=$CATALINA_BASE/conf/scavenger.conf"
