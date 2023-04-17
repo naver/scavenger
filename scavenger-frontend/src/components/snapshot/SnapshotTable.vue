@@ -166,8 +166,23 @@ export default {
         })
     },
     exportSnapshot(id) {
-      console.log("exportSnapshot: " + id);
-    },
+      const fileName = "method-invoke.tsv";
+      this.$http.get(`/customers/${this.customerId}/export/method-invocation?fn=${fileName}`)
+        .then((response) => {
+          var csvFile = new Blob([response.data], {type: 'text/csv'});
+          var downloadLink = document.createElement("a");
+          downloadLink.download = fileName;
+          downloadLink.href = window.URL.createObjectURL(csvFile);
+          downloadLink.style.display = "none";
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+          window.URL.revokeObjectURL(downloadLink.href);
+          document.body.removeChild(downloadLink);
+        })
+        .catch((error) => {
+          console.log(error);
+        })
+      },
     deleteSnapshot(id) {
       ElMessageBox.confirm(
         this.$t("message.snapshot.delete-title"),
