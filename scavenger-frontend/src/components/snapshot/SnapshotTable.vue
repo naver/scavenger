@@ -166,8 +166,8 @@ export default {
         })
     },
     exportSnapshot(id) {
-      const fileName = "method-invoke.tsv";
-      this.$http.get(`/customers/${this.customerId}/export/method-invocation?fn=${fileName}`)
+      const fileName = `snapshot${id}.tsv`;
+      this.$http.get(`/customers/${this.customerId}/export/snapshot/${id}?fn=${fileName}`)
         .then((response) => {
           var csvFile = new Blob([response.data], {type: 'text/csv'});
           var downloadLink = document.createElement("a");
