@@ -35,13 +35,6 @@
         <span>{{ $t("message.snapshot.filter-invoked-at-millis") }} : {{ filterInvokedAtMillisStr }}</span>
         <span>{{ $t("message.common.created-at") }} : {{ createdAtStr }}</span>
       </div>
-      <div class="snapshot-summary">
-        <span>{{ $t("message.export.export") }} :
-          <el-button key="plain" type="" link @click="exportMethodInvocation()">
-            {{ $t("message.export.method-invocation") }}
-          </el-button>
-        </span>
-      </div>
     </div>
   </div>
 </template>
@@ -334,24 +327,6 @@ export default {
     },
     resizeHorizontal(size) {
       localStorage.setItem("scavenger.snapshot.horizontal-size", size);
-    },
-    exportMethodInvocation() {
-      const fileName = "method-invoke.tsv";
-      this.$http.get(`/customers/${this.customerId}/export/method-invocation?fn=${fileName}`)
-        .then((response) => {
-          var csvFile = new Blob([response.data], {type: 'text/csv'});
-          var downloadLink = document.createElement("a");
-          downloadLink.download = fileName;
-          downloadLink.href = window.URL.createObjectURL(csvFile);
-          downloadLink.style.display = "none";
-          document.body.appendChild(downloadLink);
-          downloadLink.click();
-          window.URL.revokeObjectURL(downloadLink.href);
-          document.body.removeChild(downloadLink);
-        })
-        .catch((error) => {
-          console.log(error);
-        })
     },
   },
 };
