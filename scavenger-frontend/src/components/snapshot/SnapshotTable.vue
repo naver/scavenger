@@ -58,6 +58,13 @@
                     </el-button>
                   </template>
                 </el-table-column>
+                <el-table-column :label="$t('message.export.export')" width="80" align="center">
+                  <template #default="scope">
+                    <el-button circle type="primary" @click="exportSnapshot(scope.row.id)">
+                      <font-awesome-icon icon="fa-solid fa-file-export"/>
+                    </el-button>
+                  </template>
+                </el-table-column>
                 <el-table-column :label="$t('message.common.delete')" width="70" align="center">
                   <template #default="scope">
                     <el-button circle type="danger" @click="deleteSnapshot(scope.row.id)">
@@ -157,6 +164,9 @@ export default {
         .then(() => {
           ElNotification.success({message: this.$t("message.snapshot.refresh-success")});
         })
+    },
+    exportSnapshot(id) {
+      console.log("exportSnapshot: " + id);
     },
     deleteSnapshot(id) {
       ElMessageBox.confirm(
