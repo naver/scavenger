@@ -54,7 +54,10 @@ class ExportSnapshotMethodService(
 
             csvWriter {
                 delimiter = '\t'
-            }.writeAll(rows, stream)
+            }.writeAll(
+                rows = rows,
+                ops = stream
+            )
         } catch (e: IOException) {
             e.printStackTrace()
         }

@@ -17,16 +17,16 @@ data class ExportSnapshotMethodDto(
     companion object {
         fun from(entity: ExportSnapshotMethodEntity): ExportSnapshotMethodDto {
             return ExportSnapshotMethodDto(
-                entity.filterInvokedAtMillis.toString(),
-                entity.packages ?: "",
-                entity.status ?: "",
-                entity.excludeAbstract ?: "",
-                entity.parent ?: "",
-                entity.signature,
-                entity.type ?: "",
-                entity.usedCount.toString(),
-                entity.unusedCount.toString(),
-                entity.lastInvokedAtMillis.toString()
+                filterInvokedAtMillis = entity.filterInvokedAtMillis.toString(),
+                packages = entity.packages ?: "",
+                status = entity.status ?: "",
+                excludeAbstract = entity.excludeAbstract ?: "",
+                parent = entity.parent ?: "",
+                signature = entity.signature,
+                type = entity.type ?: "",
+                usedCount = entity.usedCount.toString(),
+                unusedCount = entity.unusedCount.toString(),
+                lastInvokedAtMillis = entity.lastInvokedAtMillis.toString()
             )
         }
     }
