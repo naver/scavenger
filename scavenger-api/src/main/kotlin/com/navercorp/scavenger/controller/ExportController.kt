@@ -1,18 +1,22 @@
 package com.navercorp.scavenger.controller
 
 import com.navercorp.scavenger.service.ExportSnapshotMethodService
+import org.springframework.core.io.InputStreamResource
+import org.springframework.core.io.Resource
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-
-import javax.servlet.http.HttpServletResponse
+import java.io.ByteArrayInputStream
+import java.io.ByteArrayOutputStream
 
 @RestController
 @RequestMapping("/api")
 class ExportController(
-    private val response: HttpServletResponse,
     private val exportSnapshotMethodService: ExportSnapshotMethodService
 ) {
     @GetMapping("/customers/{customerId}/export/snapshot/{snapshotId}", produces = ["text/csv"])
@@ -20,14 +24,20 @@ class ExportController(
         @PathVariable customerId: Long,
         @PathVariable snapshotId: Long,
         @RequestParam fn: String
-    ) {
-        response.characterEncoding = "UTF-8"
-        response.contentType = "text/csv; charset=UTF-8"
+    ): ResponseEntity<Resource> {
+        val byteArrayInputStream = ByteArrayOutputStream().use {
+            exportSnapshotMethodService.writeDtoToTsv(it, customerId, snapshotId)
+            ByteArrayInputStream(it.toByteArray())
+        }
 
-        response.setHeader(
-            "Content-disposition",
-            "attachment;filename=$fn"
+        val headers = HttpHeaders()
+        headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=$fn")
+        headers.set(HttpHeaders.CONTENT_TYPE, "text/csv; charset=UTF-8")
+
+        return ResponseEntity(
+            InputStreamResource(byteArrayInputStream),
+            headers,
+            HttpStatus.OK
         )
-        exportSnapshotMethodService.writeDtoToTsv(response.writer, customerId, snapshotId)
     }
 }
