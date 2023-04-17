@@ -1,6 +1,6 @@
 package com.navercorp.scavenger.controller
 
-import com.navercorp.scavenger.service.ExportMethodInvocationService
+import com.navercorp.scavenger.service.ExportSnapshotMethodService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -11,13 +11,14 @@ import javax.servlet.http.HttpServletResponse
 
 @RestController
 @RequestMapping("/api")
-class ExportMethodInvocationController(
+class ExportController(
     private val response: HttpServletResponse,
-    private val exportMethodInvocationService: ExportMethodInvocationService
+    private val exportSnapshotMethodService: ExportSnapshotMethodService
 ) {
-    @GetMapping("/customers/{customerId}/export/method-invocation", produces = ["text/csv"])
-    fun listMethodInvocations(
+    @GetMapping("/customers/{customerId}/export/snapshot/{snapshotId}", produces = ["text/csv"])
+    fun exportSnapshotMethod(
         @PathVariable customerId: Long,
+        @PathVariable snapshotId: Long,
         @RequestParam fn: String
     ) {
         response.characterEncoding = "UTF-8"
@@ -27,6 +28,6 @@ class ExportMethodInvocationController(
             "Content-disposition",
             "attachment;filename=$fn"
         )
-        exportMethodInvocationService.writeDtoToTsv(response.writer, customerId)
+        exportSnapshotMethodService.writeDtoToTsv(response.writer, customerId, snapshotId)
     }
 }
