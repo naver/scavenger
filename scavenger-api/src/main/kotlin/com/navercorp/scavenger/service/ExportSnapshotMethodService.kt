@@ -3,18 +3,21 @@ package com.navercorp.scavenger.service
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
 import com.navercorp.scavenger.dto.ExportSnapshotMethodDto
 import com.navercorp.scavenger.entity.ExportSnapshotMethodEntity
-import com.navercorp.scavenger.repository.ExportSnapshotMethodRepository
+import com.navercorp.scavenger.repository.SnapshotNodeDao
 import org.springframework.stereotype.Service
 import java.io.IOException
 import java.io.OutputStream
 
 @Service
 class ExportSnapshotMethodService(
-    var exportSnapshotMethodRepository: ExportSnapshotMethodRepository
+    private val snapshotNodeDao: SnapshotNodeDao
 ) {
 
     fun writeDtoToTsv(stream: OutputStream, customerId: Long, snapshotId: Long) {
-        val data: List<ExportSnapshotMethodEntity> = exportSnapshotMethodRepository.findSnapshotMethodExport(customerId, snapshotId)
+        val data: List<ExportSnapshotMethodEntity> = snapshotNodeDao.findAllExportSnapshotNode(
+            customerId = customerId,
+            snapshotId = snapshotId
+        )
 
         lateinit var rows: MutableList<List<String>>
         try {
