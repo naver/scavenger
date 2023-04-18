@@ -6,7 +6,7 @@ import org.springframework.data.relational.core.mapping.Table
 @Table("snapshots")
 data class ExportSnapshotMethodEntity(
     @Column("filterInvokedAtMillis")
-    val filterInvokedAtMillis: Long,
+    val filterInvokedAtMillis: Long? = null,
 
     @Column("packages")
     val packages: String? = null,
@@ -15,10 +15,10 @@ data class ExportSnapshotMethodEntity(
     val status: String? = null,
 
     @Column("excludeAbstract")
-    val excludeAbstract: String? = null,
+    val excludeAbstract: Int? = null,
 
     @Column("parent")
-    val parent: String? = null,
+    val parent: String,
 
     @Column("signature")
     val signature: String,
@@ -27,10 +27,10 @@ data class ExportSnapshotMethodEntity(
     val type: String? = null,
 
     @Column("usedCount")
-    val usedCount: Int = 0,
+    val usedCount: Int,
 
     @Column("unusedCount")
-    val unusedCount: Int = 0,
+    val unusedCount: Int,
 
     @Column("lastInvokedAtMillis")
     val lastInvokedAtMillis: Long? = null,
