@@ -34,9 +34,10 @@ class ExportController(
             ByteArrayInputStream(it.toByteArray())
         }
 
-        val headers = HttpHeaders()
-        headers.set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=$fn")
-        headers.set(HttpHeaders.CONTENT_TYPE, "text/csv; charset=UTF-8")
+        val headers = HttpHeaders().apply {
+            set(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=$fn")
+            set(HttpHeaders.CONTENT_TYPE, "text/csv; charset=UTF-8")
+        }
 
         return ResponseEntity(
             InputStreamResource(byteArrayInputStream),
