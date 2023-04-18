@@ -26,7 +26,7 @@ class ExportController(
         @RequestParam fn: String
     ): ResponseEntity<Resource> {
         val byteArrayInputStream = ByteArrayOutputStream().use {
-            exportSnapshotMethodService.writeDtoToTsv(
+            exportSnapshotMethodService.writeSnapshotToTsv(
                 stream = it,
                 customerId = customerId,
                 snapshotId = snapshotId
