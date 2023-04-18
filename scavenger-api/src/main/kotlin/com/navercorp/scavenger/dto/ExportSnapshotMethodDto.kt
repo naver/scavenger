@@ -30,7 +30,6 @@ data class ExportSnapshotMethodDto(
                 lastInvokedAtMillis = entity.lastInvokedAtMillis?.let { Instant.ofEpochMilli(it) }
             )
         }
-
     }
 
     fun toList(): List<String> {
