@@ -30,5 +30,21 @@ data class ExportSnapshotMethodDto(
                 lastInvokedAtMillis = entity.lastInvokedAtMillis?.let { Instant.ofEpochMilli(it) }
             )
         }
+
+    }
+
+    fun toList(): List<String> {
+        return listOf(
+            this.filterInvokedAtMillis?.toString().orEmpty(),
+            this.packages,
+            this.status,
+            this.excludeAbstract?.toString().orEmpty(),
+            this.parent,
+            this.signature,
+            this.type,
+            this.usedCount.toString(),
+            this.unusedCount.toString(),
+            this.lastInvokedAtMillis?.toString().orEmpty()
+        )
     }
 }
