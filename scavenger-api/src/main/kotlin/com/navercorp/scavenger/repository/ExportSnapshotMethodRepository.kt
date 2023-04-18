@@ -11,23 +11,22 @@ interface ExportSnapshotMethodRepository : DelegatableJdbcRepository<ExportSnaps
     @Query(
         """
              SELECT
-                s.filterInvokedAtMillis,
-                s.packages,
-                s.status,
-                s.excludeAbstract,
-                sn.parent,
-                sn.signature,
-                sn. `type`,
-                sn.usedCount,
-                sn.unUsedCount,
-                sn.lastInvokedAtMillis
+                snapshots.filterInvokedAtMillis,
+                snapshots.packages,
+                snapshots.status,
+                snapshots.excludeAbstract,
+                snapshot_nodes.parent,
+                snapshot_nodes.signature,
+                snapshot_nodes. `type`,
+                snapshot_nodes.usedCount,
+                snapshot_nodes.unUsedCount,
+                snapshot_nodes.lastInvokedAtMillis
             FROM
-                snapshots AS s
-                JOIN snapshot_nodes AS sn
+                snapshots
+                INNER JOIN snapshot_nodes ON snapshots.id = snapshot_nodes.snapshotId
             WHERE
-                s.id = :snapshotId
-                AND s.customerId = :customerId
-                AND s.id = sn.snapshotId
+                snapshots.id = :snapshotId
+                AND snapshots.customerId = :customerId
         """
     )
     fun findSnapshotMethodExport(
