@@ -1,32 +1,33 @@
 package com.navercorp.scavenger.dto
 
 import com.navercorp.scavenger.entity.ExportSnapshotMethodEntity
+import java.time.Instant
 
 data class ExportSnapshotMethodDto(
-    val filterInvokedAtMillis: String,
+    val filterInvokedAtMillis: Instant?,
     val packages: String,
     val status: String,
-    val excludeAbstract: String,
+    val excludeAbstract: Int?,
     val parent: String,
     val signature: String,
     val type: String,
-    val usedCount: String,
-    val unusedCount: String,
-    val lastInvokedAtMillis: String
+    val usedCount: Int,
+    val unusedCount: Int,
+    val lastInvokedAtMillis: Instant?
 ) {
     companion object {
         fun from(entity: ExportSnapshotMethodEntity): ExportSnapshotMethodDto {
             return ExportSnapshotMethodDto(
-                filterInvokedAtMillis = entity.filterInvokedAtMillis.toString(),
-                packages = entity.packages ?: "",
-                status = entity.status ?: "",
-                excludeAbstract = entity.excludeAbstract ?: "",
-                parent = entity.parent ?: "",
+                filterInvokedAtMillis = entity.filterInvokedAtMillis?.let { Instant.ofEpochMilli(it) },
+                packages = entity.packages.orEmpty(),
+                status = entity.status.orEmpty(),
+                excludeAbstract = entity.excludeAbstract,
+                parent = entity.parent,
                 signature = entity.signature,
-                type = entity.type ?: "",
-                usedCount = entity.usedCount.toString(),
-                unusedCount = entity.unusedCount.toString(),
-                lastInvokedAtMillis = entity.lastInvokedAtMillis.toString()
+                type = entity.type.orEmpty(),
+                usedCount = entity.usedCount,
+                unusedCount = entity.unusedCount,
+                lastInvokedAtMillis = entity.lastInvokedAtMillis?.let { Instant.ofEpochMilli(it) }
             )
         }
     }
