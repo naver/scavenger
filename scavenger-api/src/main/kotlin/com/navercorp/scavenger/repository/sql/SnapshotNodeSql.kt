@@ -6,23 +6,23 @@ class SnapshotNodeSql : SqlGeneratorSupport() {
 
     fun findAllExportSnapshotNode(): String =
         """
-            SELECT
-                snapshots.filterInvokedAtMillis,
-                snapshots.packages,
-                snapshots.status,
-                snapshots.excludeAbstract,
-                snapshot_nodes.parent,
-                snapshot_nodes.signature,
-                snapshot_nodes. `type`,
-                snapshot_nodes.usedCount,
-                snapshot_nodes.unUsedCount,
-                snapshot_nodes.lastInvokedAtMillis
-            FROM
-                snapshots
-                INNER JOIN snapshot_nodes ON snapshots.id = snapshot_nodes.snapshotId
-            WHERE
-                snapshots.id = :snapshotId
-                AND snapshots.customerId = :customerId
+        SELECT
+            snapshots.filterInvokedAtMillis,
+            snapshots.packages,
+            snapshots.status,
+            snapshots.excludeAbstract,
+            snapshot_nodes.parent,
+            snapshot_nodes.signature,
+            snapshot_nodes. `type`,
+            snapshot_nodes.usedCount,
+            snapshot_nodes.unUsedCount,
+            snapshot_nodes.lastInvokedAtMillis
+        FROM
+            snapshots
+            INNER JOIN snapshot_nodes ON snapshots.id = snapshot_nodes.snapshotId
+        WHERE
+            snapshots.id = :snapshotId
+            AND snapshots.customerId = :customerId
         """.trimIndent()
 
     fun insert(): String =
