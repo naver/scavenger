@@ -138,6 +138,7 @@ export default {
       export: {
         "export": "Export",
         "method-invocation": "Method Invocation",
+        "fail": "Failed to export.",
       }
     }
   },
@@ -277,6 +278,7 @@ export default {
       export: {
         "export": "내보내기",
         "method-invocation": "메소드 호출",
+        "fail": "내보내기에 실패하였습니다.",
       }
     }
   }
