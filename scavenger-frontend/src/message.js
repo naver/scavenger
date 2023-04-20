@@ -277,8 +277,8 @@ export default {
       },
       export: {
         "export": "내보내기",
-        "method-invocation": "메소드 호출",
-        "fail": "내보내기에 실패하였습니다.",
+        "method-invocation": "메서드 호출",
+        "fail": "내보내기에 실패했습니다.",
       }
     }
   }
