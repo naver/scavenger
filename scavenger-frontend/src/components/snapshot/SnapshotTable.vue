@@ -179,14 +179,10 @@ export default {
           window.URL.revokeObjectURL(downloadLink.href);
           document.body.removeChild(downloadLink);
         })
-        .catch(err => {
-          if (err.response.status !== 200) {
-            ElNotification.error({
-              message: this.$t("message.export.fail")
-            });
-          }
+        .catch(() => {
+          ElNotification.error({message: this.$t("message.export.fail")});
         });
-      },
+    },
     deleteSnapshot(id) {
       ElMessageBox.confirm(
         this.$t("message.snapshot.delete-title"),
