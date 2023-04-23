@@ -1,6 +1,6 @@
 package com.navercorp.scavenger.dto
 
-import com.navercorp.scavenger.entity.SnapshotExportEntity
+import com.navercorp.scavenger.entity.SnapshotExportDbRow
 import java.time.Instant
 
 data class SnapshotExportDto(
@@ -16,7 +16,7 @@ data class SnapshotExportDto(
     val lastInvokedAtMillis: Instant?
 ) {
     companion object {
-        fun from(entity: SnapshotExportEntity): SnapshotExportDto {
+        fun from(entity: SnapshotExportDbRow): SnapshotExportDto {
             return SnapshotExportDto(
                 filterInvokedAtMillis = entity.filterInvokedAtMillis?.let { Instant.ofEpochMilli(it) },
                 packages = entity.packages.orEmpty(),

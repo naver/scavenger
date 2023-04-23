@@ -1,6 +1,6 @@
 package com.navercorp.scavenger.repository
 
-import com.navercorp.scavenger.entity.SnapshotExportEntity
+import com.navercorp.scavenger.entity.SnapshotExportDbRow
 import com.navercorp.scavenger.entity.SnapshotNodeEntity
 import com.navercorp.scavenger.repository.sql.SnapshotNodeSql
 import com.navercorp.spring.data.jdbc.plus.sql.provider.EntityJdbcProvider
@@ -17,13 +17,13 @@ class SnapshotNodeDao(
     fun findAllExportSnapshotNode(
         customerId: Long,
         snapshotId: Long
-    ): List<SnapshotExportEntity> {
+    ): List<SnapshotExportDbRow> {
         return select(
             sql.findAllExportSnapshotNode(),
             mapParameterSource()
                 .addValue("customerId", customerId)
                 .addValue("snapshotId", snapshotId),
-            SnapshotExportEntity::class.java
+            SnapshotExportDbRow::class.java
         )
     }
 
