@@ -105,7 +105,7 @@ class SnapshotController(
         )
     }
 
-    @GetMapping("/customers/{customerId}/export/snapshot/{snapshotId}", produces = ["text/csv"])
+    @GetMapping("/customers/{customerId}/snapshot/{snapshotId}/export", produces = ["text/csv"])
     fun exportSnapshot(
         @PathVariable customerId: Long,
         @PathVariable snapshotId: Long,

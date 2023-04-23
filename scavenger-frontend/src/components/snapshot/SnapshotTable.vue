@@ -167,7 +167,7 @@ export default {
     },
     exportSnapshot(id) {
       const fileName = `snapshot${id}.tsv`;
-      this.$http.get(`/customers/${this.customerId}/export/snapshot/${id}?fn=${fileName}`)
+      this.$http.get(`/customers/${this.customerId}/snapshot/${id}/export?fn=${fileName}`)
         .then((response) => {
           const csvFile = new Blob([response.data], {type: 'text/csv'});
           const downloadLink = document.createElement("a");
