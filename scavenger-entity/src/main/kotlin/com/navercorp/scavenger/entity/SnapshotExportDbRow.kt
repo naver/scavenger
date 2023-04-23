@@ -1,10 +1,8 @@
 package com.navercorp.scavenger.entity
 
 import org.springframework.data.relational.core.mapping.Column
-import org.springframework.data.relational.core.mapping.Table
 
-@Table("snapshots")
-data class SnapshotExportEntity(
+data class SnapshotExportDbRow(
     @Column("filterInvokedAtMillis")
     val filterInvokedAtMillis: Long? = null,
 
