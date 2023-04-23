@@ -75,7 +75,7 @@ public class GrpcClient implements AutoCloseable {
         if (channel == null || channel.isShutdown()) {
             log.fine("[scavenger] creating new grpc channel");
             try {
-                int maxMessageSize = System.getProperty(MAX_MESSAGE_SIZE_CONFIG) != null ? maxMessageSize() : DEFAULT_MAX_MESSAGE_SIZE;
+                int maxMessageSize = maxMessageSize();
                 channel = createChannel(maxMessageSize);
                 stub = GrpcAgentServiceGrpc.newBlockingStub(channel)
                     .withMaxInboundMessageSize(maxMessageSize)
@@ -98,6 +98,10 @@ public class GrpcClient implements AutoCloseable {
 
     private int maxMessageSize() {
         String mexMessageSize = System.getProperty(MAX_MESSAGE_SIZE_CONFIG);
+        if (mexMessageSize == null) {
+            return DEFAULT_MAX_MESSAGE_SIZE;
+        }
+
         Matcher matcher = DATA_SIZE_PATTERN.matcher(mexMessageSize);
         if (!matcher.matches()) {
             log.log(Level.WARNING, "[scavenger] 'scavenger.max-message-size' is not a valid data size. use the default value of 10MB");
