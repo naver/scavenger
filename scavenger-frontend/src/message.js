@@ -78,6 +78,8 @@ export default {
         "delete-success": "Snapshot deleted.",
         "empty-agent": "Before creating a snapshot, please start Scavenger agent.",
         "limit": "Maximum number of snapshot creation reached. Please delete the existing snapshot.",
+        "export": "Export",
+        "export-fail": "Failed to export.",
         form: {
           "create-title": "Create Snapshot",
           "edit-title": "Edit Snapshot ({0})",
@@ -134,11 +136,6 @@ export default {
           "delete-title": "Are you sure to delete the application({0})? All associated data, such as jvm, snapshots, and invocations will be deleted.",
           "delete-success": "Application deleted."
         }
-      },
-      export: {
-        "export": "Export",
-        "method-invocation": "Method Invocation",
-        "fail": "Failed to export.",
       }
     }
   },
@@ -220,6 +217,8 @@ export default {
         "delete-success": "스냅샷을 삭제했습니다.",
         "empty-agent": "스냅샷을 생성하기 전에, 수집을 시작해 주세요.",
         "limit": "최대 스냅샷 생성 개수에 도달하였습니다. 기존 스냅샷을 삭제해 주세요.",
+        "export": "내보내기",
+        "export-fail": "내보내기에 실패했습니다.",
         form: {
           "create-title": "스냅샷 생성",
           "edit-title": "스냅샷 변경 ({0})",
@@ -274,11 +273,6 @@ export default {
           "delete-title": "애플리케이션({0})을 삭제하시겠습니까? jvm, 스냅샷, 호출 기록 등 연관된 모든 데이터가 삭제됩니다.",
           "delete-success": "애플리케이션을 삭제하였습니다."
         }
-      },
-      export: {
-        "export": "내보내기",
-        "method-invocation": "메서드 호출",
-        "fail": "내보내기에 실패했습니다.",
       }
     }
   }
