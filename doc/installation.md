@@ -77,7 +77,7 @@ Start API using the following command.
 When you start the API, you need to set the value `scavenger.collector-server-url` with the `-D` option so that the API
 knows the collector's url.
 
-- e.g) `java -Dscavenger.collector-server-url=http://localhost:9090 -jar scavenger-api-boot.jar`
+- e.g) `java -Dscavenger.collector-server-url=http://localhost:8080 -jar scavenger-api-boot.jar`
 
 #### Configuration
 
