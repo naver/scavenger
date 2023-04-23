@@ -58,7 +58,7 @@
                     </el-button>
                   </template>
                 </el-table-column>
-                <el-table-column :label="$t('message.export.export')" width="80" align="center">
+                <el-table-column :label="$t('message.snapshot.export')" width="80" align="center">
                   <template #default="scope">
                     <el-button circle type="primary" @click="exportSnapshot(scope.row.id)">
                       <font-awesome-icon icon="fa-solid fa-file-export"/>
@@ -180,7 +180,7 @@ export default {
           document.body.removeChild(downloadLink);
         })
         .catch(() => {
-          ElNotification.error({message: this.$t("message.export.fail")});
+          ElNotification.error({message: this.$t("message.snapshot.export-fail")});
         });
     },
     deleteSnapshot(id) {

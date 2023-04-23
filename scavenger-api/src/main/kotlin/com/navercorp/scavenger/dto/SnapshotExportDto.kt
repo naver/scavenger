@@ -1,9 +1,9 @@
 package com.navercorp.scavenger.dto
 
-import com.navercorp.scavenger.entity.ExportSnapshotMethodEntity
+import com.navercorp.scavenger.entity.SnapshotExportEntity
 import java.time.Instant
 
-data class ExportSnapshotMethodDto(
+data class SnapshotExportDto(
     val filterInvokedAtMillis: Instant?,
     val packages: String,
     val status: String,
@@ -16,8 +16,8 @@ data class ExportSnapshotMethodDto(
     val lastInvokedAtMillis: Instant?
 ) {
     companion object {
-        fun from(entity: ExportSnapshotMethodEntity): ExportSnapshotMethodDto {
-            return ExportSnapshotMethodDto(
+        fun from(entity: SnapshotExportEntity): SnapshotExportDto {
+            return SnapshotExportDto(
                 filterInvokedAtMillis = entity.filterInvokedAtMillis?.let { Instant.ofEpochMilli(it) },
                 packages = entity.packages.orEmpty(),
                 status = entity.status.orEmpty(),

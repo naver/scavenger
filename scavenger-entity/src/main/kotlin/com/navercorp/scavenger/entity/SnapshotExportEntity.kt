@@ -4,7 +4,7 @@ import org.springframework.data.relational.core.mapping.Column
 import org.springframework.data.relational.core.mapping.Table
 
 @Table("snapshots")
-data class ExportSnapshotMethodEntity(
+data class SnapshotExportEntity(
     @Column("filterInvokedAtMillis")
     val filterInvokedAtMillis: Long? = null,
 

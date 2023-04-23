@@ -1,14 +1,14 @@
 package com.navercorp.scavenger.service
 
 import com.github.doyaaaaaken.kotlincsv.dsl.csvWriter
-import com.navercorp.scavenger.dto.ExportSnapshotMethodDto
+import com.navercorp.scavenger.dto.SnapshotExportDto
 import com.navercorp.scavenger.repository.SnapshotNodeDao
 import org.springframework.stereotype.Service
 import java.io.IOException
 import java.io.OutputStream
 
 @Service
-class ExportSnapshotMethodService(
+class SnapshotExportService(
     private val snapshotNodeDao: SnapshotNodeDao
 ) {
     fun writeSnapshotToTsv(stream: OutputStream, customerId: Long, snapshotId: Long) {
@@ -33,7 +33,7 @@ class ExportSnapshotMethodService(
                 snapshotNodeDao.findAllExportSnapshotNode(
                     customerId = customerId,
                     snapshotId = snapshotId
-                ).map { writeRow(ExportSnapshotMethodDto.from(it).toList()) }
+                ).map { writeRow(SnapshotExportDto.from(it).toList()) }
             }
         } catch (e: IOException) {
             e.printStackTrace()
