@@ -9,15 +9,20 @@ import com.navercorp.scavenger.controller.GrpcAgentController
 import com.navercorp.scavenger.exception.LicenseKeyNotFoundException
 import io.grpc.Status
 import org.apache.catalina.connector.Connector
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.boot.web.embedded.tomcat.TomcatWebServer
 import org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.util.unit.DataSize
 
 @Configuration
 @ConditionalOnProperty(name = ["armeria.server-enabled"], havingValue = "true", matchIfMissing = true)
-class ArmeriaConfiguration(val grpcAgentController: GrpcAgentController) {
+class ArmeriaConfiguration(
+    val grpcAgentController: GrpcAgentController,
+    @Value("\${armeria.max-message-size}") val maxMessageSize: DataSize,
+) {
 
     fun getConnector(applicationContext: ServletWebServerApplicationContext): Connector {
         return (applicationContext.webServer as TomcatWebServer)
@@ -43,6 +48,7 @@ class ArmeriaConfiguration(val grpcAgentController: GrpcAgentController) {
                     .addService(grpcAgentController)
                     .addExceptionMapping(IllegalArgumentException::class.java, Status.INVALID_ARGUMENT)
                     .addExceptionMapping(LicenseKeyNotFoundException::class.java, Status.UNAUTHENTICATED)
+                    .maxRequestMessageLength(maxMessageSize.toBytes().toInt())
                     .build()
                 )
         }

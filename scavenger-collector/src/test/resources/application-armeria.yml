@@ -6,3 +6,4 @@ armeria:
   ports:
     - port: 0
       protocols: HTTP
+  max-message-size: 10MB

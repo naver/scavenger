@@ -40,3 +40,4 @@ armeria:
   ports:
     - port: ${armeria.port:8080}
       protocols: HTTP
+  max-message-size: 10MB
