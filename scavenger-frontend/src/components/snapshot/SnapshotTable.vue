@@ -85,6 +85,8 @@ import SnapshotForm from "./SnapshotForm.vue";
 import Momnet from "moment";
 import {useStore} from "../util/store";
 import {ElMessageBox, ElNotification} from "element-plus";
+import * as Xlsx from 'xlsx'
+import Moment from "moment/moment";
 
 export default {
   components: {SnapshotForm},
@@ -166,18 +168,18 @@ export default {
         })
     },
     exportSnapshot(id) {
-      const fileName = `snapshot${id}.tsv`;
-      this.$http.get(`/customers/${this.customerId}/snapshot/${id}/export?fn=${fileName}`)
+      this.$http.get(`/customers/${this.customerId}/snapshot/${id}/export`)
         .then((response) => {
-          const csvFile = new Blob([response.data], {type: 'text/csv'});
-          const downloadLink = document.createElement("a");
-          downloadLink.download = fileName;
-          downloadLink.href = window.URL.createObjectURL(csvFile);
-          downloadLink.style.display = "none";
-          document.body.appendChild(downloadLink);
-          downloadLink.click();
-          window.URL.revokeObjectURL(downloadLink.href);
-          document.body.removeChild(downloadLink);
+          const data = response.data;
+          data.forEach(row => {
+            row.filterInvokedAtMillis = Moment.unix(row.filterInvokedAtMillis).format("YYYY.MM.DD HH:mm:ss");
+            row.lastInvokedAtMillis = row.lastInvokedAtMillis == null ? null : Moment.unix(row.lastInvokedAtMillis).format("YYYY.MM.DD HH:mm:ss");
+          })
+
+          const workBook = Xlsx.utils.book_new();
+          const workSheet = Xlsx.utils.json_to_sheet(data);
+          Xlsx.utils.book_append_sheet(workBook, workSheet);
+          Xlsx.writeFile(workBook, `snapshot_${id}.csv`);
         })
         .catch(() => {
           ElNotification.error({message: this.$t("message.snapshot.export-fail")});

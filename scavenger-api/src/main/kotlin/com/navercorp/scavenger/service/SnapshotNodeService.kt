@@ -1,5 +1,6 @@
 package com.navercorp.scavenger.service
 
+import com.navercorp.scavenger.dto.SnapshotExportDto
 import com.navercorp.scavenger.entity.MethodInvocationEntity
 import com.navercorp.scavenger.entity.SnapshotEntity
 import com.navercorp.scavenger.entity.SnapshotNodeEntity
@@ -51,6 +52,18 @@ class SnapshotNodeService(
         snapshotNodeId: Long? = null
     ): List<SnapshotNodeEntity> {
         return snapshotNodeDao.selectAllBySignatureContaining(customerId, snapshotId, signature, snapshotNodeId)
+    }
+
+    fun getAllExportSnapshotNode(
+        customerId: Long,
+        snapshotId: Long
+    ): List<SnapshotExportDto> {
+        return snapshotNodeDao.findAllExportSnapshotNode(
+            customerId = customerId,
+            snapshotId = snapshotId
+        ).map {
+            SnapshotExportDto.from(it)
+        }
     }
 
     private fun filterByPackagesAntMatch(
