@@ -168,7 +168,7 @@ export default {
         })
     },
     exportSnapshot(id) {
-      this.$http.get(`/customers/${this.customerId}/snapshot/${id}/export`)
+      this.$http.get(`/customers/${this.customerId}/snapshots/${id}/export`)
         .then((response) => {
           const data = response.data;
           data.forEach(row => {
