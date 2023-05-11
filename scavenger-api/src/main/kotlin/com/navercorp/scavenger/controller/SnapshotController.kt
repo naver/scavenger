@@ -98,9 +98,9 @@ class SnapshotController(
     }
 
     @GetMapping("/customers/{customerId}/snapshots/{snapshotId}/export")
-    fun exportSnapshot(
+    fun getAllExportSnapshotNode(
         @PathVariable customerId: Long,
-        @PathVariable snapshotId: Long,
+        @PathVariable snapshotId: Long
     ): List<SnapshotExportDto> {
         return snapshotNodeService.getAllExportSnapshotNode(customerId, snapshotId)
     }

@@ -58,7 +58,7 @@ class SnapshotNodeService(
         customerId: Long,
         snapshotId: Long
     ): List<SnapshotExportDto> {
-        return snapshotNodeDao.findAllExportSnapshotNode(
+        return snapshotNodeDao.selectAllExportSnapshotNode(
             customerId = customerId,
             snapshotId = snapshotId
         ).map {

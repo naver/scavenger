@@ -14,12 +14,12 @@ class SnapshotNodeDao(
 ) : JdbcDaoSupport(entityJdbcProvider), SnapshotNodeRepository by snapshotNodeRepository {
     private val sql: SnapshotNodeSql = super.sqls(::SnapshotNodeSql)
 
-    fun findAllExportSnapshotNode(
+    fun selectAllExportSnapshotNode(
         customerId: Long,
         snapshotId: Long
     ): List<SnapshotExportDbRow> {
         return select(
-            sql.findAllExportSnapshotNode(),
+            sql.selectAllExportSnapshotNode(),
             mapParameterSource()
                 .addValue("customerId", customerId)
                 .addValue("snapshotId", snapshotId),
