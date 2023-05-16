@@ -167,23 +167,24 @@ export default {
           ElNotification.success({message: this.$t("message.snapshot.refresh-success")});
         })
     },
-    exportSnapshot(id) {
-      this.$http.get(`/customers/${this.customerId}/snapshots/${id}/export`)
-        .then((response) => {
-          const data = response.data;
-          data.forEach(row => {
-            row.filterInvokedAtMillis = Moment.unix(row.filterInvokedAtMillis).format("YYYY.MM.DD HH:mm:ss");
-            row.lastInvokedAtMillis = row.lastInvokedAtMillis == null ? null : Moment.unix(row.lastInvokedAtMillis).format("YYYY.MM.DD HH:mm:ss");
-          })
+    async exportSnapshot(id) {
+      const header = ["filterInvokedAtMillis", "packages", "status", "excludeAbstract", "parent", "signature", "type", "usedCount", "unusedCount", "lastInvokedAtMillis"];
+      const workBook = Xlsx.utils.book_new();
+      const workSheet = Xlsx.utils.json_to_sheet([], {header});
+      const page = await this.$http.get(`/customers/${this.customerId}/snapshots/${id}/export/total-page`).then(res => res.data.totalPage);
 
-          const workBook = Xlsx.utils.book_new();
-          const workSheet = Xlsx.utils.json_to_sheet(data);
-          Xlsx.utils.book_append_sheet(workBook, workSheet);
-          Xlsx.writeFile(workBook, `snapshot_${id}.csv`);
-        })
-        .catch(() => {
-          ElNotification.error({message: this.$t("message.snapshot.export-fail")});
+      for (let idx = 0; idx <= page; idx++) {
+        const response = await this.$http.get(`/customers/${this.customerId}/snapshots/${id}/export?page=${idx}`)
+        const data = response.data.map(row => {
+          row.filterInvokedAtMillis = Moment.unix(row.filterInvokedAtMillis).format("YYYY.MM.DD HH:mm:ss");
+          row.lastInvokedAtMillis = row.lastInvokedAtMillis == null ? null : Moment.unix(row.lastInvokedAtMillis).format("YYYY.MM.DD HH:mm:ss");
+          return row;
         });
+        Xlsx.utils.sheet_add_json(workSheet, data, {header, origin: -1, skipHeader: true})
+      }
+
+      Xlsx.utils.book_append_sheet(workBook, workSheet);
+      Xlsx.writeFile(workBook, `snapshot_${id}.csv`);
     },
     deleteSnapshot(id) {
       ElMessageBox.confirm(

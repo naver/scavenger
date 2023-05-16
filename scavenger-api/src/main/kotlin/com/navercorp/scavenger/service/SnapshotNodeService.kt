@@ -56,14 +56,29 @@ class SnapshotNodeService(
 
     fun getAllExportSnapshotNode(
         customerId: Long,
-        snapshotId: Long
+        snapshotId: Long,
+        page: Long
     ): List<SnapshotExportDto> {
         return snapshotNodeDao.selectAllExportSnapshotNode(
             customerId = customerId,
-            snapshotId = snapshotId
+            snapshotId = snapshotId,
+            offset = page * EXPORT_SNAPSHOT_NODE_CHUNK_SIZE,
+            size = EXPORT_SNAPSHOT_NODE_CHUNK_SIZE
         ).map {
             SnapshotExportDto.from(it)
         }
+    }
+
+    fun getAllExportSnapshotNodeTotalPage(
+        customerId: Long,
+        snapshotId: Long
+    ): Long {
+        val totalCount = snapshotNodeDao.countAllExportSnapshotNode(
+            customerId = customerId,
+            snapshotId = snapshotId
+        )
+
+        return totalCount / EXPORT_SNAPSHOT_NODE_CHUNK_SIZE
     }
 
     private fun filterByPackagesAntMatch(
@@ -207,6 +222,7 @@ class SnapshotNodeService(
 
     companion object {
         private const val BATCH_CHUNK_SIZE = 1000
+        private const val EXPORT_SNAPSHOT_NODE_CHUNK_SIZE = 10_000L
         private val DELIMITERS = arrayOf(".", "$")
     }
 }

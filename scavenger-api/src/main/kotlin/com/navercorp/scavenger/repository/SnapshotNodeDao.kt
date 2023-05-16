@@ -5,25 +5,43 @@ import com.navercorp.scavenger.entity.SnapshotNodeEntity
 import com.navercorp.scavenger.repository.sql.SnapshotNodeSql
 import com.navercorp.spring.data.jdbc.plus.sql.provider.EntityJdbcProvider
 import com.navercorp.spring.data.jdbc.plus.sql.support.JdbcDaoSupport
+import com.navercorp.spring.data.jdbc.plus.sql.support.trait.SingleValueSelectTrait
 import org.springframework.stereotype.Repository
 
 @Repository
 class SnapshotNodeDao(
     entityJdbcProvider: EntityJdbcProvider,
     snapshotNodeRepository: SnapshotNodeRepository
-) : JdbcDaoSupport(entityJdbcProvider), SnapshotNodeRepository by snapshotNodeRepository {
+) : JdbcDaoSupport(entityJdbcProvider), SingleValueSelectTrait, SnapshotNodeRepository by snapshotNodeRepository {
     private val sql: SnapshotNodeSql = super.sqls(::SnapshotNodeSql)
 
     fun selectAllExportSnapshotNode(
         customerId: Long,
-        snapshotId: Long
+        snapshotId: Long,
+        offset: Long,
+        size: Long
     ): List<SnapshotExportDbRow> {
         return select(
             sql.selectAllExportSnapshotNode(),
             mapParameterSource()
                 .addValue("customerId", customerId)
-                .addValue("snapshotId", snapshotId),
+                .addValue("snapshotId", snapshotId)
+                .addValue("offset", offset)
+                .addValue("size", size),
             SnapshotExportDbRow::class.java
+        )
+    }
+
+    fun countAllExportSnapshotNode(
+        customerId: Long,
+        snapshotId: Long
+    ): Long {
+        return selectSingleValue(
+            sql.countAllExportSnapshotNode(),
+            mapParameterSource()
+                .addValue("customerId", customerId)
+                .addValue("snapshotId", snapshotId),
+            Long::class.java
         )
     }
 

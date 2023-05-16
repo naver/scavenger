@@ -100,9 +100,18 @@ class SnapshotController(
     @GetMapping("/customers/{customerId}/snapshots/{snapshotId}/export")
     fun getAllExportSnapshotNode(
         @PathVariable customerId: Long,
-        @PathVariable snapshotId: Long
+        @PathVariable snapshotId: Long,
+        @RequestParam page: Long
     ): List<SnapshotExportDto> {
-        return snapshotNodeService.getAllExportSnapshotNode(customerId, snapshotId)
+        return snapshotNodeService.getAllExportSnapshotNode(customerId, snapshotId, page)
+    }
+
+    @GetMapping("/customers/{customerId}/snapshots/{snapshotId}/export/total-page")
+    fun getAllExportSnapshotNodeTotalPage(
+        @PathVariable customerId: Long,
+        @PathVariable snapshotId: Long,
+    ): Map<String, Long> {
+        return mapOf("totalPage" to snapshotNodeService.getAllExportSnapshotNodeTotalPage(customerId, snapshotId))
     }
 
     data class CreateSnapshotRequestParams(

@@ -23,6 +23,19 @@ class SnapshotNodeSql : SqlGeneratorSupport() {
         WHERE
             snapshots.id = :snapshotId
             AND snapshots.customerId = :customerId
+        LIMIT :offset, :size
+        """.trimIndent()
+
+    fun countAllExportSnapshotNode(): String =
+        """
+        SELECT
+            COUNT(1)
+        FROM
+            snapshots
+            INNER JOIN snapshot_nodes ON snapshots.id = snapshot_nodes.snapshotId
+        WHERE
+            snapshots.id = :snapshotId
+            AND snapshots.customerId = :customerId
         """.trimIndent()
 
     fun insert(): String =
