@@ -26,6 +26,7 @@ class AgentStateSql : SqlGeneratorSupport() {
         WHERE
             customerId = :customerId
             AND lastPolledAt < :lastPolledAt
+        LIMIT 100000
         """.trimIndent()
 
     fun deleteGarbageLastPolledAtBefore(): String =
