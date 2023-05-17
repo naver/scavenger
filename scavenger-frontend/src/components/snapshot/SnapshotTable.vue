@@ -82,11 +82,10 @@
 </template>
 <script>
 import SnapshotForm from "./SnapshotForm.vue";
-import Momnet from "moment";
+import Moment from "moment";
 import {useStore} from "../util/store";
 import {ElMessageBox, ElNotification} from "element-plus";
 import {utils, writeFile} from 'xlsx'
-import Moment from "moment/moment";
 
 export default {
   components: {SnapshotForm},
@@ -152,9 +151,9 @@ export default {
             "application": obj.applications.map(obj => this.applications[obj].name).join(", "),
             "environment": obj.environments.map(obj => this.environments[obj].name).join(", "),
             "filterInvokedAtMillis": obj.filterInvokedAtMillis > 0 ?
-              new Momnet(obj.filterInvokedAtMillis).format("YYYY.MM.DD HH:mm") : "-",
+              new Moment(obj.filterInvokedAtMillis).format("YYYY.MM.DD HH:mm") : "-",
             "packages": obj.packages,
-            "createdAt": Momnet.unix(obj.createdAt).fromNow(),
+            "createdAt": Moment.unix(obj.createdAt).fromNow(),
           }),
         );
     },
