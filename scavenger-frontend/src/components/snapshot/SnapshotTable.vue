@@ -85,7 +85,7 @@ import SnapshotForm from "./SnapshotForm.vue";
 import Momnet from "moment";
 import {useStore} from "../util/store";
 import {ElMessageBox, ElNotification} from "element-plus";
-import * as Xlsx from 'xlsx'
+import {utils, writeFile} from 'xlsx'
 import Moment from "moment/moment";
 
 export default {
@@ -169,22 +169,27 @@ export default {
     },
     async exportSnapshot(id) {
       const header = ["filterInvokedAtMillis", "packages", "status", "excludeAbstract", "parent", "signature", "type", "usedCount", "unusedCount", "lastInvokedAtMillis"];
-      const workBook = Xlsx.utils.book_new();
-      const workSheet = Xlsx.utils.json_to_sheet([], {header});
-      const page = await this.$http.get(`/customers/${this.customerId}/snapshots/${id}/export/total-page`).then(res => res.data.totalPage);
+      const workBook = utils.book_new();
+      const workSheet = utils.json_to_sheet([], {header});
 
-      for (let idx = 0; idx <= page; idx++) {
-        const response = await this.$http.get(`/customers/${this.customerId}/snapshots/${id}/export?page=${idx}`)
-        const data = response.data.map(row => {
-          row.filterInvokedAtMillis = Moment.unix(row.filterInvokedAtMillis).format("YYYY.MM.DD HH:mm:ss");
-          row.lastInvokedAtMillis = row.lastInvokedAtMillis == null ? null : Moment.unix(row.lastInvokedAtMillis).format("YYYY.MM.DD HH:mm:ss");
-          return row;
-        });
-        Xlsx.utils.sheet_add_json(workSheet, data, {header, origin: -1, skipHeader: true})
+      try {
+        const page = await this.$http.get(`/customers/${this.customerId}/snapshots/${id}/export/total-page`).then(res => res.data.totalPage);
+
+        for (let idx = 0; idx <= page; idx++) {
+          const response = await this.$http.get(`/customers/${this.customerId}/snapshots/${id}/export?page=${idx}`)
+          const data = response.data.map(row => {
+            row.filterInvokedAtMillis = Moment.unix(row.filterInvokedAtMillis).format("YYYY.MM.DD HH:mm:ss");
+            row.lastInvokedAtMillis = row.lastInvokedAtMillis == null ? null : Moment.unix(row.lastInvokedAtMillis).format("YYYY.MM.DD HH:mm:ss");
+            return row;
+          });
+          utils.sheet_add_json(workSheet, data, {header, origin: -1, skipHeader: true})
+        }
+
+        utils.book_append_sheet(workBook, workSheet);
+        writeFile(workBook, `snapshot_${id}.csv`);
+      } catch (e) {
+        ElNotification.error({message: this.$t("message.snapshot.export-fail")});
       }
-
-      Xlsx.utils.book_append_sheet(workBook, workSheet);
-      Xlsx.writeFile(workBook, `snapshot_${id}.csv`);
     },
     deleteSnapshot(id) {
       ElMessageBox.confirm(
