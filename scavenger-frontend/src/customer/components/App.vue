@@ -84,7 +84,7 @@
                 <el-form label-position="left" :model="configuration" label-width="auto" ref="scavengerForm"
                          size="small">
                   <el-form-item :label="$t('message.common.name')" :prop="'name'">
-                    <el-input v-model="configuration.name"/>
+                    <el-input v-model="configuration.name" @keydown.enter.prevent="createCustomer('scavengerForm')"/>
                   </el-form-item>
                   <div class="form-submit">
                     <el-form-item size="default">
