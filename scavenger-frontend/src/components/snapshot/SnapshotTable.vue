@@ -171,7 +171,7 @@ export default {
       const header = ["filterInvokedAtMillis", "packages", "status", "excludeAbstract", "parent", "signature", "type", "usedCount", "unusedCount", "lastInvokedAtMillis"];
       const workBook = utils.book_new();
       const workSheet = utils.json_to_sheet([], {header});
-
+      const loader = this.$loading.show()
       try {
         const page = await this.$http.get(`/customers/${this.customerId}/snapshots/${id}/export/total-page`).then(res => res.data.totalPage);
 
@@ -189,6 +189,8 @@ export default {
         writeFile(workBook, `snapshot_${id}.csv`);
       } catch (e) {
         ElNotification.error({message: this.$t("message.snapshot.export-fail")});
+      } finally {
+        loader.hide()
       }
     },
     deleteSnapshot(id) {

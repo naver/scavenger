@@ -30,6 +30,7 @@
     "splitpanes": "^3.1.5",
     "vue": "^3.2.41",
     "vue-i18n": "^9.2.2",
+    "vue-loading-overlay": "^6.0.3",
     "vue-router": "^4.1.6",
     "xlsx": "^0.18.5"
   },

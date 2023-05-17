@@ -35,6 +35,8 @@ import SnapshotTable from "./components/snapshot/SnapshotTable.vue";
 import {createI18n} from "vue-i18n";
 import messages from "./message.js";
 import {userLocale} from "./components/util/locale";
+import {LoadingPlugin} from "vue-loading-overlay";
+import "vue-loading-overlay/dist/css/index.css";
 
 const app = createApp(App);
 
@@ -86,6 +88,10 @@ const router = createRouter({
   routes,
 });
 app.use(router);
+app.use(LoadingPlugin, {
+    color: "#0d6efd",
+    loader: "dots"
+});
 
 axios.interceptors.request.use(config => {
   if (typeof config.params === "undefined") {
