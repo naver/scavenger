@@ -15,14 +15,14 @@ class SnapshotNodeDao(
 ) : JdbcDaoSupport(entityJdbcProvider), SingleValueSelectTrait, SnapshotNodeRepository by snapshotNodeRepository {
     private val sql: SnapshotNodeSql = super.sqls(::SnapshotNodeSql)
 
-    fun selectAllExportSnapshotNode(
+    fun findAllExportSnapshotNode(
         customerId: Long,
         snapshotId: Long,
         offset: Long,
         size: Long
     ): List<SnapshotExportDbRow> {
         return select(
-            sql.selectAllExportSnapshotNode(),
+            sql.findAllExportSnapshotNode(),
             mapParameterSource()
                 .addValue("customerId", customerId)
                 .addValue("snapshotId", snapshotId)

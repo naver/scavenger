@@ -4,7 +4,7 @@ import com.navercorp.spring.data.jdbc.plus.sql.support.SqlGeneratorSupport
 
 class SnapshotNodeSql : SqlGeneratorSupport() {
 
-    fun selectAllExportSnapshotNode(): String =
+    fun findAllExportSnapshotNode(): String =
         """
         SELECT
             snapshots.filterInvokedAtMillis,

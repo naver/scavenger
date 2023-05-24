@@ -59,7 +59,7 @@ class SnapshotNodeService(
         snapshotId: Long,
         page: Long
     ): List<SnapshotExportDto> {
-        return snapshotNodeDao.selectAllExportSnapshotNode(
+        return snapshotNodeDao.findAllExportSnapshotNode(
             customerId = customerId,
             snapshotId = snapshotId,
             offset = page * EXPORT_SNAPSHOT_NODE_CHUNK_SIZE,
