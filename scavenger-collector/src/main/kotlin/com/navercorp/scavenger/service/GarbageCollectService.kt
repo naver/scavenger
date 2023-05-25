@@ -96,15 +96,17 @@ class GarbageCollectService(
      */
     fun sweepAgentStatesAndJvms(customerId: Long, baseDateTime: Instant) {
         try {
-            val agentStates = agentStateDao.findGarbageLastPolledAtBefore(
-                customerId,
-                baseDateTime.minusMillis(intervalService.batchSweepMarginMilliSecond)
-            )
-            // jvm should be deleted first
-            jvmDao.deleteAllByCustomerIdAndUuids(customerId, agentStates.map { it.jvmUuid })
-                .also { logger.info { "[$customerId] $it jvm is swiped. " } }
-            agentStateDao.deleteAllByCustomerIdAndIds(customerId, agentStates.map { it.id })
-                .also { logger.info { "[$customerId] $it agent state is swiped. " } }
+            do {
+                val agentStates = agentStateDao.findGarbageLastPolledAtBefore(
+                    customerId,
+                    baseDateTime.minusMillis(intervalService.batchSweepMarginMilliSecond)
+                )
+
+                jvmDao.deleteAllByCustomerIdAndUuids(customerId, agentStates.map { it.jvmUuid })
+                    .also { logger.info { "[$customerId] $it jvm is swiped. " } }
+                agentStateDao.deleteAllByCustomerIdAndIds(customerId, agentStates.map { it.id })
+                    .also { logger.info { "[$customerId] $it agent state is swiped. " } }
+            } while (agentStates.isNotEmpty())
         } catch (e: Exception) {
             logger.warn(e) { "[$customerId] error occurred while sweepAgentStates, but ignored. " }
         }
