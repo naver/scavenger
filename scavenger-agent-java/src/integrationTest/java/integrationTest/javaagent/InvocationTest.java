@@ -29,6 +29,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.google.protobuf.util.JsonFormat;
 import integrationTest.support.AgentIntegrationTestContextProvider;
 import integrationTest.support.AgentRunner;
@@ -53,7 +54,7 @@ public class InvocationTest {
 
     @BeforeAll
     static void setUp() {
-        wireMockServer = new WireMockServer();
+        wireMockServer = new WireMockServer(new WireMockConfiguration().dynamicPort());
         wireMockServer.start();
         WireMock.configureFor(wireMockServer.port());
 
@@ -87,6 +88,7 @@ public class InvocationTest {
     void send(AgentRunner agentRunner) throws Exception {
         // given
         Properties properties = new Properties();
+        properties.setProperty("serverUrl", "http://localhost:" + wireMockServer.port());
         properties.setProperty("schedulerInitialDelayMillis", "0");
         agentRunner.setConfig(properties);
 

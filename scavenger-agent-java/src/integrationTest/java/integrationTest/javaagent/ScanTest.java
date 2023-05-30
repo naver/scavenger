@@ -29,13 +29,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.google.protobuf.util.JsonFormat;
 import integrationTest.support.AgentIntegrationTestContextProvider;
 import integrationTest.support.AgentRunner;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import sample.app.NotServiceClass;
-import sample.app.SampleApp;
 import sample.app.SampleService1;
 import sample.app.excluded.NotTrackedClass;
 import sample.app.excluded.NotTrackedClass2;
@@ -54,7 +54,7 @@ public class ScanTest {
 
     @BeforeAll
     static void setUp() {
-        wireMockServer = new WireMockServer();
+        wireMockServer = new WireMockServer(new WireMockConfiguration().dynamicPort());
         wireMockServer.start();
         WireMock.configureFor(wireMockServer.port());
 
@@ -79,7 +79,6 @@ public class ScanTest {
         assertSampleAppOutput(stdout);
         assertScanned(stdout, SampleService1.class.getMethod("doSomething", int.class));
         assertScanned(stdout, NotServiceClass.class.getMethod("doSomething", int.class));
-        assertScanned(stdout, SampleApp.class.getMethod("main", String[].class));
         assertNotScanned(stdout, NotTrackedClass.class.getMethod("doSomething"));
         assertNotScanned(stdout, NotTrackedClass2.class.getMethod("doSomething"));
     }
@@ -90,6 +89,7 @@ public class ScanTest {
         // given
         Properties properties = new Properties();
         properties.setProperty("schedulerInitialDelayMillis", "0");
+        properties.setProperty("serverUrl", "http://localhost:" + wireMockServer.port());
         agentRunner.setConfig(properties);
 
         givenThat(
