@@ -1,46 +1,44 @@
 package integrationTest.util;
 
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.matchesPattern;
-import static org.hamcrest.Matchers.not;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.lang.reflect.Method;
 import java.util.regex.Pattern;
 
 public class AgentLogAssertionUtil {
     public static void assertSampleAppOutput(String stdout) {
-        assertThat(stdout, matchesPattern(logPattern("sample.app.SampleApp", "SampleApp starts")));
-        assertThat(stdout, matchesPattern(logPattern("sample.app.SampleApp", "2+2=4")));
-        assertThat(stdout,
-            matchesPattern(logPattern("sample.app.SampleAspect", "Before execution(void sample.app.SampleService1.doSomething(int))")));
-        assertThat(stdout, matchesPattern(logPattern("sample.app.SampleService1", "Doing something 1")));
-        assertThat(stdout,
-            matchesPattern(logPattern("sample.app.SampleAspect", "Before execution(void sample.app.SampleService2.doSomething(int))")));
-        assertThat(stdout, matchesPattern(logPattern("sample.app.SampleService2", "Doing something 2")));
-        assertThat(stdout, matchesPattern(logPattern("sample.app.NotServiceClass", "Doing something 4")));
-        assertThat(stdout, matchesPattern(logPattern("sample.app.SampleAspect", "After execution(void sample.app.SampleService2.doSomething(int))")));
-        assertThat(stdout, matchesPattern(logPattern("sample.app.SampleAspect", "After execution(void sample.app.SampleService1.doSomething(int))")));
-        assertThat(stdout, matchesPattern(logPattern("sample.app.SampleApp", "Exit")));
+        assertThat(stdout)
+            .matches(logPattern("sample.app.SampleApp", "SampleApp starts"))
+            .matches(logPattern("sample.app.SampleApp", "2+2=4"))
+            .matches(logPattern("sample.app.SampleAspect", "Before execution(void sample.app.SampleService1.doSomething(int))"))
+            .matches(logPattern("sample.app.SampleService1", "Doing something 1"))
+            .matches(logPattern("sample.app.SampleAspect", "Before execution(void sample.app.SampleService2.doSomething(int))"))
+            .matches(logPattern("sample.app.SampleService2", "Doing something 2"))
+            .matches(logPattern("sample.app.NotServiceClass", "Doing something 4"))
+            .matches(logPattern("sample.app.SampleAspect", "After execution(void sample.app.SampleService2.doSomething(int))"))
+            .matches(logPattern("sample.app.SampleAspect", "After execution(void sample.app.SampleService1.doSomething(int))"))
+            .matches(logPattern("sample.app.SampleApp", "Exit"));
     }
 
     public static void assertDisabled(String stdout) {
-        assertThat(stdout, matchesPattern(logPattern("com.navercorp.scavenger.javaagent.ScavengerAgent", "[scavenger] scavenger is disabled")));
+        assertThat(stdout)
+            .matches(logPattern("com.navercorp.scavenger.javaagent.ScavengerAgent", "[scavenger] scavenger is disabled"));
     }
 
     public static void assertScanned(String stdout, Method method) {
-        assertThat(stdout, matchesPattern(scanPattern(method)));
+        assertThat(stdout).matches(scanPattern(method));
     }
 
     public static void assertNotScanned(String stdout, Method method) {
-        assertThat(stdout, not(matchesPattern(scanPattern(method))));
+        assertThat(stdout).doesNotMatch(scanPattern(method));
     }
 
     public static void assertInvoked(String stdout, Method method) {
-        assertThat(stdout, matchesPattern(invokedPattern(method)));
+        assertThat(stdout).matches(invokedPattern(method));
     }
 
     public static void assertNotInvoked(String stdout, Method method) {
-        assertThat(stdout, not(matchesPattern(invokedPattern(method))));
+        assertThat(stdout).doesNotMatch(invokedPattern(method));
     }
 
     private static Pattern logPattern(String location, String text) {

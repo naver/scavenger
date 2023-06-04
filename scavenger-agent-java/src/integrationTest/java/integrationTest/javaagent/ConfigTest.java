@@ -2,8 +2,7 @@ package integrationTest.javaagent;
 
 import static integrationTest.util.AgentLogAssertionUtil.assertDisabled;
 import static integrationTest.util.AgentLogAssertionUtil.assertSampleAppOutput;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.containsString;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Properties;
 
@@ -28,7 +27,7 @@ public class ConfigTest {
         String actual = agentRunner.call();
 
         // then
-        assertThat(actual, containsString("Configuration file is not found"));
+        assertThat(actual).contains("Configuration file is not found");
         assertDisabled(actual);
         assertSampleAppOutput(actual);
     }
@@ -43,7 +42,7 @@ public class ConfigTest {
         String actual = agentRunner.call();
 
         // then
-        assertThat(actual, containsString("Specified configuration file is not found"));
+        assertThat(actual).contains("Specified configuration file is not found");
         assertDisabled(actual);
         assertSampleAppOutput(actual);
     }
@@ -60,7 +59,7 @@ public class ConfigTest {
         String actual = agentRunner.call();
 
         // then
-        assertThat(actual, containsString("mandatory property 'packages' is missing"));
+        assertThat(actual).contains("mandatory property 'packages' is missing");
         assertDisabled(actual);
         assertSampleAppOutput(actual);
     }

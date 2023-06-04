@@ -1,6 +1,6 @@
 package integrationTest.support;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -22,9 +22,9 @@ public class AgentIntegrationTestContextProvider implements TestTemplateInvocati
 
     @Override
     public boolean supportsTestTemplate(ExtensionContext context) {
-        assertNotNull(scavengerAgentPath, "This test must be started from Gradle");
-        assertNotNull(classpath, "This test must be started from Gradle");
-        assertNotNull(javaPaths, "This test must be started from Gradle");
+        assertThat(scavengerAgentPath).as("This test must be started from Gradle").isNotNull();
+        assertThat(classpath).as("This test must be started from Gradle").isNotNull();
+        assertThat(javaPaths).as("This test must be started from Gradle").isNotNull();
         return true;
     }
 
