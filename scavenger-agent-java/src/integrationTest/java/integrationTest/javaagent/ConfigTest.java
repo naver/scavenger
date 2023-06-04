@@ -25,12 +25,12 @@ public class ConfigTest {
         agentRunner.setConfigFilePath("");
 
         // when
-        String stdout = agentRunner.call();
+        String actual = agentRunner.call();
 
         // then
-        assertThat(stdout, containsString("Configuration file is not found"));
-        assertDisabled(stdout);
-        assertSampleAppOutput(stdout);
+        assertThat(actual, containsString("Configuration file is not found"));
+        assertDisabled(actual);
+        assertSampleAppOutput(actual);
     }
 
     @TestTemplate
@@ -40,12 +40,12 @@ public class ConfigTest {
         agentRunner.setConfigFilePath("foobar");
 
         // when
-        String stdout = agentRunner.call();
+        String actual = agentRunner.call();
 
         // then
-        assertThat(stdout, containsString("Specified configuration file is not found"));
-        assertDisabled(stdout);
-        assertSampleAppOutput(stdout);
+        assertThat(actual, containsString("Specified configuration file is not found"));
+        assertDisabled(actual);
+        assertSampleAppOutput(actual);
     }
 
     @TestTemplate
@@ -57,11 +57,11 @@ public class ConfigTest {
         agentRunner.setConfig(properties);
 
         // when
-        String stdout = agentRunner.call();
+        String actual = agentRunner.call();
 
         // then
-        assertThat(stdout, containsString("mandatory property 'packages' is missing"));
-        assertDisabled(stdout);
-        assertSampleAppOutput(stdout);
+        assertThat(actual, containsString("mandatory property 'packages' is missing"));
+        assertDisabled(actual);
+        assertSampleAppOutput(actual);
     }
 }
