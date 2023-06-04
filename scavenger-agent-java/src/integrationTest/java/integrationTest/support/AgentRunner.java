@@ -41,7 +41,7 @@ public class AgentRunner implements Callable<String> {
         String output = collectProcessOutput(process.getInputStream());
         int exitCode = process.waitFor();
         if (exitCode != 0) {
-            throw new RuntimeException(String.format("Could not execute '%s': %s%nExit code=%d", command, output, exitCode));
+            throw new RuntimeException("Could not execute '" + command + "': " + output + "\nExit code=" + exitCode);
         }
         return output;
     }
@@ -67,7 +67,7 @@ public class AgentRunner implements Callable<String> {
             command.add("-Dscavenger.configuration=" + configFilePath);
         }
         command.add("sample.app.SampleApp");
-        System.out.printf("%nLaunching SampleApp with the command: %s%n%n", command);
+        System.out.println("Launching SampleApp with the command: " + command);
         return command;
     }
 

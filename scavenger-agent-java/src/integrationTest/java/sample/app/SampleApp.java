@@ -24,10 +24,7 @@ public class SampleApp {
     private final SampleService1 sampleService1;
 
     public static void main(String[] args) throws InterruptedException {
-        log.info(
-            String.format(
-                "%s starts on Java %s",
-                SampleApp.class.getSimpleName(), System.getProperty("java.version")));
+        log.info(SampleApp.class.getSimpleName() + " starts on Java " + System.getProperty("java.version"));
         SpringApplication.run(SampleApp.class, args);
         log.info("Exit");
     }
