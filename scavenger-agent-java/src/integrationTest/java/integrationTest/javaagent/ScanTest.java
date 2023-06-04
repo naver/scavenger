@@ -4,9 +4,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.givenThat;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static com.navercorp.scavenger.model.Endpoints.Agent.V5_INIT_CONFIG;
-import static integrationTest.util.AgentLogAssertionUtil.assertNotScanned;
 import static integrationTest.util.AgentLogAssertionUtil.assertSampleAppOutput;
-import static integrationTest.util.AgentLogAssertionUtil.assertScanned;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.grpcmock.GrpcMock.calledMethod;
 import static org.grpcmock.GrpcMock.getGlobalPort;
 import static org.grpcmock.GrpcMock.stubFor;
@@ -14,6 +13,7 @@ import static org.grpcmock.GrpcMock.unaryMethod;
 import static org.grpcmock.GrpcMock.verifyThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.lang.reflect.Method;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -33,6 +33,7 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.google.protobuf.util.JsonFormat;
 import integrationTest.support.AgentIntegrationTestContextProvider;
 import integrationTest.support.AgentRunner;
+import integrationTest.util.AgentLogAssertionUtil;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import sample.app.NotServiceClass;
@@ -77,10 +78,10 @@ public class ScanTest {
 
         // then
         assertSampleAppOutput(stdout);
-        assertScanned(stdout, SampleService1.class.getMethod("doSomething", int.class));
-        assertScanned(stdout, NotServiceClass.class.getMethod("doSomething", int.class));
-        assertNotScanned(stdout, NotTrackedClass.class.getMethod("doSomething"));
-        assertNotScanned(stdout, NotTrackedClass2.class.getMethod("doSomething"));
+        assertThat(stdout).matches(scanned(SampleService1.class.getMethod("doSomething", int.class)));
+        assertThat(stdout).matches(scanned(NotServiceClass.class.getMethod("doSomething", int.class)));
+        assertThat(stdout).doesNotMatch(scanned(NotTrackedClass.class.getMethod("doSomething")));
+        assertThat(stdout).doesNotMatch(scanned(NotTrackedClass2.class.getMethod("doSomething")));
     }
 
     @TestTemplate
@@ -125,6 +126,13 @@ public class ScanTest {
             calledMethod(GrpcAgentServiceGrpc.getSendCodeBasePublicationMethod())
                 .withStatusOk()
                 .withRequest(pub -> pub.getEntryCount() == getMethodsCount(stdout)));
+    }
+
+    private static Pattern scanned(Method method) {
+        String[] split = method.toString().split(" ");
+        String signature = split[split.length - 1];
+        return AgentLogAssertionUtil.logPattern("com.navercorp.scavenger.javaagent.collecting.CodeBaseScanner",
+            "[scavenger] " + signature + " is scanned");
     }
 
     private static int getMethodsCount(String stdout) {

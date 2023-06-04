@@ -1,6 +1,5 @@
 package integrationTest.javaagent;
 
-import static integrationTest.util.AgentLogAssertionUtil.assertDisabled;
 import static integrationTest.util.AgentLogAssertionUtil.assertSampleAppOutput;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -28,7 +27,7 @@ public class ConfigTest {
 
         // then
         assertThat(actual).contains("Configuration file is not found");
-        assertDisabled(actual);
+        assertThat(actual).contains("scavenger is disabled");
         assertSampleAppOutput(actual);
     }
 
@@ -43,7 +42,7 @@ public class ConfigTest {
 
         // then
         assertThat(actual).contains("Specified configuration file is not found");
-        assertDisabled(actual);
+        assertThat(actual).contains("scavenger is disabled");
         assertSampleAppOutput(actual);
     }
 
@@ -60,7 +59,7 @@ public class ConfigTest {
 
         // then
         assertThat(actual).contains("mandatory property 'packages' is missing");
-        assertDisabled(actual);
+        assertThat(actual).contains("scavenger is disabled");
         assertSampleAppOutput(actual);
     }
 }

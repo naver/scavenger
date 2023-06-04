@@ -4,9 +4,8 @@ import static com.github.tomakehurst.wiremock.client.WireMock.get;
 import static com.github.tomakehurst.wiremock.client.WireMock.givenThat;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static com.navercorp.scavenger.model.Endpoints.Agent.V5_INIT_CONFIG;
-import static integrationTest.util.AgentLogAssertionUtil.assertInvoked;
-import static integrationTest.util.AgentLogAssertionUtil.assertNotInvoked;
 import static integrationTest.util.AgentLogAssertionUtil.assertSampleAppOutput;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.grpcmock.GrpcMock.calledMethod;
 import static org.grpcmock.GrpcMock.getGlobalPort;
 import static org.grpcmock.GrpcMock.stubFor;
@@ -14,6 +13,7 @@ import static org.grpcmock.GrpcMock.unaryMethod;
 import static org.grpcmock.GrpcMock.verifyThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.lang.reflect.Method;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -33,6 +33,7 @@ import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.google.protobuf.util.JsonFormat;
 import integrationTest.support.AgentIntegrationTestContextProvider;
 import integrationTest.support.AgentRunner;
+import integrationTest.util.AgentLogAssertionUtil;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import sample.app.SampleApp;
@@ -77,10 +78,10 @@ public class InvocationTest {
 
         // then
         assertSampleAppOutput(stdout);
-        assertInvoked(stdout, SampleApp.class.getMethod("add", int.class, int.class));
-        assertInvoked(stdout, SampleAspect.class.getMethod("logAspectLoaded"));
-        assertInvoked(stdout, SampleService1.class.getMethod("doSomething", int.class));
-        assertNotInvoked(stdout, NotTrackedClass.class.getMethod("doSomething"));
+        assertThat(stdout).matches(invoked(SampleApp.class.getMethod("add", int.class, int.class)));
+        assertThat(stdout).matches(invoked(SampleAspect.class.getMethod("logAspectLoaded")));
+        assertThat(stdout).matches(invoked(SampleService1.class.getMethod("doSomething", int.class)));
+        assertThat(stdout).doesNotMatch(invoked(NotTrackedClass.class.getMethod("doSomething")));
     }
 
     @TestTemplate
@@ -130,6 +131,12 @@ public class InvocationTest {
             calledMethod(GrpcAgentServiceGrpc.getSendInvocationDataPublicationMethod())
                 .withStatusOk()
                 .withRequest(pub -> pub.getEntryCount() == getInvocationsCount(stdout)));
+    }
+
+    private static Pattern invoked(Method method) {
+        String signature = method.toString();
+        return AgentLogAssertionUtil.logPattern("com.navercorp.scavenger.javaagent.collecting.InvocationTracker",
+            "[scavenger] method " + signature + " is invoked");
     }
 
     private static int getInvocationsCount(String stdout) {
