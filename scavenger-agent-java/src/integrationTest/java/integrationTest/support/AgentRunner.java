@@ -72,14 +72,8 @@ public class AgentRunner implements Callable<String> {
     }
 
     private static String collectProcessOutput(InputStream inputStream) throws IOException {
-        StringBuilder sb = new StringBuilder();
-        String line;
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
-        String newLine = "";
-        while ((line = reader.readLine()) != null) {
-            sb.append(newLine).append(line);
-            newLine = String.format("%n");
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+            return reader.lines().collect(Collectors.joining("\n"));
         }
-        return sb.toString();
     }
 }
