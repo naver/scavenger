@@ -15,6 +15,8 @@ java {
     withSourcesJar()
 }
 
+tasks.jar { enabled = false }
+
 tasks.withType<ShadowJar> {
     archiveFileName.set("${project.name}-${project.version}.jar")
 
@@ -39,12 +41,12 @@ tasks.register<ConfigureShadowRelocation>("relocateShadowJar") {
     prefix = "sc"
 }
 
-tasks.build {
+tasks.assemble {
     dependsOn(tasks.shadowJar)
 }
 
 tasks.check {
-    dependsOn(tasks.named("integrationTest"))
+    dependsOn("integrationTest")
 }
 
 tasks.test {
