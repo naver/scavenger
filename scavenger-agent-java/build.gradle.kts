@@ -43,6 +43,10 @@ tasks.build {
     dependsOn(tasks.shadowJar)
 }
 
+tasks.check {
+    dependsOn(tasks.named("integrationTest"))
+}
+
 tasks.test {
     useJUnitPlatform()
     dependsOn(":scavenger-demo:build")
