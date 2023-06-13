@@ -82,9 +82,9 @@
                   </div>
                 </template>
                 <el-form label-position="left" :model="configuration" label-width="auto" ref="scavengerForm"
-                         size="small">
+                         size="small" :rules="rules">
                   <el-form-item :label="$t('message.common.name')" :prop="'name'">
-                    <el-input v-model="configuration.name"/>
+                    <el-input v-model="configuration.name" @keydown.enter.prevent="createCustomer('scavengerForm')"/>
                   </el-form-item>
                   <div class="form-submit">
                     <el-form-item size="default">
@@ -125,7 +125,10 @@ export default {
       dialogTableVisible: false,
       configuration: {
         name: "",
-      }
+      },
+      rules: {
+          name: [{ required: true, message: 'Please input workspace name', trigger: 'blur' }]
+      },
     };
   },
   created() {
@@ -172,25 +175,29 @@ export default {
             }).catch(() => ElNotification.error({message: this.$t("message.customer.delete-fail")}))
         });
     },
-    createCustomer() {
-      const params = {
-        name: this.configuration.name,
-      };
+    createCustomer(form) {
+      if (!form) return;
+      this.$refs[form].validate((valid) => {
+        if (!valid) return;
+        const params = {
+          name: this.configuration.name,
+        };
 
-      this.$http.post("/customers", params)
-        .then(res => {
-          this.customers = [...this.customers, res.data];
-          ElNotification.success({message: this.$t("message.customer.create-success")});
-        })
-        .catch(error => {
-          if (error.response.status === 409) {
-            ElNotification.error({message: this.$t("message.customer.duplicated")});
-          } else {
-            ElNotification.error({message: this.$t("message.common.create-fail")});
-          }
-        });
-      this.dialogTableVisible = false;
-      this.empty = false;
+        this.$http.post("/customers", params)
+          .then(res => {
+            this.customers = [...this.customers, res.data];
+            ElNotification.success({message: this.$t("message.customer.create-success")});
+          })
+          .catch(error => {
+            if (error.response.status === 409) {
+              ElNotification.error({message: this.$t("message.customer.duplicated")});
+            } else {
+              ElNotification.error({message: this.$t("message.common.create-fail")});
+            }
+          });
+        this.dialogTableVisible = false;
+        this.empty = false;
+      })
     },
   },
 };

@@ -58,6 +58,13 @@
                     </el-button>
                   </template>
                 </el-table-column>
+                <el-table-column :label="$t('message.snapshot.export')" width="80" align="center">
+                  <template #default="scope">
+                    <el-button circle type="primary" @click="exportSnapshot(scope.row.id)">
+                      <font-awesome-icon icon="fa-solid fa-file-export"/>
+                    </el-button>
+                  </template>
+                </el-table-column>
                 <el-table-column :label="$t('message.common.delete')" width="70" align="center">
                   <template #default="scope">
                     <el-button circle type="danger" @click="deleteSnapshot(scope.row.id)">
@@ -157,6 +164,24 @@ export default {
         .then(() => {
           ElNotification.success({message: this.$t("message.snapshot.refresh-success")});
         })
+    },
+    exportSnapshot(id) {
+      const fileName = `snapshot${id}.tsv`;
+      this.$http.get(`/customers/${this.customerId}/snapshot/${id}/export?fn=${fileName}`)
+        .then((response) => {
+          const csvFile = new Blob([response.data], {type: 'text/csv'});
+          const downloadLink = document.createElement("a");
+          downloadLink.download = fileName;
+          downloadLink.href = window.URL.createObjectURL(csvFile);
+          downloadLink.style.display = "none";
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+          window.URL.revokeObjectURL(downloadLink.href);
+          document.body.removeChild(downloadLink);
+        })
+        .catch(() => {
+          ElNotification.error({message: this.$t("message.snapshot.export-fail")});
+        });
     },
     deleteSnapshot(id) {
       ElMessageBox.confirm(

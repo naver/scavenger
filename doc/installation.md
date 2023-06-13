@@ -25,16 +25,20 @@ https://github.com/naver/scavenger/releases
 
 Start Collector using the following command.
 
-- e.g) `java -jar scavenger-collector-boot.jar`
+- e.g) `java -jar scavenger-collector.jar`
 
 #### Configuration
 
 You can override any configuration values with `-D` option.
 
-- `java -Darmeria.port=8080 -jar scavenger-collector-boot.jar`
+- `java -Darmeria.port=8080 -jar scavenger-collector.jar`
   
 To change the http(default 8080) and grpc(default 8080) ports used by Collector, you can change the settings below.
  - `-Darmeria.port`: http, grpc uses 8080 by default
+
+To change the max message size of gRPC in Collector, change the setting below.
+ - `-Darmeria.max-message-size`: 10MB by default
+    - Supports `B`, `KB`, `MB`, `GB`, and `TB` units.
 
 The collector provides two profiles: `h2` and `local`(default) </br>
 The profile can be enabled with `spring.profiles.active` configuration.</br>
@@ -42,7 +46,7 @@ The profile can be enabled with `spring.profiles.active` configuration.</br>
 The collector uses in-memory H2 in `local` profile. </br>
 This means that the data is initialised every time the collector application starts.</br>
 If you want to work around this using file mode, you can enable the `h2` profile.
-- `java -Dspring.profiles.active=h2 -jar scavenger-collector-boot.jar`
+- `java -Dspring.profiles.active=h2 -jar scavenger-collector.jar`
 
 If you've built your own MySQL, follow the steps below.
 1. Install MySQL Server using the official [MySQL guide](https://dev.mysql.com/doc/refman/8.0/en/installing.html).
@@ -77,7 +81,7 @@ Start API using the following command.
 When you start the API, you need to set the value `scavenger.collector-server-url` with the `-D` option so that the API
 knows the collector's url.
 
-- e.g) `java -Dscavenger.collector-server-url=http://localhost:9090 -jar scavenger-api-boot.jar`
+- e.g) `java -Dscavenger.collector-server-url=http://localhost:8080 -jar scavenger-api-boot.jar`
 
 #### Configuration
 
@@ -174,6 +178,10 @@ packages=com.navercorp
 
 - Setting up the agent via `-javaagent:path/to/scavenger-agent.jar`
 - Specify the config file via `-Dscavenger.configuration=path/to/scavenger.conf`
+- To change the max message size of gRPC in agent, change the setting below.
+- `-Dscavenger.max-message-size`: 10MB by default
+    - Supports `B`, `KB`, `MB`, `GB`, and `TB` units.
+> **We recommend tuning your codeBase configuration for minimizing tracing ranges before changing `scavenger.max-message-size`.**
 
 ```bash
 export JAVA_OPTS="$JAVA_OPTS -Dscavenger.configuration=$CATALINA_BASE/conf/scavenger.conf"

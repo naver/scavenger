@@ -78,6 +78,8 @@ export default {
         "delete-success": "Snapshot deleted.",
         "empty-agent": "Before creating a snapshot, please start Scavenger agent.",
         "limit": "Maximum number of snapshot creation reached. Please delete the existing snapshot.",
+        "export": "Export",
+        "export-fail": "Failed to export.",
         form: {
           "create-title": "Create Snapshot",
           "edit-title": "Edit Snapshot ({0})",
@@ -215,6 +217,8 @@ export default {
         "delete-success": "스냅샷을 삭제했습니다.",
         "empty-agent": "스냅샷을 생성하기 전에, 수집을 시작해 주세요.",
         "limit": "최대 스냅샷 생성 개수에 도달하였습니다. 기존 스냅샷을 삭제해 주세요.",
+        "export": "내보내기",
+        "export-fail": "내보내기에 실패했습니다.",
         form: {
           "create-title": "스냅샷 생성",
           "edit-title": "스냅샷 변경 ({0})",

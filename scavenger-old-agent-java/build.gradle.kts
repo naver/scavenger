@@ -186,6 +186,11 @@ publishing {
                         name.set("JunHo Yoon")
                         email.set("junoyoon@gmail.com")
                     }
+                    developer {
+                        id.set("sohyun-ku")
+                        name.set("Sohyun Ku")
+                        email.set("kusohyeon@gmail.com")
+                    }
                 }
                 scm {
                     connection.set("scm:git:git:github.com/naver/scavenger.git")
