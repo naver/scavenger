@@ -7,12 +7,15 @@ plugins {
     signing
     id("com.github.johnrengelman.shadow") version "7.0.0"
     id("io.freefair.lombok") version "6.6.3"
+    id("org.unbroken-dome.test-sets") version "4.0.0"
 }
 
 java {
     withJavadocJar()
     withSourcesJar()
 }
+
+tasks.jar { enabled = false }
 
 tasks.withType<ShadowJar> {
     archiveFileName.set("${project.name}-${project.version}.jar")
@@ -38,8 +41,12 @@ tasks.register<ConfigureShadowRelocation>("relocateShadowJar") {
     prefix = "sc"
 }
 
-tasks.build {
+tasks.assemble {
     dependsOn(tasks.shadowJar)
+}
+
+tasks.check {
+    dependsOn("integrationTest")
 }
 
 tasks.test {
@@ -70,6 +77,40 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("org.assertj:assertj-core:3.22.0")
     testImplementation("org.mockito:mockito-inline:4.3.1")
+}
+
+testSets {
+    create("integrationTest")
+}
+
+dependencies {
+    "integrationTestImplementation"("org.springframework.boot:spring-boot-starter-test:2.5.12")
+    "integrationTestImplementation"("org.springframework.boot:spring-boot-starter-aop:2.5.12")
+    "integrationTestImplementation"("com.github.tomakehurst:wiremock:2.27.2")
+    "integrationTestImplementation"("org.grpcmock:grpcmock-junit5:0.9.4")
+}
+
+fun javaPaths(vararg versions: Int) = versions.joinToString(",",
+    transform = { version: Int ->
+        "$version:" + javaToolchains.launcherFor {
+            languageVersion.set(JavaLanguageVersion.of(version))
+        }.get().executablePath
+    })
+
+val integrationTestRuntimeClasspath = configurations.named("integrationTestRuntimeClasspath").get().asPath
+
+tasks.named<Test>("integrationTest") {
+    dependsOn(tasks.shadowJar)
+    shouldRunAfter(tasks.test)
+    useJUnitPlatform()
+
+    inputs.files(file("build.gradle.kts"))
+    inputs.files(tasks.shadowJar.get().outputs.files)
+    outputs.dir(file("$buildDir/test-results/integrationTest"))
+
+    systemProperty("integrationTest.scavengerAgent", tasks.shadowJar.get().outputs.files.asPath)
+    systemProperty("integrationTest.classpath", "build/classes/java/integrationTest:$integrationTestRuntimeClasspath")
+    systemProperty("integrationTest.javaPaths", javaPaths(8, 11, 17))
 }
 
 tasks.withType<ProcessResources> {
