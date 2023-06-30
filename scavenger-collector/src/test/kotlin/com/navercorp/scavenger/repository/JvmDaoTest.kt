@@ -48,7 +48,7 @@ class JvmDaoTest {
         )
 
         sut.upsert(param)
-        sut.upsert(param)
+        sut.upsert(paramWithoutAgent)
     }
 
     @Test
