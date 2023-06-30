@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
 
@@ -34,6 +35,20 @@ class JvmDaoTest {
             hostname = "AL01978856.local",
         )
 
+        val paramWithoutAgent = JvmUpsertParam(
+            customerId = 3,
+            applicationId = applicationId,
+            applicationVersion = "unspecified",
+            environmentId = environmentId,
+            uuid = "9ec4624c-5b81-44fa-82c8-74233095b120",
+            codeBaseFingerprint = "CodeBaseFingerprint(numClassFiles=0, numJarFiles=1, " +
+                "sha256=b90e15678202f78cee45fa05cef8cba7c070114e37e81ff9131858c1d9c488c7)",
+            publishedAt = instant,
+            createdAt = instant,
+            hostname = "AL01978856.local",
+        )
+
+        sut.upsert(param)
         sut.upsert(param)
     }
 
@@ -67,5 +82,11 @@ class JvmDaoTest {
     fun deleteGarbagePublishedBefore() {
         sut.deleteGarbagePublishedBefore(2, Instant.now())
         assertThat(sut.findByCustomerIdAndUuid(2, "d0dfa3c2-809c-428f-b501-7419196d91c5")).isNull()
+    }
+
+    @Test
+    fun deleteAllByWithoutAgent() {
+        sut.deleteAllByWithoutAgent()
+        assertThat(sut.findByCustomerIdAndUuid(3, "9ec4624c-5b81-44fa-82c8-74233095b120")).isNull()
     }
 }

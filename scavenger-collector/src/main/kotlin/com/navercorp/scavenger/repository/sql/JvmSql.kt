@@ -55,4 +55,17 @@ class JvmSql : SqlGeneratorSupport() {
             customerId = :customerId
             AND uuid IN ( :uuids )
         """.trimIndent()
+
+    fun deleteAllByWithoutAgent(): String =
+        """
+            DELETE FROM
+                jvms
+            WHERE
+                uuid NOT IN (
+                    SELECT
+                        jvmUuid
+                    FROM
+                        agent_state
+                )
+        """.trimIndent()
 }

@@ -51,4 +51,11 @@ class JvmDao(
                 .addValue("uuids", uuids)
         )
     }
+
+    fun deleteAllByWithoutAgent(): Int {
+        return update(
+            sql.deleteAllByWithoutAgent(),
+            mapParameterSource()
+        )
+    }
 }

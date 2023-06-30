@@ -70,6 +70,8 @@ class GarbageCollectService(
                 }
                 logger.info { "[$it] hourly batch took $millis ms" }
             }
+
+        sweepJvmsWithoutAgent()
     }
 
     /**
@@ -89,6 +91,14 @@ class GarbageCollectService(
             .forEach {
                 sweepMethods(it, now)
             }
+    }
+
+    fun sweepJvmsWithoutAgent() {
+        try {
+            jvmDao.deleteAllByWithoutAgent()
+        } catch (e: Exception) {
+            logger.warn(e) { "error occurred while sweepJvmsWithoutAgent, but ignored. " }
+        }
     }
 
     /**
