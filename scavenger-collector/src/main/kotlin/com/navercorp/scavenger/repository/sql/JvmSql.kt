@@ -56,7 +56,7 @@ class JvmSql : SqlGeneratorSupport() {
             AND uuid IN ( :uuids )
         """.trimIndent()
 
-    fun selectUuidsByWithoutAgent(): String =
+    fun selectAllUuidsByWithoutAgent(): String =
         """
            SELECT uuid FROM
                 jvms

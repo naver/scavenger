@@ -85,7 +85,7 @@ class JvmDaoTest {
 
     @Test
     fun selectUuidsByWithoutAgent() {
-        val jvmUuids = sut.findUuidsByWithoutAgent(3)
+        val jvmUuids = sut.findAllUuidsByWithoutAgent(3)
         assertThat(jvmUuids).isNotEmpty
         assertThat(jvmUuids).contains("9ec4624c-5b81-44fa-82c8-74233095b120")
     }

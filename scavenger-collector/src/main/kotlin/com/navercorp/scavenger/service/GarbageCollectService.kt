@@ -101,7 +101,7 @@ class GarbageCollectService(
                     customerId,
                     baseDateTime.minusMillis(intervalService.batchSweepMarginMilliSecond)
                 )
-                val jvmUuids = jvmDao.findUuidsByWithoutAgent(customerId)
+                val jvmUuids = jvmDao.findAllUuidsByWithoutAgent(customerId)
 
                 jvmDao.deleteAllByCustomerIdAndUuids(customerId, agentStates.map { it.jvmUuid } + jvmUuids)
                     .also { logger.info { "[$customerId] $it jvm is swiped. " } }
