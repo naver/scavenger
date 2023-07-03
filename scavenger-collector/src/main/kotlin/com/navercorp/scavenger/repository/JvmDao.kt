@@ -54,7 +54,7 @@ class JvmDao(
 
     fun findAllUuidsByWithoutAgent(customerId: Long): List<String> {
         return select(
-            sql.selectUuidsByWithoutAgent(),
+            sql.selectAllUuidsByWithoutAgent(),
             mapParameterSource()
                 .addValue("customerId", customerId),
             String::class.java
