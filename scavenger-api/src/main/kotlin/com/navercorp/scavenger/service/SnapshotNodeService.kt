@@ -50,7 +50,7 @@ class SnapshotNodeService(
         signature: String,
         snapshotNodeId: Long? = null
     ): List<SnapshotNodeEntity> {
-        return snapshotNodeDao.selectAllBySignatureContaining(customerId, snapshotId, signature, snapshotNodeId)
+        return snapshotNodeDao.findAllBySignatureContaining(customerId, snapshotId, signature, snapshotNodeId)
     }
 
     private fun filterByPackagesAntMatch(

@@ -17,7 +17,7 @@ class AgentStateSql : SqlGeneratorSupport() {
             AND jvmUuid = :jvmUuid
         """.trimIndent()
 
-    fun selectGarbageLastPolledAtBefore(): String =
+    fun selectAllGarbageLastPolledAtBefore(): String =
         """
         SELECT
            ${sql.columns(AgentStateEntity::class.java)}

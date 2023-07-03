@@ -10,7 +10,7 @@ import java.util.Optional
 
 @Repository
 interface SnapshotRepository : DelegatableJdbcRepository<SnapshotEntity, Long> {
-    fun findByCustomerId(customerId: Long): List<SnapshotEntity>
+    fun findAllByCustomerId(customerId: Long): List<SnapshotEntity>
 
     fun findByCustomerIdAndId(customerId: Long, id: Long): Optional<SnapshotEntity>
 
