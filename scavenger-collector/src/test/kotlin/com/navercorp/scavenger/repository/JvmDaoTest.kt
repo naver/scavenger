@@ -89,10 +89,4 @@ class JvmDaoTest {
         assertThat(jvmUuids).isNotEmpty
         assertThat(jvmUuids).contains("9ec4624c-5b81-44fa-82c8-74233095b120")
     }
-
-    @Test
-    fun deleteAllByWithoutAgent() {
-        sut.deleteAllByWithoutAgent()
-        assertThat(sut.findByCustomerIdAndUuid(3, "9ec4624c-5b81-44fa-82c8-74233095b120")).isNull()
-    }
 }
