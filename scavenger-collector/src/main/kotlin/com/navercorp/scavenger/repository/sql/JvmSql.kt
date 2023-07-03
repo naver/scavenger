@@ -68,4 +68,18 @@ class JvmSql : SqlGeneratorSupport() {
                         agent_state
                 )
         """.trimIndent()
+
+    fun selectUuidsByWithoutAgent(): String =
+        """
+           SELECT uuid FROM
+                jvms
+           WHERE
+                customerId = :customerId
+                AND uuid NOT IN (
+                    SELECT
+                        jvmUuid
+                    FROM
+                        agent_state
+                )
+        """.trimIndent()
 }

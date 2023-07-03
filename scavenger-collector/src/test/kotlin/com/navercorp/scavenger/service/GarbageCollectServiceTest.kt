@@ -246,7 +246,7 @@ class GarbageCollectServiceTest {
 
     @Nested
     @DisplayName("if without agent state exists")
-    inner class WithoutAgentJvms() {
+    inner class WithoutAgentJvms {
         val now = Instant.now()
         val ago = now.minus(600 + IntervalService.Companion.GC_DEAD_MARGIN_MINUTES * 60, ChronoUnit.SECONDS)
 
@@ -297,8 +297,8 @@ class GarbageCollectServiceTest {
         }
 
         @Test
-        fun sweepAgentStatesAndJvms() {
-            sut.sweepJvmsWithoutAgent()
+        fun sweepAgentStatesAndJvms_removeWithoutAgentJvms() {
+            sut.sweepAgentStatesAndJvms(customerId, now)
             assertThat(jvmDao.findAllByCustomerId(customerId).size).isEqualTo(1)
         }
     }

@@ -58,4 +58,13 @@ class JvmDao(
             mapParameterSource()
         )
     }
+
+    fun findUuidsByWithoutAgent(customerId: Long): List<String> {
+        return select(
+            sql.selectUuidsByWithoutAgent(),
+            mapParameterSource()
+                .addValue("customerId", customerId),
+            String::class.java
+        )
+    }
 }

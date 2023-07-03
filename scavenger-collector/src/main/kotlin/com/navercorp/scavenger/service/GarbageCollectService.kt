@@ -70,8 +70,6 @@ class GarbageCollectService(
                 }
                 logger.info { "[$it] hourly batch took $millis ms" }
             }
-
-        sweepJvmsWithoutAgent()
     }
 
     /**
@@ -93,14 +91,6 @@ class GarbageCollectService(
             }
     }
 
-    fun sweepJvmsWithoutAgent() {
-        try {
-            jvmDao.deleteAllByWithoutAgent()
-        } catch (e: Exception) {
-            logger.warn(e) { "error occurred while sweepJvmsWithoutAgent, but ignored. " }
-        }
-    }
-
     /**
      * Remove all agent states which is not active for last expected polling time plus margin
      */
@@ -111,8 +101,9 @@ class GarbageCollectService(
                     customerId,
                     baseDateTime.minusMillis(intervalService.batchSweepMarginMilliSecond)
                 )
+                var jvmUuids = jvmDao.findUuidsByWithoutAgent(customerId)
 
-                jvmDao.deleteAllByCustomerIdAndUuids(customerId, agentStates.map { it.jvmUuid })
+                jvmDao.deleteAllByCustomerIdAndUuids(customerId, agentStates.map { it.jvmUuid } + jvmUuids)
                     .also { logger.info { "[$customerId] $it jvm is swiped. " } }
                 agentStateDao.deleteAllByCustomerIdAndIds(customerId, agentStates.map { it.id })
                     .also { logger.info { "[$customerId] $it agent state is swiped. " } }
