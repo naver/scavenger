@@ -5,9 +5,8 @@ import com.navercorp.scavenger.model.InvocationImportable
 import com.navercorp.scavenger.model.Publication
 import com.navercorp.scavenger.util.withCustomerIdMdc
 import mu.KotlinLogging
-import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
-import java.util.concurrent.CompletableFuture
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class PublicationImportService(
@@ -17,8 +16,8 @@ class PublicationImportService(
 ) {
     val logger = KotlinLogging.logger {}
 
-    @Async
-    fun import(customerId: Long, pub: Publication): CompletableFuture<Boolean> {
+    @Transactional
+    fun import(customerId: Long, pub: Publication): Boolean {
         withCustomerIdMdc(customerId) {
             val startedAt = System.currentTimeMillis()
             try {
@@ -36,6 +35,6 @@ class PublicationImportService(
             }
         }
 
-        return CompletableFuture.completedFuture(true)
+        return true
     }
 }

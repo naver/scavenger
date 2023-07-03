@@ -1,5 +1,6 @@
 package com.navercorp.scavenger.controller
 
+import com.linecorp.armeria.server.annotation.Blocking
 import com.navercorp.scavenger.model.CodeBasePublication
 import com.navercorp.scavenger.model.CommonPublicationData
 import com.navercorp.scavenger.model.GetConfigRequest
@@ -22,6 +23,7 @@ class GrpcAgentController(
         return agentService.getConfig(request.apiKey, request.jvmUuid)
     }
 
+    @Blocking
     override suspend fun sendCodeBasePublication(request: CodeBasePublication): PublicationResponse {
         try {
             validate(request)
