@@ -56,19 +56,6 @@ class JvmSql : SqlGeneratorSupport() {
             AND uuid IN ( :uuids )
         """.trimIndent()
 
-    fun deleteAllByWithoutAgent(): String =
-        """
-            DELETE FROM
-                jvms
-            WHERE
-                uuid NOT IN (
-                    SELECT
-                        jvmUuid
-                    FROM
-                        agent_state
-                )
-        """.trimIndent()
-
     fun selectUuidsByWithoutAgent(): String =
         """
            SELECT uuid FROM

@@ -52,13 +52,6 @@ class JvmDao(
         )
     }
 
-    fun deleteAllByWithoutAgent(): Int {
-        return update(
-            sql.deleteAllByWithoutAgent(),
-            mapParameterSource()
-        )
-    }
-
     fun findUuidsByWithoutAgent(customerId: Long): List<String> {
         return select(
             sql.selectUuidsByWithoutAgent(),
