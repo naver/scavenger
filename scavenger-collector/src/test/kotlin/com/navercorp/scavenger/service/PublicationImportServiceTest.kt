@@ -46,7 +46,7 @@ class PublicationImportServiceTest {
 
             @BeforeEach
             fun import() {
-                returnValue = sut.import(1, pub).join()
+                returnValue = sut.import(1, pub)
             }
 
             @Test
@@ -76,7 +76,7 @@ class PublicationImportServiceTest {
 
             @BeforeEach
             fun import() {
-                returnValue = sut.import(1, pub).join()
+                returnValue = sut.import(1, pub)
             }
 
             @Test
@@ -106,7 +106,7 @@ class PublicationImportServiceTest {
 
             @BeforeEach
             fun import() {
-                returnValue = sut.import(1, pub).join()
+                returnValue = sut.import(1, pub)
             }
 
             @Test
@@ -136,7 +136,7 @@ class PublicationImportServiceTest {
 
             @BeforeEach
             fun import() {
-                returnValue = sut.import(1, pub).join()
+                returnValue = sut.import(1, pub)
             }
 
             @Test
@@ -171,7 +171,7 @@ class PublicationImportServiceTest {
                     .import(any())
 
                 throwable = catchThrowable {
-                    sut.import(1, pub).join()
+                    sut.import(1, pub)
                 }
             }
 

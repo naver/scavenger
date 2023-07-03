@@ -13,8 +13,10 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.RegisterExtension
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.transaction.annotation.Transactional
 import java.time.Instant
 
+@Transactional
 class GrpcAgentControllerTest : AbstractMockMvcApiTest() {
     @JvmField
     @RegisterExtension
