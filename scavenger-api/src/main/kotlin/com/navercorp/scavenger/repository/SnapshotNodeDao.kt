@@ -19,7 +19,7 @@ class SnapshotNodeDao(
         snapshotId: Long
     ): List<SnapshotExportDbRow> {
         return select(
-            sql.findAllExportSnapshotNode(),
+            sql.selectAllExportSnapshotNode(),
             mapParameterSource()
                 .addValue("customerId", customerId)
                 .addValue("snapshotId", snapshotId),
@@ -34,7 +34,7 @@ class SnapshotNodeDao(
         )
     }
 
-    fun selectAllBySignatureContaining(
+    fun findAllBySignatureContaining(
         customerId: Long,
         snapshotId: Long,
         signature: String,

@@ -97,7 +97,7 @@ class GarbageCollectService(
     fun sweepAgentStatesAndJvms(customerId: Long, baseDateTime: Instant) {
         try {
             do {
-                val agentStates = agentStateDao.findGarbageLastPolledAtBefore(
+                val agentStates = agentStateDao.findAllGarbageLastPolledAtBefore(
                     customerId,
                     baseDateTime.minusMillis(intervalService.batchSweepMarginMilliSecond)
                 )
@@ -117,7 +117,7 @@ class GarbageCollectService(
             val fingerPrintUsed = jvmDao.findAllByCustomerId(customerId).mapNotNull { it.codeBaseFingerprint }.toSet()
             val fingerPrintRegistered = codeBaseFingerprintDao.findAllByCustomerId(customerId).map { it.codeBaseFingerprint }.toSet()
             val sweepSubjects = fingerPrintRegistered - fingerPrintUsed
-            codeBaseFingerprintDao.deleteAllByCustomerIdAndCodeBaseFingerprintIn(customerId, fingerPrintRegistered - fingerPrintUsed)
+            codeBaseFingerprintDao.deleteAllByCustomerIdAndCodeBaseFingerprintIn(customerId, sweepSubjects)
             logger.info { "[$customerId] sweep $sweepSubjects codebaseFingerprint" }
         } catch (e: Exception) {
             logger.warn(e) { "[$customerId] error occurred while sweepCodeBaseFingerprints, but ignore. " }

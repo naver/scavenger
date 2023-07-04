@@ -30,7 +30,7 @@ interface AgentRepository : DelegatableJdbcRepository<AgentEntity, String> {
                 agent_state.customerId = :customerId
         """
     )
-    fun findAgentsByCustomerId(@Param("customerId") customerId: Long): List<AgentEntity>
+    fun findAllAgentsByCustomerId(@Param("customerId") customerId: Long): List<AgentEntity>
 
     @Modifying
     @Query("DELETE FROM agent_state WHERE customerId = :customerId")

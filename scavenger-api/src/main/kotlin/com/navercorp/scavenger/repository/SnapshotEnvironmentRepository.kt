@@ -12,12 +12,12 @@ interface SnapshotEnvironmentRepository : DelegatableJdbcRepository<EnvironmentR
     fun countByCustomerIdAndEnvironmentId(customerId: Long, environmentId: Long): Long
 
     @Query("SELECT snapshotId FROM snapshot_environment WHERE customerId = :customerId AND environmentId = :environmentId")
-    fun findByCustomerIdAndEnvironmentId(@Param("customerId") customerId: Long, @Param("environmentId") environmentId: Long): List<Long>
+    fun findAllByCustomerIdAndEnvironmentId(@Param("customerId") customerId: Long, @Param("environmentId") environmentId: Long): List<Long>
 
     @Modifying
     @Query("DELETE FROM snapshot_environment WHERE customerId = :customerId AND snapshotId = :snapshotId")
     fun deleteByCustomerIdAndSnapshotId(customerId: Long, snapshotId: Long)
 
     @Query("SELECT snapshotId FROM snapshot_environment WHERE customerId = :customerId AND snapshotId = :snapshotId")
-    fun findByCustomerIdAndSnapshotId(@Param("customerId") customerId: Long, @Param("snapshotId") snapshotId: Long): List<Long>
+    fun findAllByCustomerIdAndSnapshotId(@Param("customerId") customerId: Long, @Param("snapshotId") snapshotId: Long): List<Long>
 }

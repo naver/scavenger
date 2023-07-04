@@ -28,7 +28,7 @@ interface MethodInvocationRepository : DelegatableJdbcRepository<MethodInvocatio
             GROUP BY methods.signature
         """
     )
-    fun findMethodInvocations(
+    fun findAllMethodInvocations(
         @Param("customerId") customerId: Long,
         @Param("applicationIdList") applicationIdList: List<Long>,
         @Param("environmentIdList") environmentIdList: List<Long>

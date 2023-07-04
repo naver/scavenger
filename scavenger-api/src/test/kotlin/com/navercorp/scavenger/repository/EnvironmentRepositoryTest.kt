@@ -11,8 +11,8 @@ class EnvironmentRepositoryTest {
     private lateinit var sut: EnvironmentRepository
 
     @Test
-    fun findByCustomerId() {
-        assertThat(sut.findByCustomerId(1)).hasSize(1)
+    fun findAllByCustomerId() {
+        assertThat(sut.findAllByCustomerId(1)).hasSize(1)
     }
 
     @Test

@@ -68,7 +68,7 @@ class CustomerService(
     fun deleteCustomer(groupId: String, userId: String, customerId: Long, remainCustomer: Boolean = true) {
         val customer = customerRepository.findById(customerId).orElseThrow()
         if (customer.groupId == groupId) {
-            snapshotRepository.findByCustomerId(customerId).forEach {
+            snapshotRepository.findAllByCustomerId(customerId).forEach {
                 snapshotApplicationRepository.deleteByCustomerIdAndSnapshotId(customerId, requireNotNull(it.id))
                 snapshotEnvironmentRepository.deleteByCustomerIdAndSnapshotId(customerId, it.id)
                 snapshotNodeRepository.deleteAllByCustomerIdAndSnapshotId(customerId, it.id)

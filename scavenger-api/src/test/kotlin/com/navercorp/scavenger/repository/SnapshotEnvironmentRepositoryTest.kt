@@ -22,15 +22,15 @@ class SnapshotEnvironmentRepositoryTest {
     }
 
     @Test
-    fun findByCustomerIdAndApplicationId() {
-        assertThat(sut.findByCustomerIdAndEnvironmentId(customerId, environmentId)).hasSizeGreaterThan(0)
+    fun findAllByCustomerIdAndEnvironmentId() {
+        assertThat(sut.findAllByCustomerIdAndEnvironmentId(customerId, environmentId)).hasSizeGreaterThan(0)
     }
 
     @Test
     @Transactional
     fun deleteByCustomerIdAndSnapshotId() {
         sut.deleteByCustomerIdAndSnapshotId(customerId, snapshotId)
-        assertThat(sut.findByCustomerIdAndSnapshotId(customerId, snapshotId)).hasSize(0)
+        assertThat(sut.findAllByCustomerIdAndSnapshotId(customerId, snapshotId)).hasSize(0)
     }
 
     @Test
@@ -42,6 +42,6 @@ class SnapshotEnvironmentRepositoryTest {
         ).toSet()
         sut.insertAll(param)
 
-        assertThat(sut.findByCustomerIdAndEnvironmentId(0, 1)).hasSize(2)
+        assertThat(sut.findAllByCustomerIdAndEnvironmentId(0, 1)).hasSize(2)
     }
 }
