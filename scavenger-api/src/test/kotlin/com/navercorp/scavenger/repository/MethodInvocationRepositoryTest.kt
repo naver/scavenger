@@ -11,7 +11,7 @@ class MethodInvocationRepositoryTest {
     private lateinit var sut: MethodInvocationRepository
 
     @Test
-    fun findMethodInvocations() {
-        assertThat(sut.findMethodInvocations(1, listOf(1), listOf(1))).hasSizeGreaterThanOrEqualTo(0)
+    fun findAllMethodInvocations() {
+        assertThat(sut.findAllMethodInvocations(1, listOf(1), listOf(1))).hasSizeGreaterThanOrEqualTo(0)
     }
 }

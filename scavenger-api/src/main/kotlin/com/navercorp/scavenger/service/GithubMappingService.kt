@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service
 class GithubMappingService(val githubMappingRepository: GithubMappingRepository) {
 
     fun getGithubMappings(customerId: Long): List<GithubMappingDto> {
-        return githubMappingRepository.findByCustomerId(customerId).map { GithubMappingDto.from(it) }
+        return githubMappingRepository.findAllByCustomerId(customerId).map { GithubMappingDto.from(it) }
     }
 
     fun createGithubMapping(customerId: Long, basePackage: String, url: String): GithubMappingDto {

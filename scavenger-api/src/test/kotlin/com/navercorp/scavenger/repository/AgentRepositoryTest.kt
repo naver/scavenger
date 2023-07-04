@@ -11,7 +11,7 @@ class AgentRepositoryTest {
     private lateinit var sut: AgentRepository
 
     @Test
-    fun findAgentsByCustomerId() {
-        assertThat(sut.findAgentsByCustomerId(1)).isNotNull
+    fun findAllAgentsByCustomerId() {
+        assertThat(sut.findAllAgentsByCustomerId(1)).isNotNull
     }
 }

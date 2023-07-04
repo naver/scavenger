@@ -11,8 +11,8 @@ class SnapshotRepositoryTest {
     private lateinit var sut: SnapshotDao
 
     @Test
-    fun findByCustomerId() {
-        assertThat(sut.findByCustomerId(1)).hasSizeGreaterThan(0)
+    fun findAllByCustomerId() {
+        assertThat(sut.findAllByCustomerId(1)).hasSizeGreaterThan(0)
     }
 
     @Test

@@ -12,12 +12,12 @@ interface SnapshotApplicationRepository : DelegatableJdbcRepository<ApplicationR
     fun countByCustomerIdAndApplicationId(customerId: Long, applicationId: Long): Long
 
     @Query("SELECT snapshotId FROM snapshot_application WHERE customerId = :customerId AND applicationId = :applicationId")
-    fun findByCustomerIdAndApplicationId(@Param("customerId") customerId: Long, @Param("applicationId") applicationId: Long): List<Long>
+    fun findAllByCustomerIdAndApplicationId(@Param("customerId") customerId: Long, @Param("applicationId") applicationId: Long): List<Long>
 
     @Modifying
     @Query("DELETE FROM snapshot_application WHERE customerId = :customerId AND snapshotId = :snapshotId")
     fun deleteByCustomerIdAndSnapshotId(customerId: Long, snapshotId: Long)
 
     @Query("SELECT snapshotId FROM snapshot_application WHERE customerId = :customerId AND snapshotId = :snapshotId")
-    fun findByCustomerIdAndSnapshotId(@Param("customerId") customerId: Long, @Param("snapshotId") snapshotId: Long): List<Long>
+    fun findAllByCustomerIdAndSnapshotId(@Param("customerId") customerId: Long, @Param("snapshotId") snapshotId: Long): List<Long>
 }

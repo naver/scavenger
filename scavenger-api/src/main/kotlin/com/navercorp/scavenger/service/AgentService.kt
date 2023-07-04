@@ -7,6 +7,6 @@ import org.springframework.stereotype.Service
 @Service
 class AgentService(val agentRepository: AgentRepository) {
     fun getAgents(customerId: Long): List<AgentEntity> {
-        return agentRepository.findAgentsByCustomerId(customerId)
+        return agentRepository.findAllAgentsByCustomerId(customerId)
     }
 }

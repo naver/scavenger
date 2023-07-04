@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface EnvironmentRepository : DelegatableJdbcRepository<EnvironmentEntity, String> {
-    fun findByCustomerId(customerId: Long): List<EnvironmentEntity>
+    fun findAllByCustomerId(customerId: Long): List<EnvironmentEntity>
 
     fun findByCustomerIdAndId(customerId: Long, id: Long): EnvironmentEntity
 
