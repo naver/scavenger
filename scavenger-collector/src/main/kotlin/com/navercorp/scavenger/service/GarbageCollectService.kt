@@ -101,13 +101,18 @@ class GarbageCollectService(
                     customerId,
                     baseDateTime.minusMillis(intervalService.batchSweepMarginMilliSecond)
                 )
-                val uuidsWithoutAgent = jvmDao.findAllUuidsByWithoutAgent(customerId)
 
-                jvmDao.deleteAllByCustomerIdAndUuids(customerId, agentStates.map { it.jvmUuid } + uuidsWithoutAgent)
+                jvmDao.deleteAllByCustomerIdAndUuids(customerId, agentStates.map { it.jvmUuid })
                     .also { logger.info { "[$customerId] $it jvm is swiped. " } }
                 agentStateDao.deleteAllByCustomerIdAndIds(customerId, agentStates.map { it.id })
                     .also { logger.info { "[$customerId] $it agent state is swiped. " } }
             } while (agentStates.isNotEmpty())
+
+            do {
+                val uuidsWithoutAgent = jvmDao.findAllUuidsByWithoutAgent(customerId)
+                jvmDao.deleteAllByCustomerIdAndUuids(customerId, uuidsWithoutAgent)
+                    .also { logger.info { "[$customerId] $it jvm without agent is swiped." } }
+            } while (uuidsWithoutAgent.isNotEmpty())
         } catch (e: Exception) {
             logger.warn(e) { "[$customerId] error occurred while sweepAgentStates, but ignored. " }
         }
