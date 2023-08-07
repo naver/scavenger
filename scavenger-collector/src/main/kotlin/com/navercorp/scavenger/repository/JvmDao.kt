@@ -6,7 +6,6 @@ import com.navercorp.scavenger.util.getFirstKey
 import com.navercorp.spring.data.jdbc.plus.sql.provider.EntityJdbcProvider
 import org.springframework.jdbc.support.GeneratedKeyHolder
 import org.springframework.stereotype.Repository
-import java.time.Instant
 
 @Repository
 class JvmDao(
@@ -29,15 +28,6 @@ class JvmDao(
         return keyHolder.getFirstKey() ?: run {
             findByCustomerIdAndUuid(param.customerId, param.uuid)?.id
         }
-    }
-
-    fun deleteGarbagePublishedBefore(customerId: Long, publishedBefore: Instant): Int {
-        return update(
-            sql.deleteGarbagePublishedBefore(),
-            mapParameterSource()
-                .addValue("customerId", customerId)
-                .addValue("publishedAt", publishedBefore)
-        )
     }
 
     fun deleteAllByCustomerIdAndUuids(customerId: Long, uuids: List<String>): Int {

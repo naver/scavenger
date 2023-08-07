@@ -37,7 +37,7 @@ class OperationService(
                 this.operationInfo = operationInfo
             }
         } catch (ignored: Exception) {
-            logger.error(ignored) { "Error occured while dispatching $operationInfoUrl, operation job is skipped" }
+            logger.error(ignored) { "Error occurred while dispatching $operationInfoUrl, operation job is skipped" }
         }
     }
 

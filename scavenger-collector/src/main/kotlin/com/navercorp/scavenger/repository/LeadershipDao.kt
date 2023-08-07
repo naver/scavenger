@@ -23,30 +23,11 @@ class LeadershipDao(
         )
     }
 
-    fun forceLeadership(memberId: String, now: Instant): Int {
-        return update(
-            sql.forceLeadership(),
-            mapParameterSource()
-                .addValue("memberId", memberId)
-                .addValue("lastSeenActive", now)
-        )
-    }
-
     fun forceReelection(): Int {
         return update(
             sql.forceReelection(),
             mapParameterSource()
         )
-    }
-
-    fun isLeader(memberId: String): Boolean {
-        val count = selectSingleValue(
-            sql.isLeader(),
-            mapParameterSource()
-                .addValue("memberId", memberId),
-            Int::class.java
-        )
-        return count != 0
     }
 
     fun getLeader(): String? {

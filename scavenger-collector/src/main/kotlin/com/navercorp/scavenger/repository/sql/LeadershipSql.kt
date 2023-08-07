@@ -23,37 +23,9 @@ class LeadershipSql : SqlGeneratorSupport() {
                 lastSeenActive = CASE WHEN memberId = VALUES(memberId) THEN VALUES(lastSeenActive) ELSE lastSeenActive END
         """
 
-    fun forceLeadership() =
-        """
-           REPLACE INTO 
-           leadership
-           ( 
-                anchor, 
-                memberId, 
-                lastSeenActive 
-           ) 
-           VALUES
-           ( 
-                1,
-                :memberId, 
-                :lastSeenActive
-            )
-        """
-
     fun forceReelection() =
         """
            DELETE FROM leadership
-        """
-
-    fun isLeader() =
-        """
-           SELECT
-               count(*) AS isLeader
-           FROM 
-               leadership
-           WHERE 
-               anchor = 1
-               AND memberId = :memberId
         """
 
     fun selectLeader() =

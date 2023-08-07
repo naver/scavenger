@@ -35,18 +35,6 @@ class JvmSql : SqlGeneratorSupport() {
             publishedAt = :publishedAt
         """.trimIndent()
 
-    /**
-     * publishedAt in jvm is same as lastSeenAt
-     */
-    fun deleteGarbagePublishedBefore(): String =
-        """
-        DELETE FROM
-            jvms
-        WHERE
-            customerId = :customerId
-            AND publishedAt < :publishedAt
-        """.trimIndent()
-
     fun deleteAllByCustomerIdAndUuids(): String =
         """
         DELETE FROM
