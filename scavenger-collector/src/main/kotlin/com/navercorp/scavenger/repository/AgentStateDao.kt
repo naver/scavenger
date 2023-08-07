@@ -26,15 +26,6 @@ class AgentStateDao(
         )
     }
 
-    fun deleteGarbageLastPolledAtBefore(customerId: Long, lastPolledAt: Instant): Int {
-        return update(
-            sql.deleteGarbageLastPolledAtBefore(),
-            mapParameterSource()
-                .addValue("customerId", customerId)
-                .addValue("lastPolledAt", lastPolledAt)
-        )
-    }
-
     @Transactional
     fun updateTimestampsAndEnabled(
         customerId: Long,

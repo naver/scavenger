@@ -78,12 +78,6 @@ class JvmDaoTest {
     }
 
     @Test
-    fun deleteGarbagePublishedBefore() {
-        sut.deleteGarbagePublishedBefore(2, Instant.now())
-        assertThat(sut.findByCustomerIdAndUuid(2, "d0dfa3c2-809c-428f-b501-7419196d91c5")).isNull()
-    }
-
-    @Test
     fun selectUuidsByWithoutAgent() {
         val jvmUuids = sut.findAllUuidsByWithoutAgent(3)
         assertThat(jvmUuids).isNotEmpty

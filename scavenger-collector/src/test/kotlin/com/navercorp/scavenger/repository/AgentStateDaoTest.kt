@@ -14,16 +14,6 @@ class AgentStateDaoTest {
 
     @Test
     @Transactional
-    fun deleteGarbageLastPolledAtBefore() {
-        val now = Instant.now()
-        sut.findAll().map { it.customerId }.forEach {
-            sut.deleteGarbageLastPolledAtBefore(it, now)
-        }
-        assertThat(sut.findAll().filter { it.lastPolledAt <= now }).isEmpty()
-    }
-
-    @Test
-    @Transactional
     fun updateTimestampsAndEnabled() {
         val now = Instant.now()
 
