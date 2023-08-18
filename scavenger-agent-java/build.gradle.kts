@@ -11,6 +11,10 @@ plugins {
 }
 
 java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(8))
+    }
+
     withJavadocJar()
     withSourcesJar()
 }
@@ -52,11 +56,6 @@ tasks.check {
 tasks.test {
     useJUnitPlatform()
     dependsOn(":scavenger-demo:build")
-}
-
-tasks.withType<JavaCompile> {
-    sourceCompatibility = "8"
-    targetCompatibility = "8"
 }
 
 repositories {
