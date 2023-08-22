@@ -7,7 +7,6 @@ import java.util.logging.Level;
 
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
-import lombok.Setter;
 import lombok.extern.java.Log;
 
 import com.navercorp.scavenger.javaagent.collecting.CodeBaseScanner;
@@ -31,6 +30,7 @@ public class Scheduler implements Runnable {
     private final SchedulerState invocationDataPublisherState;
 
     private final int forceIntervalSeconds;
+    private final int maxMethodsCount;
 
     private GetConfigResponse dynamicConfig;
     private CodeBasePublication codeBasePublication;
@@ -55,6 +55,7 @@ public class Scheduler implements Runnable {
         );
 
         this.forceIntervalSeconds = this.config.getForceIntervalSeconds();
+        this.maxMethodsCount = this.config.getMaxMethodsCount();
         // these intervals will be updated when dynamic config is polled (not likely be used)
         int intervalSeconds = 600;
         int retryIntervalSeconds = 600;
@@ -186,8 +187,8 @@ public class Scheduler implements Runnable {
         if (codeBase.getMethods().isEmpty()) {
             log.severe("[scavenger] no methods are found");
             return false;
-        } else if (codeBase.getMethods().size() > 100000) {
-            log.severe("[scavenger] maximum methods count(100000) exceed: " + codeBase.getMethods().size());
+        } else if (codeBase.getMethods().size() > maxMethodsCount) {
+            log.severe("[scavenger] maximum methods count(" + maxMethodsCount + ") exceed: " + codeBase.getMethods().size());
             return false;
         }
         this.codeBasePublication = codeBase.toPublication(config);
