@@ -80,12 +80,12 @@ public class SchedulerTest {
     @BeforeEach
     public void setUp() {
         autoCloseable = MockitoAnnotations.openMocks(this);
+        when(codeBaseScannerMock.scan())
+            .thenReturn(
+                new CodeBase(Collections.singletonList(Method.createTestMethod()), "fingerprint")
+            );
 
-        Config config = new Config(new Properties());
-        sut = new Scheduler(config, publisher);
-
-        when(codeBaseScannerMock.scan()).thenReturn(new CodeBase(Collections.singletonList(Method.createTestMethod()), "fingerprint"));
-        sut.setCodeBaseScanner(codeBaseScannerMock);
+        sut = new Scheduler(new Config(new Properties()), publisher, codeBaseScannerMock);
     }
 
     @AfterEach

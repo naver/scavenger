@@ -39,43 +39,18 @@ public class ScavengerAgent {
 
         new ScavengerBanner(config).printBanner(System.out);
 
-        CodeBase codeBase = null;
+        Scheduler scheduler = new Scheduler(config);
         if (!config.isAsyncCodeBaseScanMode()) {
-            codeBase = scanCodeBase(config);
+            boolean scanSuccessful = scheduler.scanCodeBase();
 
-            if (codeBase == null) {
+            if (!scanSuccessful) {
                 log.warning("[scavenger] scavenger is disabled");
                 return;
             }
         }
 
         InvocationTracker.installAdvice(inst, config);
-
-        Scheduler scheduler = new Scheduler(config);
-        if (codeBase != null) {
-            scheduler.setCodeBasePublication(codeBase.toPublication(config));
-        }
         scheduler.start();
-
         Runtime.getRuntime().addShutdownHook(new ShutdownHook(scheduler));
-    }
-
-    static CodeBase scanCodeBase(Config config) {
-        CodeBase codeBase;
-        try {
-            codeBase = new CodeBaseScanner(config).scan();
-        } catch (Throwable t) {
-            log.log(Level.SEVERE, "[scavenger] could not scan codebase", t);
-            return null;
-        }
-
-        if (codeBase.getMethods().isEmpty()) {
-            log.severe("[scavenger] no methods are found");
-            return null;
-        } else if (codeBase.getMethods().size() > 100000) {
-            log.severe("[scavenger] maximum methods count(100000) exceed: " + codeBase.getMethods().size());
-            return null;
-        }
-        return codeBase;
     }
 }
