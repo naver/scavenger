@@ -47,6 +47,7 @@ public class Config {
     private int schedulerInitialDelayMillis = 10_000;
     private int schedulerIntervalMillis = 10_000;
     private Integer forceIntervalSeconds;
+    private Integer maxMethodsCount;
 
     private boolean asyncCodeBaseScanMode = false;
     private boolean legacyCompatibilityMode = false;
@@ -80,6 +81,7 @@ public class Config {
         schedulerInitialDelayMillis = getIntValue(props, "schedulerInitialDelayMillis", schedulerInitialDelayMillis);
         schedulerIntervalMillis = getIntValue(props, "schedulerIntervalMillis", schedulerIntervalMillis);
         forceIntervalSeconds = getIntValue(props, "forceIntervalSeconds", 0);
+        maxMethodsCount = getIntValue(props, "maxMethodsCount", 100000);
 
         asyncCodeBaseScanMode = getBooleanValue(props, "asyncCodeBaseScanMode", asyncCodeBaseScanMode);
         legacyCompatibilityMode = getBooleanValue(props, "legacyCompatibilityMode", legacyCompatibilityMode);
