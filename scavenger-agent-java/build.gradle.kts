@@ -19,8 +19,6 @@ java {
     withSourcesJar()
 }
 
-tasks.jar { enabled = false }
-
 tasks.withType<ShadowJar> {
     archiveFileName.set("${project.name}-${project.version}.jar")
 
