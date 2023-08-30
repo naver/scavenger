@@ -16,22 +16,13 @@ class AgentStateDao(
     AgentStateRepository by agentStateRepository {
     private val sql: AgentStateSql = super.sqls(::AgentStateSql)
 
-    fun findGarbageLastPolledAtBefore(customerId: Long, lastPolledAt: Instant): List<AgentStateEntity> {
+    fun findAllGarbageLastPolledAtBefore(customerId: Long, lastPolledAt: Instant): List<AgentStateEntity> {
         return select(
-            sql.selectGarbageLastPolledAtBefore(),
+            sql.selectAllGarbageLastPolledAtBefore(),
             mapParameterSource()
                 .addValue("customerId", customerId)
                 .addValue("lastPolledAt", lastPolledAt),
             AgentStateEntity::class.java
-        )
-    }
-
-    fun deleteGarbageLastPolledAtBefore(customerId: Long, lastPolledAt: Instant): Int {
-        return update(
-            sql.deleteGarbageLastPolledAtBefore(),
-            mapParameterSource()
-                .addValue("customerId", customerId)
-                .addValue("lastPolledAt", lastPolledAt)
         )
     }
 

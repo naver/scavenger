@@ -8,7 +8,7 @@ Scavenger provides more sophisticated and clear UI and elaborate the instrumenta
 
 ### Components
 
-* Scavenger agent
+* Scavenger Agent
     * Collect the code base and regularly send the invocations of the host application to collectors.
 * Scavenger Collector
     * Store the data received from the agent in the database.
@@ -17,6 +17,8 @@ Scavenger provides more sophisticated and clear UI and elaborate the instrumenta
     * Provide APs for exploring invocations.
 * Scavenger Frontend
     * Provides UI.
+* [Scavenger Python Agent (BETA)](https://github.com/naver/scavenger/blob/develop/scavenger-agent-python)
+    * Python agent of Scavenger Agent described above.
 
 # Features
 

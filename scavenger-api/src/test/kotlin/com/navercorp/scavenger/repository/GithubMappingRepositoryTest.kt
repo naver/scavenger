@@ -12,8 +12,8 @@ class GithubMappingRepositoryTest {
     private lateinit var sut: GithubMappingRepository
 
     @Test
-    fun findByCustomerId() {
-        assertThat(sut.findByCustomerId(1)).hasSize(1)
+    fun findAllByCustomerId() {
+        assertThat(sut.findAllByCustomerId(1)).hasSize(1)
     }
 
     @Test
@@ -21,6 +21,6 @@ class GithubMappingRepositoryTest {
     fun deleteByCustomerIdAndId() {
         sut.deleteByCustomerIdAndId(1, 1)
 
-        assertThat(sut.findByCustomerId(1)).hasSize(0)
+        assertThat(sut.findAllByCustomerId(1)).hasSize(0)
     }
 }

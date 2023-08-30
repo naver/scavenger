@@ -243,4 +243,63 @@ class GarbageCollectServiceTest {
                 .hasSize(3)
         }
     }
+
+    @Nested
+    @DisplayName("if without agent state exists")
+    inner class WithoutAgentJvms {
+        val now = Instant.now()
+        val ago = now.minus(600 + IntervalService.Companion.GC_DEAD_MARGIN_MINUTES * 60, ChronoUnit.SECONDS)
+
+        @BeforeEach
+        fun beforeEach() {
+            // Clean up first
+            jvmDao.findAllByCustomerId(customerId).forEach {
+                jvmDao.deleteById(it.id)
+            }
+
+            jvmDao.insert(
+                JvmEntity(
+                    customerId = customerId,
+                    applicationId = 1,
+                    environmentId = 1,
+                    uuid = "uuid",
+                    codeBaseFingerprint = null,
+                    createdAt = ago,
+                    publishedAt = ago,
+                    hostname = "hostname",
+                )
+            )
+
+            jvmDao.insert(
+                JvmEntity(
+                    customerId = customerId,
+                    applicationId = 1,
+                    environmentId = 1,
+                    uuid = "withoutUUID",
+                    codeBaseFingerprint = null,
+                    createdAt = ago,
+                    publishedAt = ago,
+                    hostname = "hostname",
+                )
+            )
+
+            agentStateDao.insert(
+                AgentStateEntity(
+                    customerId = customerId,
+                    jvmUuid = "uuid",
+                    createdAt = ago,
+                    lastPolledAt = ago,
+                    nextPollExpectedAt = ago.plusSeconds(60),
+                    timestamp = ago,
+                    enabled = true,
+                )
+            )
+        }
+
+        @Test
+        fun sweepAgentStatesAndJvms_removeWithoutAgentJvms() {
+            sut.sweepAgentStatesAndJvms(customerId, now)
+            assertThat(jvmDao.findAllByCustomerId(customerId).size).isEqualTo(1)
+        }
+    }
 }

@@ -7,7 +7,6 @@ import java.util.logging.Level;
 
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
-import lombok.Setter;
 import lombok.extern.java.Log;
 
 import com.navercorp.scavenger.javaagent.collecting.CodeBaseScanner;
@@ -23,29 +22,29 @@ import com.navercorp.scavenger.model.InvocationDataPublication;
 public class Scheduler implements Runnable {
     private final Config config;
     private final Publisher publisher;
+    private final CodeBaseScanner codeBaseScanner;
     private final ScheduledExecutorService executor;
 
     private final SchedulerState pollState;
     private final SchedulerState codeBasePublisherState;
     private final SchedulerState invocationDataPublisherState;
 
+    private final int forceIntervalSeconds;
+    private final int maxMethodsCount;
+
     private GetConfigResponse dynamicConfig;
-    @Setter
     private CodeBasePublication codeBasePublication;
     private boolean isCodeBasePublished = false;
     private InvocationDataPublication invocationDataPublication;
     private String codeBaseFingerprint;
-    private int forceIntervalSeconds;
-    @Setter
-    private CodeBaseScanner codeBaseScanner;
 
     public Scheduler(Config config) {
-        this(config, new Publisher(config));
+        this(config, new Publisher(config), new CodeBaseScanner(config));
     }
 
-    public Scheduler(Config config, Publisher publisher) {
+    public Scheduler(Config config, Publisher publisher, CodeBaseScanner codeBaseScanner) {
         this.config = config;
-        this.codeBaseScanner = new CodeBaseScanner(config);
+        this.codeBaseScanner = codeBaseScanner;
         this.publisher = publisher;
         this.executor = Executors.newScheduledThreadPool(
             1,
@@ -56,6 +55,7 @@ public class Scheduler implements Runnable {
         );
 
         this.forceIntervalSeconds = this.config.getForceIntervalSeconds();
+        this.maxMethodsCount = this.config.getMaxMethodsCount();
         // these intervals will be updated when dynamic config is polled (not likely be used)
         int intervalSeconds = 600;
         int retryIntervalSeconds = 600;
@@ -157,22 +157,11 @@ public class Scheduler implements Runnable {
         if (!isCodeBasePublished && codeBasePublisherState.isDueTime() && dynamicConfig != null) {
             try {
                 if (this.codeBasePublication == null) {
-                    CodeBase codeBase;
-                    try {
-                        codeBase = codeBaseScanner.scan();
-                    } catch (Throwable e) {
-                        log.log(Level.SEVERE, "[scavenger] code scanning is failed. Stop codebase publishing.", e);
-                        return;
-                    }
+                    boolean scanSuccessful = scanCodeBase();
 
-                    if (codeBase.getMethods().isEmpty()) {
-                        log.severe("[scavenger] no methods are found");
-                        return;
-                    } else if (codeBase.getMethods().size() > 100000) {
-                        log.severe("[scavenger] maximum methods count(100000) exceed: " + codeBase.getMethods().size());
+                    if (!scanSuccessful) {
                         return;
                     }
-                    this.codeBasePublication = codeBase.toPublication(config);
                 }
 
                 this.publisher.publishCodeBase(codeBasePublication);
@@ -184,6 +173,26 @@ public class Scheduler implements Runnable {
                 codeBasePublisherState.scheduleRetry();
             }
         }
+    }
+
+    public boolean scanCodeBase() {
+        CodeBase codeBase;
+        try {
+            codeBase = codeBaseScanner.scan();
+        } catch (Throwable e) {
+            log.log(Level.SEVERE, "[scavenger] code scanning is failed. Stop codebase publishing.", e);
+            return false;
+        }
+
+        if (codeBase.getMethods().isEmpty()) {
+            log.severe("[scavenger] no methods are found");
+            return false;
+        } else if (codeBase.getMethods().size() > maxMethodsCount) {
+            log.severe("[scavenger] maximum methods count(" + maxMethodsCount + ") exceed: " + codeBase.getMethods().size());
+            return false;
+        }
+        this.codeBasePublication = codeBase.toPublication(config);
+        return true;
     }
 
     public void publishInvocationDataIfNeeded() {

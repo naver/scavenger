@@ -19,11 +19,11 @@ class ApplicationService(
     val snapshotService: SnapshotService
 ) {
     fun getApplications(customerId: Long): List<ApplicationDto> {
-        return applicationRepository.findByCustomerId(customerId).map { ApplicationDto.from(it) }
+        return applicationRepository.findAllByCustomerId(customerId).map { ApplicationDto.from(it) }
     }
 
     fun getApplicationsDetail(customerId: Long): List<ApplicationDetailDto> {
-        val applications = applicationRepository.findByCustomerId(customerId)
+        val applications = applicationRepository.findAllByCustomerId(customerId)
         return applications
             .map { applicationEntity: ApplicationEntity ->
                 val applicationId = applicationEntity.id
@@ -47,7 +47,7 @@ class ApplicationService(
         checkNotNull(applicationRepository.findByCustomerIdAndId(customerId, applicationId)) { "잘못된 접근" }
         jvmRepository.deleteByCustomerIdAndApplicationId(customerId, applicationId)
         invocationRepository.deleteByCustomerIdAndApplicationId(customerId, applicationId)
-        snapshotApplicationRepository.findByCustomerIdAndApplicationId(customerId, applicationId)
+        snapshotApplicationRepository.findAllByCustomerIdAndApplicationId(customerId, applicationId)
             .forEach { snapshotId -> snapshotService.deleteSnapshot(customerId, snapshotId) }
         applicationRepository.deleteByCustomerIdAndId(customerId, applicationId)
     }

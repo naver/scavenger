@@ -17,7 +17,7 @@ class AgentStateSql : SqlGeneratorSupport() {
             AND jvmUuid = :jvmUuid
         """.trimIndent()
 
-    fun selectGarbageLastPolledAtBefore(): String =
+    fun selectAllGarbageLastPolledAtBefore(): String =
         """
         SELECT
            ${sql.columns(AgentStateEntity::class.java)}
@@ -27,15 +27,6 @@ class AgentStateSql : SqlGeneratorSupport() {
             customerId = :customerId
             AND lastPolledAt < :lastPolledAt
         LIMIT 10000
-        """.trimIndent()
-
-    fun deleteGarbageLastPolledAtBefore(): String =
-        """
-        DELETE FROM
-            agent_state
-        WHERE
-            customerId = :customerId
-            AND lastPolledAt < :lastPolledAt
         """.trimIndent()
 
     fun deleteAllByCustomerIdAndIds(): String =

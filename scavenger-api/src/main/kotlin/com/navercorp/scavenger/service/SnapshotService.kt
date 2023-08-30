@@ -31,7 +31,7 @@ class SnapshotService(
         filterInvokedAtMillis: Long,
         packages: String
     ): SnapshotDto {
-        val methodInvocations = methodInvocationRepository.findMethodInvocations(customerId, applicationIdList, environmentIdList)
+        val methodInvocations = methodInvocationRepository.findAllMethodInvocations(customerId, applicationIdList, environmentIdList)
         val snapshotEntity = SnapshotEntity(
             name = name,
             customerId = customerId,
@@ -58,7 +58,7 @@ class SnapshotService(
         packages: String
     ): SnapshotDto {
         val existing = snapshotDao.findByCustomerIdAndId(customerId, snapshotId).orElseThrow()
-        val methodInvocations = methodInvocationRepository.findMethodInvocations(existing.customerId, applicationIdList, environmentIdList)
+        val methodInvocations = methodInvocationRepository.findAllMethodInvocations(existing.customerId, applicationIdList, environmentIdList)
         val snapshot = existing.copy(packages = packages, name = name, filterInvokedAtMillis = filterInvokedAtMillis)
 
         snapshotDao.updateSnapshot(snapshot)
@@ -86,7 +86,7 @@ class SnapshotService(
         val snapshot = snapshotDao.findByCustomerIdAndId(customerId, snapshotId).orElseThrow()
         val applicationIdList: List<Long> = snapshot.applications.map { it.applicationId }
         val environmentIdList: List<Long> = snapshot.environments.map { it.environmentId }
-        val methodInvocations = methodInvocationRepository.findMethodInvocations(snapshot.customerId, applicationIdList, environmentIdList)
+        val methodInvocations = methodInvocationRepository.findAllMethodInvocations(snapshot.customerId, applicationIdList, environmentIdList)
 
         snapshotNodeService.deleteSnapshotNode(snapshot.customerId, snapshotId)
         snapshotNodeService.createAndSaveSnapshotNodes(snapshot, methodInvocations)
@@ -111,7 +111,7 @@ class SnapshotService(
     }
 
     fun listSnapshots(customerId: Long): List<SnapshotDto> {
-        return snapshotDao.findByCustomerId(customerId).map { SnapshotDto.from(it) }
+        return snapshotDao.findAllByCustomerId(customerId).map { SnapshotDto.from(it) }
     }
 
     companion object {

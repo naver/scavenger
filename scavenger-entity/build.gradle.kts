@@ -11,6 +11,12 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jdbc:2.5.12")
 }
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(11))
+    }
+}
+
 repositories {
     mavenCentral()
 }

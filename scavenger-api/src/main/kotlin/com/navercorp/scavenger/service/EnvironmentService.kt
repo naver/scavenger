@@ -19,11 +19,11 @@ class EnvironmentService(
     val snapshotService: SnapshotService
 ) {
     fun getEnvironments(customerId: Long): List<EnvironmentDto> {
-        return environmentRepository.findByCustomerId(customerId).map { EnvironmentDto.from(it) }
+        return environmentRepository.findAllByCustomerId(customerId).map { EnvironmentDto.from(it) }
     }
 
     fun getEnvironmentsDetail(customerId: Long): List<EnvironmentDetailDto> {
-        val environments = environmentRepository.findByCustomerId(customerId)
+        val environments = environmentRepository.findAllByCustomerId(customerId)
         return environments
             .map { environmentEntity: EnvironmentEntity ->
                 val environmentId = environmentEntity.id
@@ -47,7 +47,7 @@ class EnvironmentService(
         checkNotNull(environmentRepository.findByCustomerIdAndId(customerId, environmentId)) { "잘못된 접근" }
         jvmRepository.deleteByCustomerIdAndEnvironmentId(customerId, environmentId)
         invocationRepository.deleteByCustomerIdAndEnvironmentId(customerId, environmentId)
-        snapshotEnvironmentRepository.findByCustomerIdAndEnvironmentId(customerId, environmentId)
+        snapshotEnvironmentRepository.findAllByCustomerIdAndEnvironmentId(customerId, environmentId)
             .forEach { snapshotId -> snapshotService.deleteSnapshot(customerId, snapshotId) }
         environmentRepository.deleteByCustomerIdAndId(customerId, environmentId)
     }

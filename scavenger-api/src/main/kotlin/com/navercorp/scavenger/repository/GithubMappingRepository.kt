@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface GithubMappingRepository : DelegatableJdbcRepository<GithubMappingEntity, Long> {
-    fun findByCustomerId(customerId: Long): List<GithubMappingEntity>
+    fun findAllByCustomerId(customerId: Long): List<GithubMappingEntity>
 
     @Modifying
     @Query("DELETE FROM github_mappings WHERE customerId = :customerId AND id = :id")

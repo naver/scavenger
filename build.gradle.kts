@@ -27,8 +27,8 @@ release {
         version
     }
 
-    pushReleaseVersionBranch.set("release/${ releaseVersion }")
-    tagTemplate.set("v${ releaseVersion }")
+    pushReleaseVersionBranch.set("release/${releaseVersion}")
+    tagTemplate.set("v${releaseVersion}")
     preTagCommitMessage.set("Release ")
     newVersionCommitMessage.set("Update next development version after Release")
     with(git) {
@@ -39,5 +39,13 @@ release {
 subprojects {
     tasks.withType<Test> {
         useJUnitPlatform()
+    }
+}
+
+project(":scavenger-old-agent-java").afterEvaluate {
+    tasks.all {
+        onlyIf {
+            project.hasProperty("oldAgent")
+        }
     }
 }

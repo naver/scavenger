@@ -66,12 +66,12 @@ class SnapshotNodeRepositoryTest {
     }
 
     @Test
-    fun selectAllBySignatureContaining() {
-        val result = sut.selectAllBySignatureContaining(customerId, snapshotId, parent)
+    fun findAllBySignatureContaining() {
+        val result = sut.findAllBySignatureContaining(customerId, snapshotId, parent)
         assertThat(result).hasSizeGreaterThan(0)
 
-        assertThat(sut.selectAllBySignatureContaining(customerId, snapshotId, parent, result.last().id)).hasSize(0)
+        assertThat(sut.findAllBySignatureContaining(customerId, snapshotId, parent, result.last().id)).hasSize(0)
 
-        assertThat(sut.selectAllBySignatureContaining(customerId, snapshotId, "hello")).hasSize(1)
+        assertThat(sut.findAllBySignatureContaining(customerId, snapshotId, "hello")).hasSize(1)
     }
 }
