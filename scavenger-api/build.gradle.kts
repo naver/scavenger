@@ -42,7 +42,7 @@ dependencies {
     implementation("org.liquibase:liquibase-core")
     implementation("io.github.microutils:kotlin-logging-jvm:2.1.23")
     implementation("net.ttddyy:datasource-proxy:1.7")
-    implementation("com.github.vertical-blank:sql-formatter:1.0.1")
+    implementation("com.github.vertical-blank:sql-formatter:2.0.4")
     implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.9.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
