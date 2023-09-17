@@ -43,14 +43,16 @@ class ArmeriaConfiguration(
     @Bean
     fun armeriaServiceInitializer(tomcatService: TomcatService): ArmeriaServerConfigurator {
         return ArmeriaServerConfigurator { serviceBuilder: ServerBuilder ->
+            val maxMessageSize = maxMessageSize.toBytes().toInt()
             serviceBuilder.service("prefix:/", tomcatService)
                 .service(GrpcService.builder()
                     .addService(grpcAgentController)
                     .addExceptionMapping(IllegalArgumentException::class.java, Status.INVALID_ARGUMENT)
                     .addExceptionMapping(LicenseKeyNotFoundException::class.java, Status.UNAUTHENTICATED)
-                    .maxRequestMessageLength(maxMessageSize.toBytes().toInt())
+                    .maxRequestMessageLength(maxMessageSize)
                     .build()
                 )
+                .maxRequestLength(maxMessageSize.toLong())
         }
     }
 }
