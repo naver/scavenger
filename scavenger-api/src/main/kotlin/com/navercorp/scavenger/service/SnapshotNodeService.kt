@@ -24,7 +24,7 @@ class SnapshotNodeService(
         filteredMethodInvocations.forEach {
             updateCountGraph(
                 current = root,
-                elements = splitSignature(it),
+                elements = splitSignatureWithType(it),
                 isUsed = it.invokedAtMillis > 0 && it.invokedAtMillis >= snapshotEntity.filterInvokedAtMillis,
                 invokedAtMillis = it.invokedAtMillis
             )
@@ -75,20 +75,20 @@ class SnapshotNodeService(
 
     private fun updateCountGraph(
         current: Node,
-        elements: List<Map<String, String>>,
+        elements: List<SignatureWithType>,
         isUsed: Boolean,
         invokedAtMillis: Long
     ) {
         var node = current
         elements.forEach {
-            val signature = checkNotNull(it["signature"]) { "signature must be not null" }
+            val signature = it.signature
             updateCount(node, isUsed, invokedAtMillis)
             if (signature !in node.signatureChildMap) {
                 val delimiter = if (signature.contains("$")) "" else "."
                 val nextElementName = if (node.signature.isBlank()) signature else "${node.signature}$delimiter$signature"
                 node.signatureChildMap[signature] = Node(
                     signature = nextElementName,
-                    type = Node.Type.valueOf(checkNotNull(it["type"]) { "type must be not null" })
+                    type = it.type
                 )
             }
             node = node.signatureChildMap.getValue(signature)
@@ -113,30 +113,31 @@ class SnapshotNodeService(
     * "a.b.c.d(e, f)" to ["a", "b", "c", "d(e, f)"]
     * "a.b.c.D(e, f)" to ["a", "b", "c", "D", "D(e, f)"]
     */
-    private fun splitSignature(methodInvocationEntity: MethodInvocationEntity): List<Map<String, String>> {
+    private fun splitSignatureWithType(methodInvocationEntity: MethodInvocationEntity): List<SignatureWithType> {
         val (nameOnlySignature, arguments) = methodInvocationEntity.signature.split("(", limit = 2)
 
         val elements = nameOnlySignature.split("(?=\\b[.$])".toRegex())
             .filterNot { it == "" }
-            .map { mutableMapOf("signature" to it.replace(".", "")) }
+            .map { SignatureWithType(it.replace(".", "")) }
             .toMutableList()
 
         if (isConstructor(methodInvocationEntity)) {
-            val constructorSignature = checkNotNull(elements.last()["signature"]) { "signature must be not null" }
-            elements.add(mutableMapOf("signature" to constructorSignature.replace("$", "")))
+            val constructorSignature = elements.last().signature
+            elements.add(SignatureWithType(constructorSignature.replace("$", "")))
         }
 
-        val lastElement = elements.last()
-        lastElement["signature"] = "${lastElement["signature"]}($arguments" + if (arguments.last() != ')') ")" else ""
+        val lastElement = elements.removeLast()
+        elements.add(SignatureWithType("${lastElement.signature}($arguments" + if (arguments.last() != ')') ")" else ""))
 
-        elements.forEachIndexed { index, mutableMap ->
-            val signature = checkNotNull(mutableMap["signature"]) { "signature must be not null" }
-            mutableMap["type"] = if (signature.contains("(")) {
-                Node.Type.METHOD.name
-            } else if (signature.contains("$") || checkNotNull(elements[index + 1]["signature"]).contains("[($]".toRegex())) {
-                Node.Type.CLASS.name
+
+        elements.forEachIndexed{index, signatureWithType ->
+            val signature = signatureWithType.signature
+            signatureWithType.type = if (signature.contains("(")) {
+                Node.Type.METHOD
+            } else if (signature.contains("$") || elements[index + 1].signature.contains("[($]".toRegex())) {
+                Node.Type.CLASS
             } else {
-                Node.Type.PACKAGE.name
+                Node.Type.PACKAGE
             }
         }
 
@@ -178,6 +179,12 @@ class SnapshotNodeService(
             type = currentNode.type.toString(),
             customerId = customerId
         )
+    }
+
+    data class SignatureWithType(
+        val signature: String,
+    ) {
+        lateinit var type: Node.Type
     }
 
     data class Node(
