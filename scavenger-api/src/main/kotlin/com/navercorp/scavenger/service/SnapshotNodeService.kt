@@ -129,11 +129,11 @@ class SnapshotNodeService(
         val lastElement = elements.last()
         lastElement["signature"] = "${lastElement["signature"]}($arguments" + if (arguments.last() != ')') ")" else ""
 
-        elements.asReversed().forEachIndexed { index, mutableMap ->
+        elements.forEachIndexed { index, mutableMap ->
             val signature = checkNotNull(mutableMap["signature"]) { "signature must be not null" }
             mutableMap["type"] = if (signature.contains("(")) {
                 Node.Type.METHOD.name
-            } else if (signature.contains("$") || checkNotNull(elements[elements.size - index]["signature"]).contains("[($]".toRegex())) {
+            } else if (signature.contains("$") || checkNotNull(elements[index + 1]["signature"]).contains("[($]".toRegex())) {
                 Node.Type.CLASS.name
             } else {
                 Node.Type.PACKAGE.name
