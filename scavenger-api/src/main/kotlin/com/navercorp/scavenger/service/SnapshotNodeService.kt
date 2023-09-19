@@ -129,8 +129,7 @@ class SnapshotNodeService(
         val lastElement = elements.removeLast()
         elements.add(SignatureWithType("${lastElement.signature}($arguments" + if (arguments.last() != ')') ")" else ""))
 
-
-        elements.forEachIndexed{index, signatureWithType ->
+        elements.forEachIndexed { index, signatureWithType ->
             val signature = signatureWithType.signature
             signatureWithType.type = if (signature.contains("(")) {
                 Node.Type.METHOD
