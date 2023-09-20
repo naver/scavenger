@@ -24,7 +24,7 @@ class SnapshotNodeService(
         filteredMethodInvocations.forEach {
             updateCountGraph(
                 current = root,
-                elements = splitSignature(it),
+                elements = splitSignatureWithType(it),
                 isUsed = it.invokedAtMillis > 0 && it.invokedAtMillis >= snapshotEntity.filterInvokedAtMillis,
                 invokedAtMillis = it.invokedAtMillis
             )
@@ -75,22 +75,23 @@ class SnapshotNodeService(
 
     private fun updateCountGraph(
         current: Node,
-        elements: List<String>,
+        elements: List<SignatureWithType>,
         isUsed: Boolean,
         invokedAtMillis: Long
     ) {
         var node = current
         elements.forEach {
+            val signature = it.signature
             updateCount(node, isUsed, invokedAtMillis)
-            if (it !in node.signatureChildMap) {
-                val delimiter = if (node.type == Node.Type.CLASS && !it.contains("(")) "$" else "."
-                val nextElementName = if (node.signature.isBlank()) it else "${node.signature}$delimiter$it"
-                node.signatureChildMap[it] = Node(
+            if (signature !in node.signatureChildMap) {
+                val delimiter = if (signature.contains("$")) "" else "."
+                val nextElementName = if (node.signature.isBlank()) signature else "${node.signature}$delimiter$signature"
+                node.signatureChildMap[signature] = Node(
                     signature = nextElementName,
-                    type = getType(node, nextElementName)
+                    type = it.type
                 )
             }
-            node = node.signatureChildMap.getValue(it)
+            node = node.signatureChildMap.getValue(signature)
         }
         updateCount(node, isUsed, invokedAtMillis)
     }
@@ -112,38 +113,38 @@ class SnapshotNodeService(
     * "a.b.c.d(e, f)" to ["a", "b", "c", "d(e, f)"]
     * "a.b.c.D(e, f)" to ["a", "b", "c", "D", "D(e, f)"]
     */
-    private fun splitSignature(methodInvocationEntity: MethodInvocationEntity): List<String> {
+    private fun splitSignatureWithType(methodInvocationEntity: MethodInvocationEntity): List<SignatureWithType> {
         val (nameOnlySignature, arguments) = methodInvocationEntity.signature.split("(", limit = 2)
 
-        val elements = nameOnlySignature.split(*DELIMITERS)
+        val elements = nameOnlySignature.split("(?=\\b[.$])".toRegex())
             .filterNot { it == "" }
+            .map { SignatureWithType(it.replace(".", "")) }
             .toMutableList()
 
         if (isConstructor(methodInvocationEntity)) {
-            elements.add(elements.last())
+            val constructorSignature = elements.last().signature
+            elements.add(SignatureWithType(constructorSignature.replace("$", "")))
         }
 
-        elements[elements.size - 1] = "${elements.last()}($arguments" + if (arguments.last() != ')') ")" else ""
-        return elements
-    }
+        val lastElement = elements.removeLast()
+        elements.add(SignatureWithType("${lastElement.signature}($arguments" + if (arguments.last() != ')') ")" else ""))
 
-    private fun isConstructor(methodInvocationEntity: MethodInvocationEntity): Boolean {
-        return methodInvocationEntity.methodName == "<init>"
-    }
-
-    private fun getType(parent: Node, signature: String): Node.Type {
-        val isParentTypeClass = parent.type == Node.Type.CLASS
-        return if (isParentTypeClass && signature.contains("(")) {
-            Node.Type.METHOD
-        } else {
-            val split = signature.split(*DELIMITERS)
-            val firstOfLast = split.last()[0]
-            if (firstOfLast.uppercaseChar() == firstOfLast || isParentTypeClass /*Inner Class*/) {
+        elements.forEachIndexed { index, signatureWithType ->
+            val signature = signatureWithType.signature
+            signatureWithType.type = if (signature.contains("(")) {
+                Node.Type.METHOD
+            } else if (signature.contains("$") || elements[index + 1].signature.contains("[($]".toRegex())) {
                 Node.Type.CLASS
             } else {
                 Node.Type.PACKAGE
             }
         }
+
+        return elements
+    }
+
+    private fun isConstructor(methodInvocationEntity: MethodInvocationEntity): Boolean {
+        return methodInvocationEntity.methodName == "<init>"
     }
 
     private fun serializeGraphAddToNodes(
@@ -179,6 +180,12 @@ class SnapshotNodeService(
         )
     }
 
+    data class SignatureWithType(
+        val signature: String,
+    ) {
+        lateinit var type: Node.Type
+    }
+
     data class Node(
         val signature: String,
         val type: Type,
@@ -194,6 +201,5 @@ class SnapshotNodeService(
 
     companion object {
         private const val BATCH_CHUNK_SIZE = 1000
-        private val DELIMITERS = arrayOf(".", "$")
     }
 }
