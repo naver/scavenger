@@ -181,3 +181,8 @@ CREATE TABLE IF NOT EXISTS `leadership` (
     memberId   VARCHAR(128)   NOT NULL,
     lastSeenActive TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) COLLATE = utf8mb4_0900_as_cs;
+
+
+--changeset scavenger:3
+
+ALTER TABLE snapshot_nodes MODIFY signature TEXT;
