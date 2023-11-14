@@ -98,6 +98,7 @@ val integrationTestRuntimeClasspath = configurations.named("integrationTestRunti
 
 tasks.named<Test>("integrationTest") {
     dependsOn(tasks.shadowJar)
+    mustRunAfter(tasks.jar)
     shouldRunAfter(tasks.test)
     useJUnitPlatform()
 
