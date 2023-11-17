@@ -1,6 +1,6 @@
 #!/bin/bash
 
-./gradlew build -p scavenger-agent-java -x test
+./gradlew build -p scavenger-agent-java -x test -x integrationTest
 ./gradlew build -p scavenger-demo -x test
 
 java -Dscavenger.configuration=./scavenger-demo/scavenger.conf  \
