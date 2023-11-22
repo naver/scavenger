@@ -197,14 +197,14 @@ class GarbageCollectServiceTest {
             sut.sweepMethods(customerId, min!!)
             assertThat(methodDao.findAllByCustomerId(customerId))
                 .describedAs("nothing is deleted when the 1 week is not passed since last seen")
-                .hasSize(5)
+                .hasSize(34)
             assertThat(invocationDao.findAllByCustomerId(customerId))
                 .describedAs("invocations should be same as before")
                 .hasSize(invocations.size)
             sut.sweepMethods(customerId, min!!.plusSeconds(10))
             assertThat(methodDao.findAllByCustomerId(customerId))
                 .describedAs("marked method is deleted when the more than 1 week is passed after last seen")
-                .hasSize(3)
+                .hasSize(32)
             val invocationsAfter = invocationDao.findAllByCustomerId(customerId)
             assertThat(invocationsAfter)
                 .describedAs("invocations should be deleted as well")
@@ -212,7 +212,7 @@ class GarbageCollectServiceTest {
             sut.sweepMethods(customerId, Instant.now())
             assertThat(methodDao.findAllByCustomerId(customerId))
                 .describedAs("nothing more is deleted when no marking is done")
-                .hasSize(3)
+                .hasSize(32)
         }
 
         @Test
@@ -225,14 +225,14 @@ class GarbageCollectServiceTest {
             sut.sweepMethods(customerId, min!!)
             assertThat(methodDao.findAllByCustomerId(customerId))
                 .describedAs("nothing is deleted when the 1 week is not passed since last seen")
-                .hasSize(5)
+                .hasSize(34)
             assertThat(invocationDao.findAllByCustomerId(customerId))
                 .describedAs("invocations should be same as before")
                 .hasSize(invocations.size)
             sut.sweepMethods(customerId, min!!.plusSeconds(10))
             assertThat(methodDao.findAllByCustomerId(customerId))
                 .describedAs("marked method is deleted when the more than 1 week is passed after last seen")
-                .hasSize(3)
+                .hasSize(32)
             val invocationsAfter = invocationDao.findAllByCustomerId(customerId)
             assertThat(invocationsAfter)
                 .describedAs("invocations should be deleted as well")
@@ -240,7 +240,7 @@ class GarbageCollectServiceTest {
             sut.sweepMethods(customerId, Instant.now())
             assertThat(methodDao.findAllByCustomerId(customerId))
                 .describedAs("nothing more is deleted when no marking is done")
-                .hasSize(3)
+                .hasSize(32)
         }
     }
 

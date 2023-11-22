@@ -12,7 +12,7 @@ class ApplicationRepositoryTest {
 
     @Test
     fun findAllByCustomerId() {
-        assertThat(sut.findAllByCustomerId(1)).hasSize(1)
+        assertThat(sut.findAllByCustomerId(1)).hasSize(2)
     }
 
     @Test
