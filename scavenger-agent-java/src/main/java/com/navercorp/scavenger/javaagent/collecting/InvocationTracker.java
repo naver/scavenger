@@ -3,6 +3,7 @@ package com.navercorp.scavenger.javaagent.collecting;
 import java.lang.instrument.Instrumentation;
 import java.util.logging.Logger;
 
+import com.blogspot.mydailyjava.weaklockfree.DetachedThreadLocal;
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.agent.builder.AgentBuilder;
 import net.bytebuddy.asm.Advice;
@@ -33,6 +34,8 @@ public class InvocationTracker {
     @Setter
     @Getter
     private static boolean debugMode = false;
+
+    public static final DetachedThreadLocal<String> threadLocal = new DetachedThreadLocal<>(DetachedThreadLocal.Cleaner.THREAD);
 
     public static Logger getLog() {
         return log;
@@ -69,9 +72,11 @@ public class InvocationTracker {
     @Advice.OnMethodEnter
     public static void onInvocation(@Advice.Origin String signature) {
         String hash = getMethodRegistry().getHash(signature, isLegacyCompatibilityMode());
-
         //noinspection StringEquality
         if (hash != MethodRegistry.SYNTHETIC_SIGNATURE_HASH) {
+            getLog().info("[scavenger] previous " + threadLocal.get() + " current " + signature);
+            threadLocal.set(signature);
+
             if (isDebugMode()) {
                 getLog().info("[scavenger] method " + signature + " is invoked - " + hash);
             }

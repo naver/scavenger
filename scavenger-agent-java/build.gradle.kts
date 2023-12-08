@@ -69,6 +69,7 @@ dependencies {
     implementation("com.google.protobuf:protobuf-java-util:${property("protobufVersion")}")
     implementation("io.grpc:grpc-stub:${property("grpcVersion")}")
     implementation("io.grpc:grpc-okhttp:${property("grpcVersion")}")
+    implementation("com.blogspot.mydailyjava:weak-lock-free:0.18")
 
     testImplementation(platform("org.junit:junit-bom:5.8.2"))
     testImplementation("org.junit.jupiter:junit-jupiter")
