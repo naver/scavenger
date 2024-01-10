@@ -2,5 +2,10 @@ databaseChangeLog:
   - include:
       file: db/changelog/schema.sql
   - include:
+      file: db/changelog/schema-1.1.2.sql
+  - include:
       file: db/changelog/test-data-set.sql
+      context: local
+  - include:
+      file: db/changelog/test-data-set-1.1.2.sql
       context: local

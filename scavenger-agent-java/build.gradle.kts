@@ -19,8 +19,6 @@ java {
     withSourcesJar()
 }
 
-tasks.jar { enabled = false }
-
 tasks.withType<ShadowJar> {
     archiveFileName.set("${project.name}-${project.version}.jar")
 
@@ -64,9 +62,9 @@ repositories {
 
 dependencies {
     implementation(project(":scavenger-model"))
-    implementation("net.bytebuddy:byte-buddy:1.12.23")
-    implementation("org.ow2.asm:asm:9.4")
-    implementation("org.ow2.asm:asm-tree:9.4")
+    implementation("net.bytebuddy:byte-buddy:1.14.3")
+    implementation("org.ow2.asm:asm:9.5")
+    implementation("org.ow2.asm:asm-tree:9.5")
     implementation("com.squareup.okhttp3:okhttp:3.14.9")
     implementation("com.google.protobuf:protobuf-java-util:${property("protobufVersion")}")
     implementation("io.grpc:grpc-stub:${property("grpcVersion")}")
@@ -100,6 +98,7 @@ val integrationTestRuntimeClasspath = configurations.named("integrationTestRunti
 
 tasks.named<Test>("integrationTest") {
     dependsOn(tasks.shadowJar)
+    mustRunAfter(tasks.jar)
     shouldRunAfter(tasks.test)
     useJUnitPlatform()
 
@@ -109,7 +108,7 @@ tasks.named<Test>("integrationTest") {
 
     systemProperty("integrationTest.scavengerAgent", tasks.shadowJar.get().outputs.files.asPath)
     systemProperty("integrationTest.classpath", "build/classes/java/integrationTest:$integrationTestRuntimeClasspath")
-    systemProperty("integrationTest.javaPaths", javaPaths(8, 11, 17))
+    systemProperty("integrationTest.javaPaths", javaPaths(8, 11, 17, 21))
 }
 
 tasks.withType<ProcessResources> {
