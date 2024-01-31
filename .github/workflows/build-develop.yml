@@ -92,3 +92,38 @@ jobs:
         with:
           name: scavenger-api
           path: scavenger-api/build/test-results
+  scavenger-schema:
+    runs-on: ubuntu-latest
+    services:
+      database:
+        image: mysql:8.0.28
+        ports:
+          - 3306:3306
+        env:
+          MYSQL_ROOT_PASSWORD: scavenger
+          MYSQL_DATABASE: scavenger
+          MYSQL_USER: scavenger
+          MYSQL_PASSWORD: scavenger
+        options: >-
+          --health-cmd "mysqladmin ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Java JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+      - name: Gradle Caching
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+      - name: Build with Gradle
+        run: SPRING_PROFILES_ACTIVE=mysql ./gradlew :scavenger-collector:clean scavenger-collector:test --tests ScavengerCollectorApplicationTest
