@@ -1,3 +1,5 @@
---changeset scavenger:3
+--liquibase formatted sql
 
-ALTER TABLE snapshot_nodes MODIFY signature TEXT;
+--changeset scavenger:5
+
+ALTER TABLE snapshot_nodes MODIFY COLUMN signature TEXT;

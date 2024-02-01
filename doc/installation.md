@@ -56,6 +56,7 @@ If you've built your own MySQL, follow the steps below.
     CREATE DATABASE scavenger;
     ```
 4. Use the `-D` option to set the following four properties.
+    - `spring.profiles.active=mysql`
     - `spring.datasource.url={mysql url}`
     - `spring.datasource.username={mysql user name}`
     - `spring.datasource.password={mysql password}`
@@ -111,6 +112,7 @@ If you've built your own MySQL, follow the steps below.
     CREATE DATABASE scavenger;
     ```
 4. Use the `-D` option to set the following four properties.
+    - `spring.profiles.active=mysql`
     - `spring.datasource.url={mysql url}`
     - `spring.datasource.username={mysql user name}`
     - `spring.datasource.password={mysql password}`
