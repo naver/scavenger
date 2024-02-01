@@ -19,7 +19,7 @@ jobs:
           distribution: 'zulu'
           java-version: '11'
       - name: Extract tag version
-        run: echo "tag=$(echo '${{ github.ref_name }}' | egrep -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}')" >> $GITHUB_OUTPUT
+        run: echo "tag=$(echo '${{ github.ref_name }}' | egrep -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}(-p[0-9]+)?')" >> $GITHUB_OUTPUT
         id: extract_tag_version
       - name: Build project
         run: ./gradlew clean build
