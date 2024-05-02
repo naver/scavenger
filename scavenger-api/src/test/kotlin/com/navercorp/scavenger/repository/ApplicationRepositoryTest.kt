@@ -17,8 +17,8 @@ class ApplicationRepositoryTest {
 
     @Test
     fun findByCustomerIdAndId() {
-        assertThat(sut.findByCustomerIdAndId(1, 1)).satisfies {
+        assertThat(sut.findByCustomerIdAndId(1, 1)).satisfies({
             assertThat(it.id).isEqualTo(1)
-        }
+        })
     }
 }
