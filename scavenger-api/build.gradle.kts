@@ -4,8 +4,8 @@ import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
     val kotlinVersion = "1.8.10"
-    val springBootVersion = "2.5.12"
-    val springDependencyManagementVersion = "1.0.11.RELEASE"
+    val springBootVersion = "2.7.18"
+    val springDependencyManagementVersion = "1.1.4"
 
     kotlin("jvm") version kotlinVersion
     id("org.gradle.idea")
@@ -36,7 +36,7 @@ dependencies {
     implementation("com.navercorp.spring:spring-boot-starter-data-jdbc-plus-sql:${property("springDataJdbcPlusVersion")}")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
-    implementation("mysql:mysql-connector-java")
+    implementation("com.mysql:mysql-connector-j")
     implementation("org.apache.commons:commons-lang3")
     implementation("com.h2database:h2:2.1.210")
     implementation("org.liquibase:liquibase-core")
