@@ -9,8 +9,8 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
-import javax.servlet.http.HttpServletRequest
-import javax.servlet.http.HttpServletResponse
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 
 @EnableWebMvc
 @Configuration
@@ -21,19 +21,19 @@ class WebConfig : WebMvcConfigurer {
 
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
         registry.addResourceHandler(
-            "/**/*.js",
-            "/**/*.png",
-            "/**/*.jpg",
-            "/**/*.swf",
-            "/**/*.csv",
-            "/**/*.css",
-            "/**/*.html",
-            "/**/*.gif",
-            "/**/*.ico",
-            "/**/*.woff2",
-            "/**/*.woff",
-            "/**/*.ttf"
-        ).addResourceLocations("classpath:/static/")
+            "/assets/*.js",
+            "/assets/*.png",
+            "/assets/*.jpg",
+            "/assets/*.swf",
+            "/assets/*.csv",
+            "/assets/*.css",
+            "/assets/*.html",
+            "/assets/*.gif",
+            "/assets/*.ico",
+            "/assets/*.woff2",
+            "/assets/*.woff",
+            "/assets/*.ttf"
+        ).addResourceLocations("classpath:/static/assets/")
     }
 
     class MdcLoggingInterceptor : HandlerInterceptor, Ordered {
