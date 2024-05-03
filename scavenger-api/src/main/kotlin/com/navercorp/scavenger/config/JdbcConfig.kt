@@ -22,7 +22,6 @@ import org.springframework.data.jdbc.repository.config.AbstractJdbcConfiguration
 import org.springframework.data.relational.core.mapping.NamingStrategy
 import org.springframework.data.relational.core.mapping.RelationalMappingContext
 import org.springframework.data.relational.core.mapping.RelationalPersistentProperty
-import org.springframework.data.relational.core.sql.IdentifierProcessing
 import java.util.Collections
 import javax.sql.DataSource
 
@@ -41,8 +40,7 @@ class JdbcConfig : AbstractJdbcConfiguration() {
         return EntityConvertibleSqlParameterSourceFactory(
             ConvertibleParameterSourceFactory(DefaultJdbcParameterSourceConverter(Collections.emptyList()), NoneFallbackParameterSource()),
             mappingContext,
-            jdbcConverter,
-            IdentifierProcessing.ANSI
+            jdbcConverter
         )
     }
 
