@@ -4,7 +4,7 @@ import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
     val kotlinVersion = "1.8.10"
-    val springBootVersion = "3.0.0"
+    val springBootVersion = "3.2.4"
     val springDependencyManagementVersion = "1.1.4"
 
     kotlin("jvm") version kotlinVersion
@@ -32,8 +32,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
     implementation("org.springframework.boot:spring-boot-configuration-processor")
     implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
-    implementation("com.navercorp.spring:spring-boot-starter-data-jdbc-plus-repository:3.0.2")
-    implementation("com.navercorp.spring:spring-boot-starter-data-jdbc-plus-sql:3.0.2")
+    implementation("com.navercorp.spring:spring-boot-starter-data-jdbc-plus-repository:3.2.4")
+    implementation("com.navercorp.spring:spring-boot-starter-data-jdbc-plus-sql:3.2.4")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     implementation("com.mysql:mysql-connector-j")
