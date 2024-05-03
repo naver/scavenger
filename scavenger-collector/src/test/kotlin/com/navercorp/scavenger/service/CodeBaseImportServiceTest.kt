@@ -172,9 +172,9 @@ class CodeBaseImportServiceTest {
                         applicationId,
                         codeBaseFingerprint
                     )
-                ).satisfies {
+                ).satisfies({
                     assertThat(it?.publishedAt).isEqualTo(newPublishedAt)
-                }
+                })
             }
         }
 
