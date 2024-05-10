@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.support.TransactionTemplate
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-import javax.annotation.PostConstruct
+import jakarta.annotation.PostConstruct
 import kotlin.system.measureTimeMillis
 
 @Service
