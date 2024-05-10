@@ -3,8 +3,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
-    val kotlinVersion = "1.8.10"
-    val springBootVersion = "2.7.18"
+    val kotlinVersion = "1.9.0"
+    val springBootVersion = "3.0.0"
     val springDependencyManagementVersion = "1.1.4"
 
     kotlin("jvm") version kotlinVersion
@@ -23,7 +23,7 @@ dependencies {
     implementation(project(":scavenger-old-model"))
     implementation(project(":scavenger-schema"))
     implementation(kotlin("stdlib-jdk8"))
-    implementation(platform("com.linecorp.armeria:armeria-bom:1.22.1"))
+    implementation(platform("com.linecorp.armeria:armeria-bom:1.26.0"))
 
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -33,8 +33,8 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
     implementation("org.springframework.boot:spring-boot-starter-cache")
     implementation("org.springframework.boot:spring-boot-configuration-processor")
-    implementation("com.navercorp.spring:spring-boot-starter-data-jdbc-plus-repository:2.4.7")
-    implementation("com.navercorp.spring:spring-boot-starter-data-jdbc-plus-sql:2.4.7")
+    implementation("com.navercorp.spring:spring-boot-starter-data-jdbc-plus-repository:3.0.2")
+    implementation("com.navercorp.spring:spring-boot-starter-data-jdbc-plus-sql:3.0.2")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310") // test
     implementation("com.mysql:mysql-connector-j")
@@ -42,8 +42,8 @@ dependencies {
     implementation("com.h2database:h2:2.1.212")
     implementation("org.liquibase:liquibase-core")
     implementation("io.grpc:grpc-kotlin-stub:${property("grpcKotlinVersion")}")
-    implementation("com.linecorp.armeria:armeria-spring-boot2-starter")
-    implementation("com.linecorp.armeria:armeria-tomcat9")
+    implementation("com.linecorp.armeria:armeria-spring-boot3-starter")
+    implementation("com.linecorp.armeria:armeria-tomcat10")
     implementation("com.linecorp.armeria:armeria-grpc")
     implementation("io.github.microutils:kotlin-logging-jvm:2.1.23")
     implementation("net.ttddyy:datasource-proxy:1.7")
@@ -69,7 +69,7 @@ configure<DependencyManagementExtension> {
 }
 
 kotlin {
-    jvmToolchain(11)
+    jvmToolchain(17)
 }
 
 tasks.withType<KotlinCompile> {
