@@ -34,7 +34,7 @@ protobuf {
         }
 
         id("grpckt") {
-            artifact = "io.grpc:protoc-gen-grpc-kotlin:${property("grpcKotlinVersion")}:jdk7@jar"
+            artifact = "io.grpc:protoc-gen-grpc-kotlin:${property("grpcKotlinVersion")}:jdk8@jar"
         }
     }
 

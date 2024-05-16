@@ -23,7 +23,7 @@ dependencies {
     implementation(project(":scavenger-old-model"))
     implementation(project(":scavenger-schema"))
     implementation(kotlin("stdlib-jdk8"))
-    implementation(platform("com.linecorp.armeria:armeria-bom:1.26.0"))
+    implementation(platform("com.linecorp.armeria:armeria-bom:1.28.4"))
 
     implementation("org.springframework.boot:spring-boot-starter")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
@@ -59,6 +59,7 @@ dependencies {
     testImplementation("io.rest-assured:json-path:${property("restAssuredVersion")}")
     testImplementation("io.rest-assured:xml-path:${property("restAssuredVersion")}")
     testImplementation("io.grpc:grpc-testing:${property("grpcVersion")}")
+    testImplementation("io.grpc:grpc-inprocess:${property("grpcVersion")}")
 }
 
 configure<DependencyManagementExtension> {
