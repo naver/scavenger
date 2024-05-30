@@ -8,12 +8,12 @@ plugins {
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
-    implementation("org.springframework.boot:spring-boot-starter-data-jdbc:2.5.12")
+    implementation("org.springframework.boot:spring-boot-starter-data-jdbc:3.2.4")
 }
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(11))
+        languageVersion.set(JavaLanguageVersion.of(17))
     }
 }
 
