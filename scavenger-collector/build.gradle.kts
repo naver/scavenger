@@ -3,7 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
-    val kotlinVersion = "1.9.0"
+    val kotlinVersion = "1.9.24"
     val springBootVersion = "3.2.4"
     val springDependencyManagementVersion = "1.1.4"
 
@@ -49,7 +49,7 @@ dependencies {
     implementation("net.ttddyy:datasource-proxy:1.7")
     implementation("com.github.vertical-blank:sql-formatter:1.0.1")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:3.2.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.3.1")
     testImplementation("org.mockito:mockito-inline:4.3.1")
     testImplementation("org.assertj:assertj-core")
     testImplementation("io.rest-assured:rest-assured:${property("restAssuredVersion")}")

@@ -1,5 +1,5 @@
 plugins {
-    val kotlinVersion = "1.9.0"
+    val kotlinVersion = "1.9.24"
 
     java
     kotlin("jvm") version kotlinVersion
