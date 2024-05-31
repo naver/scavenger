@@ -65,7 +65,6 @@ dependencies {
 configure<DependencyManagementExtension> {
     imports {
         mavenBom(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
-        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2020.0.4")
     }
 }
 
