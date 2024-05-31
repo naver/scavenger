@@ -2,7 +2,7 @@ package com.navercorp.scavenger.service
 
 import com.navercorp.scavenger.config.IntervalProperties
 import com.navercorp.scavenger.repository.JvmDao
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.cache.annotation.Cacheable
 import org.springframework.stereotype.Service

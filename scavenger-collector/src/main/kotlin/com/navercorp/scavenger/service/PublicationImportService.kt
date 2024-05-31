@@ -4,7 +4,7 @@ import com.navercorp.scavenger.model.CodeBaseImportable
 import com.navercorp.scavenger.model.InvocationImportable
 import com.navercorp.scavenger.model.Publication
 import com.navercorp.scavenger.util.withCustomerIdMdc
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import java.util.concurrent.CompletableFuture

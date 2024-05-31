@@ -45,7 +45,7 @@ dependencies {
     implementation("com.linecorp.armeria:armeria-spring-boot3-starter")
     implementation("com.linecorp.armeria:armeria-tomcat10")
     implementation("com.linecorp.armeria:armeria-grpc")
-    implementation("io.github.microutils:kotlin-logging-jvm:2.1.23")
+    implementation("io.github.oshai:kotlin-logging-jvm:5.1.0")
     implementation("net.ttddyy:datasource-proxy:1.7")
     implementation("com.github.vertical-blank:sql-formatter:1.0.1")
     testImplementation("org.springframework.boot:spring-boot-starter-test")

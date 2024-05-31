@@ -40,7 +40,7 @@ dependencies {
     implementation("org.apache.commons:commons-lang3")
     implementation("com.h2database:h2:2.1.210")
     implementation("org.liquibase:liquibase-core")
-    implementation("io.github.microutils:kotlin-logging-jvm:2.1.23")
+    implementation("io.github.oshai:kotlin-logging-jvm:5.1.0")
     implementation("net.ttddyy:datasource-proxy:1.7")
     implementation("com.github.vertical-blank:sql-formatter:2.0.4")
     implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.9.0")

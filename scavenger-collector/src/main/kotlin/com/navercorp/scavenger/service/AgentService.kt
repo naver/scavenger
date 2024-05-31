@@ -6,7 +6,7 @@ import com.navercorp.scavenger.model.GetConfigResponse
 import com.navercorp.scavenger.model.ProtoPublication
 import com.navercorp.scavenger.model.toLegacyPublication
 import io.codekvast.javaagent.model.v4.GetConfigResponse4
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Service
 import java.io.InputStream
 import kotlin.random.Random
