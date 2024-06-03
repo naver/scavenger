@@ -3,7 +3,7 @@
 ## Prerequisite
 
 - Scavenger is a combination of various server components(API, Frontend, Collector) and agent component.
-  To install scavenger, you need JDK 11 or latest version.
+  To install scavenger, you need JDK 17 or latest version.
 - Scavenger uses 2 ports. if some ports are blocked by your firewall, you should ask the network admin to open the
   following ports in the firewall.
   These ports can be configured by the configuration.
