@@ -1,11 +1,11 @@
 package com.navercorp.scavenger.service
 
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
-import javax.annotation.PostConstruct
+import jakarta.annotation.PostConstruct
 
 @Service
 class OperationService(

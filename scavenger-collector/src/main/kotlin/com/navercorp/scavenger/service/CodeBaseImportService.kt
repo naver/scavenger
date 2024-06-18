@@ -8,7 +8,7 @@ import com.navercorp.scavenger.repository.CodeBaseFingerprintDao
 import com.navercorp.scavenger.repository.InvocationDao
 import com.navercorp.scavenger.repository.MethodDao
 import io.codekvast.javaagent.model.v4.SignatureStatus4
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.data.relational.core.conversion.DbActionExecutionException
 import org.springframework.stereotype.Service

@@ -1,6 +1,6 @@
 package com.navercorp.scavenger.leader
 
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 
 class SimpleEventBroadcaster<T> : EventBroadcaster<T> {
     val logger = KotlinLogging.logger {}

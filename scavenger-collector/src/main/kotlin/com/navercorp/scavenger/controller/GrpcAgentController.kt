@@ -9,7 +9,7 @@ import com.navercorp.scavenger.model.InvocationDataPublication
 import com.navercorp.scavenger.model.ProtoPublication
 import com.navercorp.scavenger.model.PublicationResponse
 import com.navercorp.scavenger.service.AgentService
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Controller
 
 @Controller

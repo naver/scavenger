@@ -14,11 +14,11 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.mockito.ArgumentMatchers.anyInt
 import org.mockito.ArgumentMatchers.anyLong
+import org.mockito.Mockito.verifyNoInteractions
 import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
-import org.mockito.kotlin.verifyZeroInteractions
 import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
@@ -97,7 +97,7 @@ class AgentServiceTest {
             @Test
             @DisplayName("it does not import publication")
             fun saveLegacyPublication_notImportPublicationWhenApiKeyNotExist() {
-                verifyZeroInteractions(publicationImportService)
+                verifyNoInteractions(publicationImportService)
             }
         }
 
@@ -128,7 +128,7 @@ class AgentServiceTest {
             @Test
             @DisplayName("it does not import publication")
             fun saveLegacyPublication_notImportWhenDifferentCustomerId() {
-                verifyZeroInteractions(publicationImportService)
+                verifyNoInteractions(publicationImportService)
             }
         }
 
@@ -210,7 +210,7 @@ class AgentServiceTest {
             @Test
             @DisplayName("it does not import publication")
             fun savePublication_notImportPublicationWhenApiKeyNotExist() {
-                verifyZeroInteractions(publicationImportService)
+                verifyNoInteractions(publicationImportService)
             }
         }
 
@@ -267,7 +267,7 @@ class AgentServiceTest {
             @Test
             @DisplayName("it does not update agent state")
             fun getConfig_notUpdateAgentStateWhenApiKeyNotExist() {
-                verifyZeroInteractions(agentStateService)
+                verifyNoInteractions(agentStateService)
             }
         }
 

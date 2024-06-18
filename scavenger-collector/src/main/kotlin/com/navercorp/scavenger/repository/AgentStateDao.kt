@@ -21,7 +21,7 @@ class AgentStateDao(
             sql.selectAllGarbageLastPolledAtBefore(),
             mapParameterSource()
                 .addValue("customerId", customerId)
-                .addValue("lastPolledAt", lastPolledAt),
+                .addValue("lastPolledAt", toInstantMicro(lastPolledAt)),
             AgentStateEntity::class.java
         )
     }
@@ -67,5 +67,10 @@ class AgentStateDao(
                 .addValue("customerId", customerId)
                 .addValue("ids", ids)
         )
+    }
+
+    fun toInstantMicro(instant: Instant): Instant {
+        val epochMicro = (instant.epochSecond * 1_000_000) + (instant.nano / 1000)
+        return Instant.ofEpochSecond(epochMicro / 1_000_000, (epochMicro % 1_000_000) * 1000)
     }
 }

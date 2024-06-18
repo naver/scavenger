@@ -12,7 +12,7 @@ import com.navercorp.scavenger.service.AgentService
 import io.codekvast.javaagent.model.v4.GetConfigRequest4
 import io.codekvast.javaagent.model.v4.GetConfigResponse4
 import io.codekvast.javaagent.model.v4.InitConfigResponse4
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.multipart.MultipartFile
-import javax.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletRequest
 
 @RestController
 class AgentController(
