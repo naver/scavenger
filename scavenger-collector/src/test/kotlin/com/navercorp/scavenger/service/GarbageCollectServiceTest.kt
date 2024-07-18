@@ -140,10 +140,10 @@ class GarbageCollectServiceTest {
             jvmDao.deleteById(jvms.map { it.id }.first())
             sut.sweepCodeBaseFingerprints(customerId)
             assertThat(codeBaseFingerprintDao.findAllByCustomerId(customerId).map { it.codeBaseFingerprint })
-                .satisfies {
+                .satisfies({
                     assertThat(it).isNotEmpty
                     assertThat(it).doesNotContain(jvms.first().codeBaseFingerprint)
-                }
+                })
         }
 
         @Test
@@ -151,9 +151,9 @@ class GarbageCollectServiceTest {
         fun sweepCodeBaseFingerprint_notRemoveCodeBaseFingerPrintUsing() {
             sut.sweepAgentStatesAndJvms(customerId, now)
             assertThat(codeBaseFingerprintDao.findAllByCustomerId(customerId))
-                .satisfies {
+                .satisfies({
                     assertThat(it).hasSize(3)
-                }
+                })
         }
     }
 
@@ -182,9 +182,9 @@ class GarbageCollectServiceTest {
                 assertThat(it.garbage).isFalse()
             }
             sut.markMethods(customerId)
-            assertThat(methodDao.findAllByCustomerId(customerId).filter { it.garbage }).satisfies {
+            assertThat(methodDao.findAllByCustomerId(customerId).filter { it.garbage }).satisfies({
                 assertThat(it).hasSize(2)
-            }
+            })
         }
 
         @Test

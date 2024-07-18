@@ -6,7 +6,7 @@ import com.navercorp.scavenger.param.JvmUpsertParam
 import com.navercorp.scavenger.repository.ApplicationDao
 import com.navercorp.scavenger.repository.EnvironmentDao
 import com.navercorp.scavenger.repository.JvmDao
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Service
 import java.time.Instant
 

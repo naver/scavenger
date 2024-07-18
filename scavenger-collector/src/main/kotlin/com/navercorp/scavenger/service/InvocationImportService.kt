@@ -4,7 +4,7 @@ import com.navercorp.scavenger.dto.InvocationImportDto
 import com.navercorp.scavenger.param.InvocationUpsertParam
 import com.navercorp.scavenger.repository.InvocationDao
 import io.codekvast.javaagent.model.v4.SignatureStatus4
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.dao.DeadlockLoserDataAccessException
 import org.springframework.stereotype.Service
 import java.time.Instant

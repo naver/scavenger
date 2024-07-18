@@ -15,7 +15,7 @@ import com.navercorp.scavenger.repository.SnapshotApplicationRepository
 import com.navercorp.scavenger.repository.SnapshotEnvironmentRepository
 import com.navercorp.scavenger.repository.SnapshotNodeRepository
 import com.navercorp.scavenger.repository.SnapshotRepository
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Service
