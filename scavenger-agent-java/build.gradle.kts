@@ -5,9 +5,9 @@ plugins {
     java
     `maven-publish`
     signing
-    id("com.github.johnrengelman.shadow") version "7.0.0"
-    id("io.freefair.lombok") version "6.6.3"
-    id("org.unbroken-dome.test-sets") version "4.0.0"
+    id("com.github.johnrengelman.shadow") version "8.0.0"
+    id("io.freefair.lombok") version "8.6"
+    id("org.unbroken-dome.test-sets") version "4.1.0"
 }
 
 java {
@@ -77,7 +77,7 @@ dependencies {
 }
 
 testSets {
-    create("integrationTest")
+    register("integrationTest")
 }
 
 dependencies {
@@ -104,7 +104,7 @@ tasks.named<Test>("integrationTest") {
 
     inputs.files(file("build.gradle.kts"))
     inputs.files(tasks.shadowJar.get().outputs.files)
-    outputs.dir(file("$buildDir/test-results/integrationTest"))
+    outputs.dir(layout.buildDirectory.dir("test-results/integrationTest").get().asFile)
 
     systemProperty("integrationTest.scavengerAgent", tasks.shadowJar.get().outputs.files.asPath)
     systemProperty("integrationTest.classpath", "build/classes/java/integrationTest:$integrationTestRuntimeClasspath")

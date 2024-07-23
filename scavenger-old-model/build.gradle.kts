@@ -2,7 +2,7 @@ plugins {
     java
     id("org.gradle.idea")
     id("com.adarshr.test-logger") version "3.0.0"
-    id("io.freefair.lombok") version "6.5.1"
+    id("io.freefair.lombok") version "8.6"
 }
 
 dependencies {

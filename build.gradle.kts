@@ -43,7 +43,7 @@ subprojects {
 }
 
 project(":scavenger-old-agent-java").afterEvaluate {
-    tasks.all {
+    tasks.configureEach {
         onlyIf {
             project.hasProperty("oldAgent")
         }
