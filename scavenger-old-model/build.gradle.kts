@@ -15,6 +15,12 @@ dependencies {
     testImplementation("org.hamcrest:hamcrest:2.2")
 }
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(8))
+    }
+}
+
 tasks.compileJava {
     sourceCompatibility = "7"
     targetCompatibility = "7"
