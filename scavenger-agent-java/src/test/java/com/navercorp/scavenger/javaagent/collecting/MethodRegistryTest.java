@@ -14,7 +14,7 @@ public class MethodRegistryTest {
 
     @BeforeEach
     public void setUp() {
-        sut = new MethodRegistry();
+        sut = new MethodRegistry(false);
     }
 
     @Nested
@@ -35,7 +35,7 @@ public class MethodRegistryTest {
             @Test
             @DisplayName("it returns cached value")
             void cached() {
-                assertThat(sut.getHash(signature, false)).isEqualTo(expected);
+                assertThat(sut.getHash(signature)).isEqualTo(expected);
             }
         }
 
@@ -47,7 +47,7 @@ public class MethodRegistryTest {
             @Test
             @DisplayName("it returns empty string")
             void returnNull() {
-                assertThat(sut.getHash(cglibSignature, false))
+                assertThat(sut.getHash(cglibSignature))
                     .isEqualTo("");
             }
         }

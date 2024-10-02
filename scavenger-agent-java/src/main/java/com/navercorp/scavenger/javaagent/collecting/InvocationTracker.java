@@ -1,7 +1,8 @@
 package com.navercorp.scavenger.javaagent.collecting;
 
+import static com.navercorp.scavenger.javaagent.collecting.MethodRegistry.isSyntheticSignatureHash;
+
 import java.lang.instrument.Instrumentation;
-import java.util.logging.Logger;
 
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.agent.builder.AgentBuilder;
@@ -22,25 +23,12 @@ public class InvocationTracker {
     @Getter
     @Setter
     private static InvocationRegistry invocationRegistry = new InvocationRegistry();
-
-    @Getter
-    private static final MethodRegistry methodRegistry = new MethodRegistry();
-
-    @Setter
-    @Getter
-    private static boolean legacyCompatibilityMode = false;
-
-    @Setter
-    @Getter
-    private static boolean debugMode = false;
-
-    public static Logger getLog() {
-        return log;
-    }
+    private static MethodRegistry methodRegistry;
+    private static boolean isDebugMode;
 
     public static void installAdvice(Instrumentation inst, Config config) {
-        setLegacyCompatibilityMode(config.isLegacyCompatibilityMode());
-        setDebugMode(config.isDebugMode());
+        methodRegistry = new MethodRegistry(config.isLegacyCompatibilityMode());
+        isDebugMode = config.isDebugMode();
 
         ElementMatcherBuilder matcherBuilder = new ElementMatcherBuilder(config);
         Advice advice = Advice.to(InvocationTracker.class);
@@ -49,7 +37,7 @@ public class InvocationTracker {
             .transform((builder, typeDescription, classLoader, module, protectionDomain) ->
                 builder.visit(advice.on(matcherBuilder.buildMethodMatcher(typeDescription)))
             );
-        if (isDebugMode()) {
+        if (isDebugMode) {
             transform = transform.with(new AgentBuilder.Listener.Adapter() {
                 @Override
                 public void onTransformation(
@@ -73,14 +61,13 @@ public class InvocationTracker {
     }
 
     public static void hashAndRegister(String signature) {
-        String hash = getMethodRegistry().getHash(signature, isLegacyCompatibilityMode());
-
-        //noinspection StringEquality
-        if (hash != MethodRegistry.SYNTHETIC_SIGNATURE_HASH) {
-            if (isDebugMode()) {
-                getLog().info("[scavenger] method " + signature + " is invoked - " + hash);
-            }
-            getInvocationRegistry().register(hash);
+        String hash = methodRegistry.getHash(signature);
+        if (isSyntheticSignatureHash(hash)) {
+            return;
         }
+        if (isDebugMode) {
+            log.info("[scavenger] method " + signature + " is invoked - " + hash);
+        }
+        invocationRegistry.register(hash);
     }
 }
