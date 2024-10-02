@@ -6,7 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import lombok.Getter;
 import lombok.extern.java.Log;
 
-import com.navercorp.scavenger.util.HashGenerator;
+import com.navercorp.scavenger.util.HashGenerator.DefaultHash;
 
 @Log
 public class MethodRegistry {
@@ -33,7 +33,7 @@ public class MethodRegistry {
         if (isLegacyCompatibilityMode) {
             signature = signature.replace('$', '.').replace(",", ", ");
         }
-        return HashGenerator.Md5.from(signature);
+        return DefaultHash.from(signature);
     }
 
     static String extractSignature(String byteBuddySignature) {

@@ -4,7 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
 
-import com.navercorp.scavenger.util.HashGenerator;
+import com.navercorp.scavenger.util.HashGenerator.DefaultHash;
 
 class MethodTest {
     @Test
@@ -19,7 +19,7 @@ class MethodTest {
             assertThat(it.getModifiers()).isEqualTo("static");
             assertThat(it.getPackageName()).isEqualTo("packageName");
             assertThat(it.getSignature()).isEqualTo("name(int a, int wow)");
-            assertThat(it.getSignatureHash()).isEqualTo(HashGenerator.Md5.from("name(int a, int wow)"));
+            assertThat(it.getSignatureHash()).isEqualTo(DefaultHash.from("name(int a, int wow)"));
         });
 
         Method method2 = new Method(null, Visibility.PRIVATE, null, false, false, "", "int a,int wow", null);
@@ -30,7 +30,7 @@ class MethodTest {
             assertThat(it.getModifiers()).isEqualTo("");
             assertThat(it.getPackageName()).isEqualTo("");
             assertThat(it.getSignature()).isEqualTo("");
-            assertThat(it.getSignatureHash()).isEqualTo(HashGenerator.Md5.from(""));
+            assertThat(it.getSignatureHash()).isEqualTo(DefaultHash.from(""));
         });
     }
 
