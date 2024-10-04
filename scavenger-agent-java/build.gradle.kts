@@ -1,11 +1,10 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     java
     `maven-publish`
     signing
-    id("com.github.johnrengelman.shadow") version "8.0.0"
+    id("com.gradleup.shadow") version "8.3.3"
     id("io.freefair.lombok") version "8.6"
     id("org.unbroken-dome.test-sets") version "4.1.0"
 }
@@ -27,7 +26,9 @@ tasks.withType<ShadowJar> {
         attributes["Implementation-Version"] = project.version
     }
 
-    dependsOn("relocateShadowJar")
+    isEnableRelocation = true
+    relocationPrefix = "sc"
+
     mergeServiceFiles()
 
     minimize {
@@ -36,11 +37,6 @@ tasks.withType<ShadowJar> {
         exclude(dependency("com.squareup.okhttp3:okhttp:.*"))
     }
     exclude("**/*.kotlin_*")
-}
-
-tasks.register<ConfigureShadowRelocation>("relocateShadowJar") {
-    target = tasks.shadowJar.get()
-    prefix = "sc"
 }
 
 tasks.assemble {
