@@ -50,28 +50,8 @@ import sample.app.regex.ExcludeRegexClass1;
 import sample.app.regex.ExcludeRegexClass2;
 
 @ExtendWith(AgentIntegrationTestContextProvider.class)
-@ExtendWith(GrpcMockExtension.class)
 @DisplayName("codebase scan test")
-public class ScanTest {
-    private static WireMockServer wireMockServer;
-    private static ManagedChannel channel;
-
-    @BeforeAll
-    static void setUp() {
-        wireMockServer = new WireMockServer(new WireMockConfiguration().dynamicPort());
-        wireMockServer.start();
-        WireMock.configureFor(wireMockServer.port());
-
-        channel = ManagedChannelBuilder.forAddress("localhost", GrpcMock.getGlobalPort())
-            .usePlaintext()
-            .build();
-    }
-
-    @AfterAll
-    static void tearDown() {
-        Optional.ofNullable(wireMockServer).ifPresent(WireMockServer::shutdown);
-        Optional.ofNullable(channel).ifPresent(ManagedChannel::shutdownNow);
-    }
+public class ScanTest extends AbstractWireMockTest {
 
     @TestTemplate
     @DisplayName("it scans correctly")
