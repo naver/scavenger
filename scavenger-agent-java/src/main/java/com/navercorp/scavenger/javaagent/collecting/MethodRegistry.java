@@ -2,7 +2,6 @@ package com.navercorp.scavenger.javaagent.collecting;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.regex.Pattern;
 
 import lombok.Getter;
 import lombok.extern.java.Log;
@@ -11,8 +10,6 @@ import com.navercorp.scavenger.util.HashGenerator;
 
 @Log
 public class MethodRegistry {
-    private static final String SYNTHETIC_SIGNATURE_HASH = "";
-    private static final Pattern SYNTHETIC_SIGNATURE_PATTERN = Pattern.compile(".*\\$\\$(Enhancer|FastClass)BySpringCGLIB\\$\\$.*");
 
     @Getter
     private final Map<String, String> byteBuddySignatureToHash = new ConcurrentHashMap<>();
@@ -26,15 +23,7 @@ public class MethodRegistry {
         return byteBuddySignatureToHash.computeIfAbsent(byteBuddySignature, this::generateHash);
     }
 
-    @SuppressWarnings("StringEquality")
-    public static boolean isSyntheticSignatureHash(String hash) {
-        return SYNTHETIC_SIGNATURE_HASH == hash;
-    }
-
     private String generateHash(String byteBuddySignature) {
-        if (SYNTHETIC_SIGNATURE_PATTERN.matcher(byteBuddySignature).matches()) {
-            return SYNTHETIC_SIGNATURE_HASH;
-        }
         String signature = extractSignature(byteBuddySignature);
         if (isLegacyCompatibilityMode) {
             signature = signature.replace('$', '.').replace(",", ", ");

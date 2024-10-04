@@ -35,6 +35,8 @@ import java.util.regex.Pattern;
 
 @RequiredArgsConstructor
 public class ElementMatcherBuilder {
+    private static final String SYNTHETIC_REGEX = ".*\\$\\$(Enhancer|FastClass)BySpringCGLIB\\$\\$.*";
+
     private final Config config;
 
     public ElementMatcher<TypeDescription> buildClassMatcher() {
@@ -72,6 +74,7 @@ public class ElementMatcherBuilder {
 
         return packageNameMatcher
             .and(not(isSynthetic()))
+            .and(not(nameMatches(SYNTHETIC_REGEX)))
             .and(not(isInterface()))
             .and(not(excludePackageMatcher))
             .and(annotationMatcher.or(additionalPackageMatcher).or(additionalByRegexMatcher))

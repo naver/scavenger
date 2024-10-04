@@ -1,7 +1,5 @@
 package com.navercorp.scavenger.javaagent.collecting;
 
-import static com.navercorp.scavenger.javaagent.collecting.MethodRegistry.isSyntheticSignatureHash;
-
 import java.lang.instrument.Instrumentation;
 
 import net.bytebuddy.ByteBuddy;
@@ -62,9 +60,6 @@ public class InvocationTracker {
 
     public static void hashAndRegister(String signature) {
         String hash = methodRegistry.getHash(signature);
-        if (isSyntheticSignatureHash(hash)) {
-            return;
-        }
         if (isDebugMode) {
             log.info("[scavenger] method " + signature + " is invoked - " + hash);
         }
