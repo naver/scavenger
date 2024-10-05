@@ -1,15 +1,12 @@
 package com.navercorp.scavenger.javaagent.collecting;
 
-import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import lombok.extern.java.Log;
 
 import com.navercorp.scavenger.javaagent.model.Config;
-import com.navercorp.scavenger.javaagent.scheduling.ScavengerThreadFactory;
 import com.navercorp.scavenger.model.InvocationDataPublication;
 
 @Log
@@ -17,37 +14,12 @@ public class InvocationRegistry {
     private static final int FRONT_BUFFER_INDEX = 0;
     private static final int BACK_BUFFER_INDEX = 1;
 
-    private final Set<String>[] invocations;
-    private final BlockingQueue<String> queue = new LinkedBlockingQueue<>();
+    private final Set<String>[] invocations = new Set[]{ConcurrentHashMap.newKeySet(), ConcurrentHashMap.newKeySet()};
     private volatile int currentInvocationIndex = FRONT_BUFFER_INDEX;
     private long recordingIntervalStartedAtMillis = System.currentTimeMillis();
 
-    public InvocationRegistry() {
-        //noinspection unchecked
-        this.invocations = new Set[] {new HashSet<>(), new HashSet<>()};
-        Thread worker = ScavengerThreadFactory.builder()
-            .name("registry")
-            .build()
-            .newThread(new Thread(this::workerTask));
-        worker.start();
-    }
-
-    void workerTask() {
-        while (!Thread.currentThread().isInterrupted()) {
-            try {
-                invocations[currentInvocationIndex].add(queue.take());
-            } catch (InterruptedException e) {
-                log.fine("[scavenger] Interrupted");
-                Thread.currentThread().interrupt();
-                return;
-            }
-        }
-    }
-
     public void register(String hash) {
-        if (!invocations[currentInvocationIndex].contains(hash)) {
-            queue.add(hash);
-        }
+        invocations[currentInvocationIndex].add(hash);
     }
 
     private synchronized void toggleInvocationsIndex() {
