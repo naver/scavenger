@@ -36,23 +36,20 @@ public class MethodRegistry {
         return hash;
     }
 
-    private String extractSignature(String byteBuddySignature) {
+    static String extractSignature(String byteBuddySignature) {
         int begin = 0;
         int end = byteBuddySignature.length();
         boolean isParenthesisFound = false;
-
-        for (int pos = 0; pos < end; pos++) {
-            if (byteBuddySignature.charAt(pos) == ' ') {
-                if (!isParenthesisFound) {
+        for (int pos = end - 1; pos >= 0; pos--) {
+            if (isParenthesisFound) {
+                if (byteBuddySignature.charAt(pos) == ' ') {
                     begin = pos + 1;
-                } else {
-                    end = pos;
+                    break;
                 }
             } else if (byteBuddySignature.charAt(pos) == '(') {
                 isParenthesisFound = true;
             }
         }
-
         return byteBuddySignature.substring(begin, end);
     }
 }

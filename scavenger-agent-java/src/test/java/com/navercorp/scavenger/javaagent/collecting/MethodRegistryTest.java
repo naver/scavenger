@@ -53,4 +53,11 @@ public class MethodRegistryTest {
         }
     }
 
+    @Test
+    void extractSignature() {
+        assertThat(
+                MethodRegistry.extractSignature("public static void sample.app.NotServiceClass.doNothing()"))
+                .isEqualTo("sample.app.NotServiceClass.doNothing()");
+    }
+
 }
