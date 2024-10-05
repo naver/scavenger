@@ -20,7 +20,7 @@ public class ConfigTest {
     @DisplayName("if no configuration is found")
     void noConfig(AgentRunner agentRunner) throws Exception {
         // given
-        agentRunner.setConfigFilePath("");
+        agentRunner.setConfigFilePath(null);
 
         // when
         String actual = agentRunner.call();
@@ -50,9 +50,7 @@ public class ConfigTest {
     @DisplayName("if required field is not set")
     void missingRequiredTest(AgentRunner agentRunner) throws Exception {
         // given
-        Properties properties = new Properties();
-        properties.setProperty("packages", "");
-        agentRunner.setConfig(properties);
+        agentRunner.setConfigProperty("packages", "");
 
         // when
         String actual = agentRunner.call();

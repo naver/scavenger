@@ -81,6 +81,10 @@ dependencies {
     "integrationTestImplementation"("org.springframework.boot:spring-boot-starter-aop:2.5.12")
     "integrationTestImplementation"("com.github.tomakehurst:wiremock:2.27.2")
     "integrationTestImplementation"("org.grpcmock:grpcmock-junit5:0.13.0")
+
+    // JMH benchmarks
+    "integrationTestImplementation"("org.openjdk.jmh:jmh-core:1.37")
+    "integrationTestAnnotationProcessor"("org.openjdk.jmh:jmh-generator-annprocess:1.37")
 }
 
 fun javaPaths(vararg versions: Int) = versions.joinToString(",",

@@ -73,10 +73,8 @@ public class ScanTest extends AbstractWireMockTest {
     @DisplayName("it sends publication correctly")
     void send(AgentRunner agentRunner) throws Exception {
         // given
-        Properties properties = new Properties();
-        properties.setProperty("schedulerInitialDelayMillis", "0");
-        properties.setProperty("serverUrl", "http://localhost:" + wireMockServer.port());
-        agentRunner.setConfig(properties);
+        agentRunner.setConfigProperty("serverUrl", "http://localhost:" + wireMockServer.port());
+        agentRunner.setConfigProperty("schedulerInitialDelayMillis", "0");
 
         givenThat(
             get(V5_INIT_CONFIG + "?licenseKey=")

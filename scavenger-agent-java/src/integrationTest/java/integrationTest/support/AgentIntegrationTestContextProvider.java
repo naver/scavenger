@@ -33,6 +33,14 @@ public class AgentIntegrationTestContextProvider implements TestTemplateInvocati
         return Arrays.stream(javaPaths.split(",")).map(this::invocationContext);
     }
 
+    protected Class<?> getTestAppMainClass() {
+        return sample.app.SampleApp.class;
+    }
+
+    protected String getScavengerConfigPath() {
+        return "scavenger.conf";
+    }
+
     private TestTemplateInvocationContext invocationContext(String javaPathString) {
         String[] split = javaPathString.split(":");
         String javaVersion = split[0];
@@ -51,7 +59,7 @@ public class AgentIntegrationTestContextProvider implements TestTemplateInvocati
         };
     }
 
-    private static class AgentRunnerParameterResolver implements ParameterResolver {
+    private class AgentRunnerParameterResolver implements ParameterResolver {
         private final String javaPath;
 
         private AgentRunnerParameterResolver(String javaPath) {
@@ -60,13 +68,12 @@ public class AgentIntegrationTestContextProvider implements TestTemplateInvocati
 
         @Override
         public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-            return parameterContext.getParameter().getType()
-                .equals(AgentRunner.class);
+            return parameterContext.getParameter().getType().equals(AgentRunner.class);
         }
 
         @Override
         public Object resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-            return new AgentRunner(javaPath, classpath, scavengerAgentPath);
+            return new AgentRunner(javaPath, classpath, getTestAppMainClass(), scavengerAgentPath, getScavengerConfigPath());
         }
     }
 }
