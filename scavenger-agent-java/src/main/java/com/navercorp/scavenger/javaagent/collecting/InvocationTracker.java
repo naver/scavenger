@@ -63,6 +63,7 @@ public class InvocationTracker {
             });
         }
         transform.installOn(inst);
+        log.info("[scavenger] Advice is installed on all matching methods");
     }
 
     @SuppressWarnings("unused")
