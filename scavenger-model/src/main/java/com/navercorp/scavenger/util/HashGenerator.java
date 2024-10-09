@@ -1,5 +1,7 @@
 package com.navercorp.scavenger.util;
 
+import org.apache.commons.codec.digest.MurmurHash3;
+
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -9,7 +11,14 @@ public class HashGenerator {
 
     public static class DefaultHash {
         public static String from(String signature) {
-            return Md5.from(signature);
+            return Murmur.from(signature);
+        }
+    }
+
+    private static class Murmur {
+        private static String from(String signature) {
+            long[] x64hash = MurmurHash3.hash128x64(signature.getBytes(StandardCharsets.UTF_8));
+            return Long.toHexString(x64hash[0]) + Long.toHexString(x64hash[1]);
         }
     }
 
