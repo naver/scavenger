@@ -1,8 +1,9 @@
 package com.navercorp.scavenger.javaagent.collecting;
 
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 import lombok.extern.java.Log;
 
@@ -11,53 +12,41 @@ import com.navercorp.scavenger.model.InvocationDataPublication;
 
 @Log
 public class InvocationRegistry {
-    private static final int FRONT_BUFFER_INDEX = 0;
-    private static final int BACK_BUFFER_INDEX = 1;
 
-    private final Set<String>[] invocations = new Set[]{ConcurrentHashMap.newKeySet(), ConcurrentHashMap.newKeySet()};
-    private volatile int currentInvocationIndex = FRONT_BUFFER_INDEX;
+    private static class BooleanHolder {
+        private volatile boolean value = true;
+    }
+
+    private final ConcurrentHashMap<String, BooleanHolder> invocations = new ConcurrentHashMap<>();
     private long recordingIntervalStartedAtMillis = System.currentTimeMillis();
 
     public void register(String hash) {
-        invocations[currentInvocationIndex].add(hash);
-    }
-
-    private synchronized void toggleInvocationsIndex() {
-        recordingIntervalStartedAtMillis = System.currentTimeMillis();
-        currentInvocationIndex = currentInvocationIndex == FRONT_BUFFER_INDEX ? BACK_BUFFER_INDEX : FRONT_BUFFER_INDEX;
+        BooleanHolder holder = invocations.computeIfAbsent(hash, k -> new BooleanHolder());
+        if (!holder.value) {
+            holder.value = true;
+        }
     }
 
     public InvocationDataPublication getPublication(Config config, String codeBaseFingerprint) {
+        List<InvocationDataPublication.InvocationDataEntry> dataEntries = new ArrayList<>();
+        for (Map.Entry<String, BooleanHolder> entry : invocations.entrySet()) {
+            if (entry.getValue().value) {
+                entry.getValue().value = false;
+                dataEntries.add(InvocationDataPublication.InvocationDataEntry.newBuilder()
+                        .setHash(entry.getKey())
+                        .build());
+            }
+        }
         long oldRecordingIntervalStartedAtMillis = recordingIntervalStartedAtMillis;
-        int oldIndex = currentInvocationIndex;
-
-        toggleInvocationsIndex();
-
-        try {
-            Thread.sleep(10L);
-
-            return InvocationDataPublication.newBuilder()
+        recordingIntervalStartedAtMillis = System.currentTimeMillis();
+        return InvocationDataPublication.newBuilder()
                 .setCommonData(
                     config.buildCommonPublicationData().toBuilder()
                         .setCodeBaseFingerprint(codeBaseFingerprint)
                         .build()
                 )
-                .addAllEntry(
-                    invocations[oldIndex].stream()
-                        .map(it ->
-                            InvocationDataPublication.InvocationDataEntry.newBuilder()
-                                .setHash(it)
-                                .build()
-                        ).collect(Collectors.toList())
-                )
+                .addAllEntry(dataEntries)
                 .setRecordingIntervalStartedAtMillis(oldRecordingIntervalStartedAtMillis)
                 .build();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        } finally {
-            invocations[oldIndex].clear();
-        }
-
-        return null;
     }
 }
