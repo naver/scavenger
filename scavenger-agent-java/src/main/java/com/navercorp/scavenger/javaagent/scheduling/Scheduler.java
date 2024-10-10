@@ -213,7 +213,11 @@ public class Scheduler implements Runnable {
                 invocationDataPublication = null;
                 invocationDataPublisherState.scheduleNext();
             } catch (Exception e) {
-                log.log(Level.SEVERE, "[scavenger] invocation data publish failed", e);
+                if (e instanceof StatusRuntimeException && ((StatusRuntimeException) e).getStatus().equals(Status.UNAVAILABLE)) {
+                    log.log(Level.SEVERE, "[scavenger] invocation data publish failed (server unavailable)");
+                } else {
+                    log.log(Level.SEVERE, "[scavenger] invocation data publish failed", e);
+                }
                 invocationDataPublisherState.scheduleRetry();
             }
         }
