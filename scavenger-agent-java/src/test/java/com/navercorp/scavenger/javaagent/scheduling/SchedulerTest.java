@@ -6,13 +6,12 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Properties;
 
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 
 import lombok.SneakyThrows;
 
@@ -26,7 +25,9 @@ import com.navercorp.scavenger.javaagent.publishing.Publisher;
 import com.navercorp.scavenger.model.CommonPublicationData;
 import com.navercorp.scavenger.model.GetConfigResponse;
 import com.navercorp.scavenger.model.InvocationDataPublication;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 @Nested
 @DisplayName("Scheduler class")
 public class SchedulerTest {
@@ -64,8 +65,6 @@ public class SchedulerTest {
     @Mock
     private Publisher publisher;
 
-    private AutoCloseable autoCloseable;
-
     @Mock
     private CodeBaseScanner codeBaseScannerMock;
 
@@ -79,18 +78,12 @@ public class SchedulerTest {
     @SneakyThrows
     @BeforeEach
     public void setUp() {
-        autoCloseable = MockitoAnnotations.openMocks(this);
         when(codeBaseScannerMock.scan())
             .thenReturn(
                 new CodeBase(Collections.singletonList(Method.createTestMethod()), "fingerprint")
             );
 
         sut = new Scheduler(new Config(new Properties()), publisher, codeBaseScannerMock);
-    }
-
-    @AfterEach
-    public void tearDown() throws Exception {
-        autoCloseable.close();
     }
 
     @Nested
