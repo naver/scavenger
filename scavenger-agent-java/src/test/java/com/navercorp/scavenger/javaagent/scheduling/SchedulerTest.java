@@ -1,9 +1,18 @@
 package com.navercorp.scavenger.javaagent.scheduling;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.atMostOnce;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -13,11 +22,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 
-import lombok.SneakyThrows;
-
 import com.navercorp.scavenger.javaagent.collecting.CodeBaseScanner;
 import com.navercorp.scavenger.javaagent.collecting.InvocationRegistry;
-import com.navercorp.scavenger.javaagent.collecting.InvocationTracker;
 import com.navercorp.scavenger.javaagent.model.CodeBase;
 import com.navercorp.scavenger.javaagent.model.Config;
 import com.navercorp.scavenger.javaagent.model.Method;
@@ -63,27 +69,31 @@ public class SchedulerTest {
         .build();
 
     @Mock
+    private InvocationRegistry invocationRegistry;
+
+    @Mock
     private Publisher publisher;
 
     @Mock
     private CodeBaseScanner codeBaseScannerMock;
 
-    @SuppressWarnings("SameParameterValue")
-    private InvocationDataPublication.InvocationDataEntry newInvocationDataEntry(String hash) {
-        return InvocationDataPublication.InvocationDataEntry.newBuilder()
-            .setHash(hash)
-            .build();
+    @BeforeEach
+    public void setUp() throws Exception {
+        lenient().when(codeBaseScannerMock.scan())
+            .thenReturn(new CodeBase(List.of(Method.createTestMethod()), "fingerprint"));
+        sut = new Scheduler(invocationRegistry, new Config(new Properties()), publisher, codeBaseScannerMock);
     }
 
-    @SneakyThrows
-    @BeforeEach
-    public void setUp() {
-        when(codeBaseScannerMock.scan())
+    private void mockInvocationRegistered() {
+        when(invocationRegistry.getPublication(any(), anyString()))
             .thenReturn(
-                new CodeBase(Collections.singletonList(Method.createTestMethod()), "fingerprint")
+                InvocationDataPublication.newBuilder()
+                    .setCommonData(sampleCommonData)
+                    .addEntry(InvocationDataPublication.InvocationDataEntry.newBuilder()
+                        .setHash("hash")
+                        .build())
+                    .build()
             );
-
-        sut = new Scheduler(new Config(new Properties()), publisher, codeBaseScannerMock);
     }
 
     @Nested
@@ -97,7 +107,7 @@ public class SchedulerTest {
             @BeforeEach
             public void setUpAndRun() {
                 when(publisher.pollDynamicConfig()).thenReturn(configResponse);
-                InvocationTracker.getInvocationRegistry().register("hash");
+                mockInvocationRegistered();
 
                 sut.run();
             }
@@ -126,7 +136,7 @@ public class SchedulerTest {
         class NoInvocationTest {
 
             @BeforeEach
-            public void setUpAndRun() throws IOException {
+            public void setUpAndRun() {
                 when(publisher.pollDynamicConfig()).thenReturn(configResponse);
                 sut.run();
             }
@@ -206,17 +216,13 @@ public class SchedulerTest {
         @Nested
         @DisplayName("if invocation publish failed")
         class InvocationPublishTest {
-            InvocationRegistry registry;
 
             @BeforeEach
             public void setUpAndRunThreeTimes() throws IOException {
-                registry = spy(InvocationRegistry.class);
-
                 when(publisher.pollDynamicConfig())
                     .thenReturn(configResponse);
 
-                InvocationTracker.setInvocationRegistry(registry);
-                registry.register("hash");
+                mockInvocationRegistered();
 
                 doThrow(new RuntimeException())
                     .when(publisher)
@@ -231,7 +237,7 @@ public class SchedulerTest {
             @Test
             @DisplayName("it runs getPublication only once")
             void getOnce() {
-                verify(registry, atMostOnce()).getPublication(any(), anyString());
+                verify(invocationRegistry, atMostOnce()).getPublication(any(), anyString());
             }
 
             @Test
@@ -268,17 +274,8 @@ public class SchedulerTest {
 
             @BeforeEach
             public void runsAndShutdown() throws IOException {
-                InvocationRegistry registry = mock(InvocationRegistry.class);
-                InvocationTracker.setInvocationRegistry(registry);
-
+                mockInvocationRegistered();
                 when(publisher.pollDynamicConfig()).thenReturn(configResponse);
-                when(registry.getPublication(any(), anyString()))
-                    .thenReturn(
-                        InvocationDataPublication.newBuilder()
-                            .setCommonData(sampleCommonData)
-                            .addEntry(newInvocationDataEntry("hash"))
-                            .build()
-                    );
 
                 sut.run();
                 sut.shutdown();

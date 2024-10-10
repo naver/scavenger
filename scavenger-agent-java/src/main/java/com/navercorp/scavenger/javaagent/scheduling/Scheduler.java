@@ -5,6 +5,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
+import com.navercorp.scavenger.javaagent.collecting.InvocationRegistry;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
 import lombok.extern.java.Log;
@@ -20,6 +21,7 @@ import com.navercorp.scavenger.model.InvocationDataPublication;
 
 @Log
 public class Scheduler implements Runnable {
+    private final InvocationRegistry invocationRegistry;
     private final Config config;
     private final Publisher publisher;
     private final CodeBaseScanner codeBaseScanner;
@@ -38,11 +40,12 @@ public class Scheduler implements Runnable {
     private InvocationDataPublication invocationDataPublication;
     private String codeBaseFingerprint;
 
-    public Scheduler(Config config) {
-        this(config, new Publisher(config), new CodeBaseScanner(config));
+    public Scheduler(InvocationRegistry invocationRegistry, Config config) {
+        this(invocationRegistry, config, new Publisher(config), new CodeBaseScanner(config));
     }
 
-    public Scheduler(Config config, Publisher publisher, CodeBaseScanner codeBaseScanner) {
+    public Scheduler(InvocationRegistry invocationRegistry, Config config, Publisher publisher, CodeBaseScanner codeBaseScanner) {
+        this.invocationRegistry = invocationRegistry;
         this.config = config;
         this.codeBaseScanner = codeBaseScanner;
         this.publisher = publisher;
@@ -199,7 +202,7 @@ public class Scheduler implements Runnable {
         if (invocationDataPublisherState.isDueTime() && dynamicConfig != null && isCodeBasePublished) {
             try {
                 if (invocationDataPublication == null) {
-                    invocationDataPublication = InvocationTracker.getInvocationRegistry()
+                    invocationDataPublication = invocationRegistry
                         .getPublication(
                             config,
                             codeBaseFingerprint

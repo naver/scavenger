@@ -10,24 +10,28 @@ import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.dynamic.scaffold.TypeValidation;
 import net.bytebuddy.utility.JavaModule;
 
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.java.Log;
 
 import com.navercorp.scavenger.javaagent.model.Config;
 
 @Log
 public class InvocationTracker {
-    @Getter
-    @Setter
-    private static InvocationRegistry invocationRegistry = new InvocationRegistry();
-    private static MethodRegistry methodRegistry;
-    private static boolean isDebugMode;
+    private final InvocationRegistry invocationRegistry;
+    private final MethodRegistry methodRegistry;
+    private final boolean isDebugMode;
 
-    public static void installAdvice(Instrumentation inst, Config config) {
-        methodRegistry = new MethodRegistry(config.isLegacyCompatibilityMode());
-        isDebugMode = config.isDebugMode();
+    private static InvocationTracker INSTANCE;
 
+    public InvocationTracker(InvocationRegistry invocationRegistry,
+                             MethodRegistry methodRegistry,
+                             boolean isDebugMode) {
+        this.invocationRegistry = invocationRegistry;
+        this.methodRegistry = methodRegistry;
+        this.isDebugMode = isDebugMode;
+        INSTANCE = this;
+    }
+
+    public void installAdvice(Instrumentation inst, Config config) {
         ElementMatcherBuilder matcherBuilder = new ElementMatcherBuilder(config);
         Advice advice = Advice.to(InvocationTracker.class);
         AgentBuilder transform = new AgentBuilder.Default(new ByteBuddy().with(TypeValidation.DISABLED))
@@ -59,10 +63,10 @@ public class InvocationTracker {
     }
 
     public static void hashAndRegister(String signature) {
-        String hash = methodRegistry.getHash(signature);
-        if (isDebugMode) {
+        String hash = INSTANCE.methodRegistry.getHash(signature);
+        if (INSTANCE.isDebugMode) {
             log.info("[scavenger] method " + signature + " is invoked - " + hash);
         }
-        invocationRegistry.register(hash);
+        INSTANCE.invocationRegistry.register(hash);
     }
 }

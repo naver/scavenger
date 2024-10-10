@@ -7,10 +7,10 @@ import java.util.logging.Level;
 
 import lombok.extern.java.Log;
 
-import com.navercorp.scavenger.javaagent.collecting.CodeBaseScanner;
+import com.navercorp.scavenger.javaagent.collecting.InvocationRegistry;
 import com.navercorp.scavenger.javaagent.collecting.InvocationTracker;
+import com.navercorp.scavenger.javaagent.collecting.MethodRegistry;
 import com.navercorp.scavenger.javaagent.collecting.ScavengerBanner;
-import com.navercorp.scavenger.javaagent.model.CodeBase;
 import com.navercorp.scavenger.javaagent.model.Config;
 import com.navercorp.scavenger.javaagent.scheduling.Scheduler;
 import com.navercorp.scavenger.javaagent.scheduling.ShutdownHook;
@@ -39,17 +39,22 @@ public class ScavengerAgent {
 
         new ScavengerBanner(config).printBanner(System.out);
 
-        Scheduler scheduler = new Scheduler(config);
+        InvocationRegistry invocationRegistry = new InvocationRegistry();
+        InvocationTracker tracker = new InvocationTracker(
+                invocationRegistry,
+                new MethodRegistry(config.isLegacyCompatibilityMode()),
+                config.isDebugMode());
+        Scheduler scheduler = new Scheduler(invocationRegistry, config);
+
         if (!config.isAsyncCodeBaseScanMode()) {
             boolean scanSuccessful = scheduler.scanCodeBase();
-
             if (!scanSuccessful) {
                 log.warning("[scavenger] scavenger is disabled");
                 return;
             }
         }
 
-        InvocationTracker.installAdvice(inst, config);
+        tracker.installAdvice(inst, config);
         scheduler.start();
         Runtime.getRuntime().addShutdownHook(new ShutdownHook(scheduler));
     }
