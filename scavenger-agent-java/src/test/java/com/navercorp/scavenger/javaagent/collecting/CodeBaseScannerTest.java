@@ -182,5 +182,25 @@ public class CodeBaseScannerTest {
                 assertThat(actual).isNotEmpty();
             }
         }
+
+        @Nested
+        @DisplayName("if filtering classes with regex")
+        class FilterClassesByRegexTest {
+
+            @BeforeEach
+            public void setFilter() {
+                String file = Objects.requireNonNull(getClass().getClassLoader().getResource("scavenger-demo-1.1.3-SNAPSHOT.jar")).getFile();
+                config.setCodeBase(Collections.singletonList(file));
+                config.setExcludeClassesByRegex(Collections.singletonList("TestRegex.*"));
+                scanner = new CodeBaseScanner(config);
+            }
+
+            @Test
+            @DisplayName("it finds correct number of methods")
+            void scanFilterClassesByRegex() throws IOException {
+                List<Method> actual = scanner.scan().getMethods();
+                assertThat(actual).hasSize(67);
+            }
+        }
     }
 }

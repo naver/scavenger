@@ -6,6 +6,7 @@ import com.example.demo.service.BridgeService
 import com.example.demo.service.CglibProxyService
 import com.example.demo.service.DynamicProxyService
 import com.example.demo.service.PojoService
+import com.example.demo.service.TestRegexService
 import com.example.demo.service2.TestService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RestController
@@ -16,7 +17,8 @@ class MyController(
     private val dynamicProxyService: DynamicProxyService,
     private val cglibProxyService: CglibProxyService,
     private val asyncService: AsyncService,
-    private val testService: TestService
+    private val testService: TestService,
+    private val testRegexService: TestRegexService
 ): BaseController() {
     @GetMapping("")
     fun hello(): String {
@@ -33,6 +35,11 @@ class MyController(
     @GetMapping("/async")
     fun async(): String {
         return asyncService.asyncJob().toString()
+    }
+
+    @GetMapping("/test-regex")
+    fun testRegex(): String {
+        return testRegexService.test();
     }
 
     @RestController
