@@ -55,11 +55,17 @@ public class ElementMatcherBuilder {
             .reduce(ElementMatcher.Junction::or)
             .orElse(none());
 
+        ElementMatcher.Junction<NamedElement> excludeClassesByRegexMatcher = config.getExcludeClassesByRegex().stream()
+            .map(ElementMatchers::nameMatches)
+            .reduce(ElementMatcher.Junction::or)
+            .orElse(none());
+
         return packageNameMatcher
             .and(not(isSynthetic()))
             .and(not(isInterface()))
             .and(not(excludePackageMatcher))
-            .and(annotationMatcher.or(additionalPackageMatcher));
+            .and(annotationMatcher.or(additionalPackageMatcher))
+            .and(not(excludeClassesByRegexMatcher));
     }
 
     public ElementMatcher<MethodDescription> buildMethodMatcher(TypeDescription typeDescription) {
