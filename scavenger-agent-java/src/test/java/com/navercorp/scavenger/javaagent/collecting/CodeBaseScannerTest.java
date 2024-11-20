@@ -184,8 +184,8 @@ public class CodeBaseScannerTest {
         }
 
         @Nested
-        @DisplayName("if filtering classes with regex")
-        class FilterClassesByRegexTest {
+        @DisplayName("if com.example.demo.service.TestRegexService excluded by regex")
+        class FilterExcludeByRegexTest {
 
             @BeforeEach
             public void setFilter() {
@@ -200,6 +200,27 @@ public class CodeBaseScannerTest {
             void scanFilterClassesByRegex() throws IOException {
                 List<Method> actual = scanner.scan().getMethods();
                 assertThat(actual).hasSize(67);
+            }
+        }
+
+        @Nested
+        @DisplayName("if com.example.demo.service.TestRegexService is set as an additional regex and @RestController is filtered")
+        class FilterAdditionalByRegexTest {
+
+            @BeforeEach
+            public void setFilter() {
+                String file = Objects.requireNonNull(getClass().getClassLoader().getResource("scavenger-demo-1.1.3-SNAPSHOT.jar")).getFile();
+                config.setCodeBase(Collections.singletonList(file));
+                config.setAnnotations(Collections.singletonList("org.springframework.web.bind.annotation.RestController"));
+                config.setAdditionalByRegex(Collections.singletonList("^com\\.example\\.demo\\.service\\..*TestRegex.*$"));
+                scanner = new CodeBaseScanner(config);
+            }
+
+            @Test
+            @DisplayName("it finds correct number of methods")
+            void scanFilterClassesByRegex() throws IOException {
+                List<Method> actual = scanner.scan().getMethods();
+                assertThat(actual).hasSize(18);
             }
         }
     }
