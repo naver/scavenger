@@ -36,6 +36,7 @@ public class CodeBaseScanner {
     private final List<String> excludePackagePaths;
     private final List<String> additionalPackagePaths;
     private final List<String> excludeByRegex;
+    private final List<String> additionalByRegex;
 
     public CodeBaseScanner(Config config) {
         this.config = config;
@@ -44,6 +45,7 @@ public class CodeBaseScanner {
         this.excludePackagePaths = replaceDotToSlash(config.getExcludePackagesWithEndingDot());
         this.additionalPackagePaths = replaceDotToSlash(config.getAdditionalPackagesWithEndingDot());
         this.excludeByRegex = config.getExcludeByRegex();
+        this.additionalByRegex = config.getAdditionalByRegex();
     }
 
     public CodeBase scan() throws IOException {
@@ -161,7 +163,7 @@ public class CodeBaseScanner {
             && !isInterface(clazz)
             && !isExcludedByRegex(clazz)
             && isIncludedByPackage(clazz)
-            && (isIncludedByAnnotation(clazz) || isAdditionalPackage(clazz));
+            && (isIncludedByAnnotation(clazz) || isAdditionalPackage(clazz) || isAdditionalByRegex(clazz));
     }
 
     private boolean isIncludedByPackage(ClassNode clazz) {
@@ -174,17 +176,17 @@ public class CodeBaseScanner {
         }
     }
 
-    private boolean isExcludedByRegex(ClassNode clazz) {
-        String className = clazz.name.replaceAll("/", ".");
-        return excludeByRegex.stream().anyMatch(regex -> Pattern.matches(regex, className));
-    }
-
     private boolean isInterface(ClassNode clazz) {
         return (clazz.access & Opcodes.ACC_INTERFACE) == Opcodes.ACC_INTERFACE;
     }
 
     private boolean isAdditionalPackage(ClassNode clazz) {
         return additionalPackagePaths.stream().anyMatch(clazz.name::startsWith);
+    }
+
+    private boolean isAdditionalByRegex(ClassNode clazz) {
+        String className = clazz.name.replaceAll("/", ".");
+        return additionalByRegex.stream().anyMatch(regex -> Pattern.matches(regex, className));
     }
 
     // filter applies to only class not method
@@ -269,6 +271,11 @@ public class CodeBaseScanner {
 
     private boolean isExcludedSinceTrivial(Method method) {
         return method.getName().equals("toString") && method.getParameterTypes().isEmpty();
+    }
+
+    private boolean isExcludedByRegex(ClassNode clazz) {
+        String className = clazz.name.replaceAll("/", ".");
+        return excludeByRegex.stream().anyMatch(regex -> Pattern.matches(regex, className));
     }
 
     private static ClassNode getNode(byte[] bytes) {

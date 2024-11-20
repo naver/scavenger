@@ -34,6 +34,7 @@ public class Config {
     private List<String> additionalPackages;
     private List<String> annotations;
     private List<String> excludeByRegex;
+    private List<String> additionalByRegex;
     private Visibility methodVisibility = Visibility.PROTECTED;
     private boolean excludeConstructors = false;
     private boolean excludeGetterSetter = false;
@@ -69,6 +70,7 @@ public class Config {
             .map(it -> it.startsWith("@") ? it.substring(1) : it)
             .collect(Collectors.toList());
         excludeByRegex = getSeparatedValues(props, "excludeByRegex");
+        additionalByRegex = getSeparatedValues(props, "additionalByRegex");
         methodVisibility = getVisibilityValue(props, "methodVisibility", methodVisibility);
         excludeConstructors = getBooleanValue(props, "excludeConstructors", excludeConstructors);
         excludeGetterSetter = getBooleanValue(props, "excludeGetterSetter", excludeGetterSetter);

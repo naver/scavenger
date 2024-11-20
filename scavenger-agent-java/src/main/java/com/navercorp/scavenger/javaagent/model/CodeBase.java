@@ -62,6 +62,7 @@ public class CodeBase {
         md.update(config.getAdditionalPackages().toString().getBytes(UTF_8));
         md.update(config.getAnnotations().toString().getBytes(UTF_8));
         md.update(config.getExcludeByRegex().toString().getBytes(UTF_8));
+        md.update(config.getAdditionalByRegex().toString().getBytes(UTF_8));
         md.update(config.getMethodVisibility().toString().getBytes(UTF_8));
         md.update((byte)(config.isExcludeConstructors() ? 1 : 0));
         md.update((byte)(config.isExcludeGetterSetter() ? 1 : 0));

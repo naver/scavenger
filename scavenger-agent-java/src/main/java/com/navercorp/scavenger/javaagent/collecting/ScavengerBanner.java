@@ -42,6 +42,7 @@ public class ScavengerBanner {
         printlnIfNotEmpty(out, format("annotation", config.getAnnotations()));
         printlnIfNotEmpty(out, format("additional package", config.getAdditionalPackages()));
         printlnIfNotEmpty(out, format("exclude by regex", config.getExcludeByRegex()));
+        printlnIfNotEmpty(out, format("additional by regex", config.getAdditionalByRegex()));
         printlnIfNotEmpty(out, format("method visibility", config.getMethodVisibility().toString()));
         printlnIfNotEmpty(out, format("exclude constructors", Boolean.toString(config.isExcludeConstructors())));
         printlnIfNotEmpty(out, format("exclude setters, getters", Boolean.toString(config.isExcludeGetterSetter())));
