@@ -33,7 +33,7 @@ public class Config {
     private List<String> excludePackages;
     private List<String> additionalPackages;
     private List<String> annotations;
-    private List<String> excludeClassesByRegex;
+    private List<String> excludeByRegex;
     private Visibility methodVisibility = Visibility.PROTECTED;
     private boolean excludeConstructors = false;
     private boolean excludeGetterSetter = false;
@@ -68,7 +68,7 @@ public class Config {
         annotations = getSeparatedValues(props, "annotations").stream()
             .map(it -> it.startsWith("@") ? it.substring(1) : it)
             .collect(Collectors.toList());
-        excludeClassesByRegex = getSeparatedValues(props, "excludeClassesByRegex");
+        excludeByRegex = getSeparatedValues(props, "excludeByRegex");
         methodVisibility = getVisibilityValue(props, "methodVisibility", methodVisibility);
         excludeConstructors = getBooleanValue(props, "excludeConstructors", excludeConstructors);
         excludeGetterSetter = getBooleanValue(props, "excludeGetterSetter", excludeGetterSetter);

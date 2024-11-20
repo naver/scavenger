@@ -191,7 +191,7 @@ public class CodeBaseScannerTest {
             public void setFilter() {
                 String file = Objects.requireNonNull(getClass().getClassLoader().getResource("scavenger-demo-1.1.3-SNAPSHOT.jar")).getFile();
                 config.setCodeBase(Collections.singletonList(file));
-                config.setExcludeClassesByRegex(Collections.singletonList("TestRegex.*"));
+                config.setExcludeByRegex(Collections.singletonList("^com\\.example\\.demo\\.service\\..*TestRegex.*$"));
                 scanner = new CodeBaseScanner(config);
             }
 

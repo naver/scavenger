@@ -35,7 +35,7 @@ public class CodeBaseScanner {
     private final List<String> packagePaths;
     private final List<String> excludePackagePaths;
     private final List<String> additionalPackagePaths;
-    private final List<String> excludeClassesByRegex;
+    private final List<String> excludeByRegex;
 
     public CodeBaseScanner(Config config) {
         this.config = config;
@@ -43,7 +43,7 @@ public class CodeBaseScanner {
         this.packagePaths = replaceDotToSlash(packagesWithEndingDot);
         this.excludePackagePaths = replaceDotToSlash(config.getExcludePackagesWithEndingDot());
         this.additionalPackagePaths = replaceDotToSlash(config.getAdditionalPackagesWithEndingDot());
-        this.excludeClassesByRegex = config.getExcludeClassesByRegex();
+        this.excludeByRegex = config.getExcludeByRegex();
     }
 
     public CodeBase scan() throws IOException {
@@ -159,7 +159,7 @@ public class CodeBaseScanner {
     private boolean filterClass(ClassNode clazz) {
         return clazz != null
             && !isInterface(clazz)
-            && !isExcludedClassesByRegex(clazz)
+            && !isExcludedByRegex(clazz)
             && isIncludedByPackage(clazz)
             && (isIncludedByAnnotation(clazz) || isAdditionalPackage(clazz));
     }
@@ -174,9 +174,9 @@ public class CodeBaseScanner {
         }
     }
 
-    private boolean isExcludedClassesByRegex(ClassNode clazz) {
-        String className = clazz.name.substring(clazz.name.lastIndexOf("/") + 1);
-        return excludeClassesByRegex.stream().anyMatch(regex -> Pattern.matches(regex, className));
+    private boolean isExcludedByRegex(ClassNode clazz) {
+        String className = clazz.name.replaceAll("/", ".");
+        return excludeByRegex.stream().anyMatch(regex -> Pattern.matches(regex, className));
     }
 
     private boolean isInterface(ClassNode clazz) {

@@ -55,7 +55,7 @@ public class ElementMatcherBuilder {
             .reduce(ElementMatcher.Junction::or)
             .orElse(none());
 
-        ElementMatcher.Junction<NamedElement> excludeClassesByRegexMatcher = config.getExcludeClassesByRegex().stream()
+        ElementMatcher.Junction<NamedElement> excludeByRegexMatcher = config.getExcludeByRegex().stream()
             .map(ElementMatchers::nameMatches)
             .reduce(ElementMatcher.Junction::or)
             .orElse(none());
@@ -65,7 +65,7 @@ public class ElementMatcherBuilder {
             .and(not(isInterface()))
             .and(not(excludePackageMatcher))
             .and(annotationMatcher.or(additionalPackageMatcher))
-            .and(not(excludeClassesByRegexMatcher));
+            .and(not(excludeByRegexMatcher));
     }
 
     public ElementMatcher<MethodDescription> buildMethodMatcher(TypeDescription typeDescription) {
