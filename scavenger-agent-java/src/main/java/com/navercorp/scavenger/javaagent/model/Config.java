@@ -4,6 +4,7 @@ import static com.navercorp.scavenger.javaagent.util.ConfigUtils.getAliasedStrin
 import static com.navercorp.scavenger.javaagent.util.ConfigUtils.getBooleanValue;
 import static com.navercorp.scavenger.javaagent.util.ConfigUtils.getIntValue;
 import static com.navercorp.scavenger.javaagent.util.ConfigUtils.getSeparatedValues;
+import static com.navercorp.scavenger.javaagent.util.ConfigUtils.getSeparatedValuesByComma;
 import static com.navercorp.scavenger.javaagent.util.ConfigUtils.getStringValue;
 import static com.navercorp.scavenger.javaagent.util.ConfigUtils.getVisibilityValue;
 import static com.navercorp.scavenger.javaagent.util.ConfigUtils.separateValues;
@@ -69,8 +70,8 @@ public class Config {
         annotations = getSeparatedValues(props, "annotations").stream()
             .map(it -> it.startsWith("@") ? it.substring(1) : it)
             .collect(Collectors.toList());
-        excludeByRegex = getSeparatedValues(props, "excludeByRegex");
-        additionalByRegex = getSeparatedValues(props, "additionalByRegex");
+        excludeByRegex = getSeparatedValuesByComma(props, "excludeByRegex");
+        additionalByRegex = getSeparatedValuesByComma(props, "additionalByRegex");
         methodVisibility = getVisibilityValue(props, "methodVisibility", methodVisibility);
         excludeConstructors = getBooleanValue(props, "excludeConstructors", excludeConstructors);
         excludeGetterSetter = getBooleanValue(props, "excludeGetterSetter", excludeGetterSetter);

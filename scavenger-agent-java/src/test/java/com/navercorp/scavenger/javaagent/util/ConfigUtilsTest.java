@@ -377,5 +377,21 @@ public class ConfigUtilsTest {
             assertThat(ConfigUtils.separateValues(",   , @service, : @annotation  ; : @hi.hi  , "))
                 .containsExactly("@annotation", "@hi.hi", "@service");
         }
+
+        @Test
+        @DisplayName("should separate comma separated values")
+        void separateValuesByCommaTest() {
+            assertThat(ConfigUtils.separateValuesByComma("   com.acme... ; foo.bar..   "))
+                .contains("com.acme... ; foo.bar..");
+
+            assertThat(ConfigUtils.separateValuesByComma(",   , x, : y  ; : com.acme... , foo.bar..  , "))
+                .contains("foo.bar..", "x", ": y  ; : com.acme...");
+
+            assertThat(ConfigUtils.separateValuesByComma(",   , @service, : @annotation  ; : @hi.hi  , "))
+                .contains(": @annotation  ; : @hi.hi", "@service");
+
+            assertThat(ConfigUtils.separateValuesByComma("  (?:^|\\.)AdditionalService$, ^com\\.example\\.demo\\.service\\..*TestRegex.*$  ,^([a-zA-Z_][a-zA-Z0-9_]*)(\\.[a-zA-Z_][a-zA-Z0-9_]*)*\\.([A-Z][a-zA-Z0-9_$]*)$"))
+                .contains("(?:^|\\.)AdditionalService$", "^com\\.example\\.demo\\.service\\..*TestRegex.*$", "^([a-zA-Z_][a-zA-Z0-9_]*)(\\.[a-zA-Z_][a-zA-Z0-9_]*)*\\.([A-Z][a-zA-Z0-9_$]*)$");
+        }
     }
 }
