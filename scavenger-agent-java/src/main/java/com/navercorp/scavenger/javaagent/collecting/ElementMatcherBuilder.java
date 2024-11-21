@@ -60,7 +60,7 @@ public class ElementMatcherBuilder {
             .reduce(ElementMatcher.Junction::or)
             .orElse(none());
 
-        ElementMatcher.Junction<NamedElement> additionalByRegexMatcher = config.getExcludeByRegex().stream()
+        ElementMatcher.Junction<NamedElement> additionalByRegexMatcher = config.getAdditionalByRegex().stream()
             .map(ElementMatchers::nameMatches)
             .reduce(ElementMatcher.Junction::or)
             .orElse(none());
