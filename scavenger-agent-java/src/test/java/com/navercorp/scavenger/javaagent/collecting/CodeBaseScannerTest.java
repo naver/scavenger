@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -191,7 +192,7 @@ public class CodeBaseScannerTest {
             public void setFilter() {
                 String file = Objects.requireNonNull(getClass().getClassLoader().getResource("scavenger-demo-1.1.3-SNAPSHOT.jar")).getFile();
                 config.setCodeBase(Collections.singletonList(file));
-                config.setExcludeByRegex(Collections.singletonList("^com\\.example\\.demo\\.service\\..*TestRegex.*$"));
+                config.setExcludeByRegex(Collections.singletonList(Pattern.compile("^com\\.example\\.demo\\.service\\..*TestRegex.*$")));
                 scanner = new CodeBaseScanner(config);
             }
 
@@ -212,7 +213,7 @@ public class CodeBaseScannerTest {
                 String file = Objects.requireNonNull(getClass().getClassLoader().getResource("scavenger-demo-1.1.3-SNAPSHOT.jar")).getFile();
                 config.setCodeBase(Collections.singletonList(file));
                 config.setAnnotations(Collections.singletonList("org.springframework.web.bind.annotation.RestController"));
-                config.setAdditionalByRegex(Collections.singletonList("^com\\.example\\.demo\\.service\\..*TestRegex.*$"));
+                config.setAdditionalByRegex(Collections.singletonList(Pattern.compile("^com\\.example\\.demo\\.service\\..*TestRegex.*$")));
                 scanner = new CodeBaseScanner(config);
             }
 

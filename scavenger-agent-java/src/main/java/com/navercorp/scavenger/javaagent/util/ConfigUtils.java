@@ -159,8 +159,10 @@ public class ConfigUtils {
         return separateValues(getStringValue(props, key, null));
     }
 
-    public static List<String> getSeparatedValuesByComma(Properties props, String key) {
-        return separateValuesByComma(getStringValue(props, key, null));
+    public static List<Pattern> getSeparatedValuesForRegex(Properties props, String key) {
+        return separateValuesByComma(getStringValue(props, key, null)).stream()
+            .map(Pattern::compile)
+            .collect(Collectors.toList());
     }
 
     private static String trimTrailingDots(String string) {

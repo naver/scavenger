@@ -35,8 +35,8 @@ public class CodeBaseScanner {
     private final List<String> packagePaths;
     private final List<String> excludePackagePaths;
     private final List<String> additionalPackagePaths;
-    private final List<String> excludeByRegex;
-    private final List<String> additionalByRegex;
+    private final List<Pattern> excludeByRegex;
+    private final List<Pattern> additionalByRegex;
 
     public CodeBaseScanner(Config config) {
         this.config = config;
@@ -186,7 +186,7 @@ public class CodeBaseScanner {
 
     private boolean isAdditionalByRegex(ClassNode clazz) {
         String className = clazz.name.replaceAll("/", ".");
-        return additionalByRegex.stream().anyMatch(regex -> Pattern.matches(regex, className));
+        return additionalByRegex.stream().anyMatch(pattern -> pattern.matcher(className).matches());
     }
 
     // filter applies to only class not method
@@ -275,7 +275,7 @@ public class CodeBaseScanner {
 
     private boolean isExcludedByRegex(ClassNode clazz) {
         String className = clazz.name.replaceAll("/", ".");
-        return excludeByRegex.stream().anyMatch(regex -> Pattern.matches(regex, className));
+        return excludeByRegex.stream().anyMatch(pattern -> pattern.matcher(className).matches());
     }
 
     private static ClassNode getNode(byte[] bytes) {

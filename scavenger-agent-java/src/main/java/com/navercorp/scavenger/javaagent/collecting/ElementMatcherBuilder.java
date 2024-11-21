@@ -29,6 +29,10 @@ import lombok.RequiredArgsConstructor;
 
 import com.navercorp.scavenger.javaagent.model.Config;
 
+import javax.annotation.Nonnull;
+
+import java.util.regex.Pattern;
+
 @RequiredArgsConstructor
 public class ElementMatcherBuilder {
     private final Config config;
@@ -56,12 +60,12 @@ public class ElementMatcherBuilder {
             .orElse(none());
 
         ElementMatcher.Junction<NamedElement> excludeByRegexMatcher = config.getExcludeByRegex().stream()
-            .map(ElementMatchers::nameMatches)
+            .map(ElementMatcherBuilder::patternMatches)
             .reduce(ElementMatcher.Junction::or)
             .orElse(none());
 
         ElementMatcher.Junction<NamedElement> additionalByRegexMatcher = config.getAdditionalByRegex().stream()
-            .map(ElementMatchers::nameMatches)
+            .map(ElementMatcherBuilder::patternMatches)
             .reduce(ElementMatcher.Junction::or)
             .orElse(none());
 
@@ -110,4 +114,14 @@ public class ElementMatcherBuilder {
             .and(visibilityMatcher)
             .and(trivialMethodMatchers);
     }
+
+    private static ElementMatcher.Junction<NamedElement> patternMatches(Pattern pattern) {
+        return new ElementMatcher.Junction.ForNonNullValues<NamedElement>() {
+            @Override
+            protected boolean doMatch(@Nonnull NamedElement namedElement) {
+                return pattern.matcher(namedElement.getActualName()).matches();
+            }
+        };
+    }
+
 }
