@@ -161,9 +161,9 @@ public class CodeBaseScanner {
     private boolean filterClass(ClassNode clazz) {
         return clazz != null
             && !isInterface(clazz)
-            && !isExcludedByRegex(clazz)
             && isIncludedByPackage(clazz)
-            && (isIncludedByAnnotation(clazz) || isAdditionalPackage(clazz) || isAdditionalByRegex(clazz));
+            && (isIncludedByAnnotation(clazz) || isAdditionalPackage(clazz) || isAdditionalByRegex(clazz))
+            && !isExcludedByRegex(clazz);
     }
 
     private boolean isIncludedByPackage(ClassNode clazz) {
