@@ -7,7 +7,6 @@ import java.net.URL;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
-import java.util.function.Consumer;
 
 import org.assertj.core.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;

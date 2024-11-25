@@ -337,4 +337,87 @@ public class ElementMatcherBuilderTest {
             }
         }
     }
+
+    @Nested
+    @DisplayName("if excludeByRegex is set")
+    class excludeByRegexTest {
+        ElementMatcher<TypeDescription> matcher;
+
+        @BeforeEach
+        public void prepareMatcher() {
+            Properties props = new Properties();
+            props.setProperty("packages", "com.example.demo");
+            props.setProperty("excludeByRegex", "^com\\.example\\.demo\\.service\\..*TestRegex.*$");
+            Config config = new Config(props);
+            ElementMatcherBuilder builder = new ElementMatcherBuilder(config);
+            matcher = builder.buildClassMatcher();
+        }
+
+        @Test
+        @DisplayName("it returns false for empty string")
+        void emptyString() {
+            assertThat(matcher.matches(withClazzNameWithPackage(""))).isFalse();
+        }
+
+        @Test
+        @DisplayName("it returns false if matched with exclude regex pattern")
+        void unmatched() {
+            assertThat(matcher.matches(withClazzNameWithPackage("com.example.demo.service.TestRegexService"))).isFalse();
+            assertThat(matcher.matches(withClazzNameWithPackage("com.example.demo.service.test.TestRegexService"))).isFalse();
+        }
+    }
+
+    @Nested
+    @DisplayName("if additionalByRegex is set")
+    class AdditionalByRegexTest {
+        ElementMatcher<TypeDescription> matcher;
+
+        @BeforeEach
+        public void prepareMatcher() {
+            Properties props = new Properties();
+            props.setProperty("packages", "com.example.demo");
+            props.setProperty("annotations", "com.example.annotation");
+            props.setProperty("additionalByRegex", "^com\\.example\\.demo\\..*TestRegex.*$");
+            Config config = new Config(props);
+            ElementMatcherBuilder builder = new ElementMatcherBuilder(config);
+            matcher = builder.buildClassMatcher();
+        }
+
+        @Test
+        @DisplayName("it returns true if matched with additional regex and annotations")
+        void matched() {
+            assertThat(matcher.matches(
+                withAnnotations("com.example.demo.Clazz", "com.example.annotation")
+            )).isTrue();
+            assertThat(matcher.matches(
+                withAnnotations("com.example.demo.test.Clazz", "com.example.annotation")
+            )).isTrue();
+            assertThat(matcher.matches(
+                withAnnotations("com.example.demo.TestRegexClazz", "com.other.annotation")
+            )).isTrue();
+            assertThat(matcher.matches(
+                withAnnotations(
+                    "com.example.demo.test.TestRegexClazz",
+                    Arrays.asList("com.other.annotation", "com.example.annotation")
+                )
+            )).isTrue();
+            assertThat(matcher.matches(
+                withClazzNameWithPackage("com.example.demo.TestRegexClazz")
+            )).isTrue();
+        }
+
+        @Test
+        @DisplayName("it returns false for unmatched type")
+        void unmatched() {
+            assertThat(matcher.matches(
+                withAnnotations("com.example.Clazz", "com.example.annotation")
+            )).isFalse();
+            assertThat(matcher.matches(
+                withAnnotations("com.example.demo.Clazz", "com.example.annotation.test")
+            )).isFalse();
+            assertThat(matcher.matches(
+                withAnnotations("com.example.demo.Clazz", "com.com.example.annotation")
+            )).isFalse();
+        }
+    }
 }

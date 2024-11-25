@@ -29,6 +29,10 @@ import lombok.RequiredArgsConstructor;
 
 import com.navercorp.scavenger.javaagent.model.Config;
 
+import javax.annotation.Nonnull;
+
+import java.util.regex.Pattern;
+
 @RequiredArgsConstructor
 public class ElementMatcherBuilder {
     private final Config config;
@@ -55,11 +59,23 @@ public class ElementMatcherBuilder {
             .reduce(ElementMatcher.Junction::or)
             .orElse(none());
 
+        ElementMatcher.Junction<NamedElement> excludeByRegexMatcher = config.getExcludeByRegex().stream()
+            .map(ElementMatcherBuilder::patternMatches)
+            .reduce(ElementMatcher.Junction::or)
+            .orElse(none());
+
+        ElementMatcher.Junction<NamedElement> additionalByRegexMatcher = config.getAdditionalByRegex().stream()
+            .map(ElementMatcherBuilder::patternMatches)
+            .reduce(ElementMatcher.Junction::or)
+            .orElse(none());
+
+
         return packageNameMatcher
             .and(not(isSynthetic()))
             .and(not(isInterface()))
             .and(not(excludePackageMatcher))
-            .and(annotationMatcher.or(additionalPackageMatcher));
+            .and(annotationMatcher.or(additionalPackageMatcher).or(additionalByRegexMatcher))
+            .and(not(excludeByRegexMatcher));
     }
 
     public ElementMatcher<MethodDescription> buildMethodMatcher(TypeDescription typeDescription) {
@@ -98,4 +114,14 @@ public class ElementMatcherBuilder {
             .and(visibilityMatcher)
             .and(trivialMethodMatchers);
     }
+
+    private static ElementMatcher.Junction<NamedElement> patternMatches(Pattern pattern) {
+        return new ElementMatcher.Junction.ForNonNullValues<NamedElement>() {
+            @Override
+            protected boolean doMatch(@Nonnull NamedElement namedElement) {
+                return pattern.matcher(namedElement.getActualName()).matches();
+            }
+        };
+    }
+
 }

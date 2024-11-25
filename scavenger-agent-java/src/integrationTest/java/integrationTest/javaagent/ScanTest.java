@@ -46,6 +46,9 @@ import com.navercorp.scavenger.model.GrpcAgentServiceGrpc;
 import com.navercorp.scavenger.model.InitConfigResponse;
 import com.navercorp.scavenger.model.PublicationResponse;
 
+import sample.app.regex.ExcludeRegexClass1;
+import sample.app.regex.ExcludeRegexClass2;
+
 @ExtendWith(AgentIntegrationTestContextProvider.class)
 @ExtendWith(GrpcMockExtension.class)
 @DisplayName("codebase scan test")
@@ -82,6 +85,8 @@ public class ScanTest {
         assertThat(stdout).matches(scanned(NotServiceClass.class.getMethod("doSomething", int.class)));
         assertThat(stdout).doesNotMatch(scanned(NotTrackedClass.class.getMethod("doSomething")));
         assertThat(stdout).doesNotMatch(scanned(NotTrackedClass2.class.getMethod("doSomething")));
+        assertThat(stdout).doesNotMatch(scanned(ExcludeRegexClass1.class.getMethod("doSomething")));
+        assertThat(stdout).doesNotMatch(scanned(ExcludeRegexClass2.class.getMethod("doSomething")));
     }
 
     @TestTemplate

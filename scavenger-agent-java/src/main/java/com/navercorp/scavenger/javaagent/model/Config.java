@@ -4,6 +4,7 @@ import static com.navercorp.scavenger.javaagent.util.ConfigUtils.getAliasedStrin
 import static com.navercorp.scavenger.javaagent.util.ConfigUtils.getBooleanValue;
 import static com.navercorp.scavenger.javaagent.util.ConfigUtils.getIntValue;
 import static com.navercorp.scavenger.javaagent.util.ConfigUtils.getSeparatedValues;
+import static com.navercorp.scavenger.javaagent.util.ConfigUtils.getSeparatedValuesForRegex;
 import static com.navercorp.scavenger.javaagent.util.ConfigUtils.getStringValue;
 import static com.navercorp.scavenger.javaagent.util.ConfigUtils.getVisibilityValue;
 import static com.navercorp.scavenger.javaagent.util.ConfigUtils.separateValues;
@@ -11,6 +12,7 @@ import static com.navercorp.scavenger.javaagent.util.ConfigUtils.withEndingDot;
 
 import java.util.List;
 import java.util.Properties;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import lombok.Data;
@@ -33,6 +35,8 @@ public class Config {
     private List<String> excludePackages;
     private List<String> additionalPackages;
     private List<String> annotations;
+    private List<Pattern> excludeByRegex;
+    private List<Pattern> additionalByRegex;
     private Visibility methodVisibility = Visibility.PROTECTED;
     private boolean excludeConstructors = false;
     private boolean excludeGetterSetter = false;
@@ -67,6 +71,8 @@ public class Config {
         annotations = getSeparatedValues(props, "annotations").stream()
             .map(it -> it.startsWith("@") ? it.substring(1) : it)
             .collect(Collectors.toList());
+        excludeByRegex = getSeparatedValuesForRegex(props, "excludeByRegex");
+        additionalByRegex = getSeparatedValuesForRegex(props, "additionalByRegex");
         methodVisibility = getVisibilityValue(props, "methodVisibility", methodVisibility);
         excludeConstructors = getBooleanValue(props, "excludeConstructors", excludeConstructors);
         excludeGetterSetter = getBooleanValue(props, "excludeGetterSetter", excludeGetterSetter);

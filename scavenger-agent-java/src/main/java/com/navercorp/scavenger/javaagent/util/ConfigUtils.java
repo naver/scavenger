@@ -146,8 +146,23 @@ public class ConfigUtils {
             .collect(Collectors.toList());
     }
 
+    public static List<String> separateValuesByComma(String value) {
+        return value == null
+            ? Collections.emptyList()
+            : Arrays.stream(value.split(","))
+            .map(String::trim)
+            .filter(it -> !it.isEmpty())
+            .collect(Collectors.toList());
+    }
+
     public static List<String> getSeparatedValues(Properties props, String key) {
         return separateValues(getStringValue(props, key, null));
+    }
+
+    public static List<Pattern> getSeparatedValuesForRegex(Properties props, String key) {
+        return separateValuesByComma(getStringValue(props, key, null)).stream()
+            .map(Pattern::compile)
+            .collect(Collectors.toList());
     }
 
     private static String trimTrailingDots(String string) {
