@@ -66,7 +66,7 @@ public class Method {
     private boolean isGetter(MethodNode methodNode) {
         Type returnType = Type.getReturnType(methodNode.desc);
 
-        return (methodNode.parameters == null || methodNode.parameters.isEmpty())
+        return Type.getArgumentTypes(methodNode.desc).length == 0
             && returnType != Type.VOID_TYPE && (methodNode.name.startsWith("get")
             || (methodNode.name.startsWith("is") && returnType == Type.BOOLEAN_TYPE)
             || (methodNode.name.matches("component\\d+")) // kotlin component
@@ -75,8 +75,7 @@ public class Method {
 
     private boolean isSetter(MethodNode methodNode) {
         return methodNode.name.startsWith("set")
-            && methodNode.parameters != null
-            && methodNode.parameters.size() == 1
+            && Type.getArgumentTypes(methodNode.desc).length == 1
             && Type.getReturnType(methodNode.desc) == Type.VOID_TYPE;
     }
 
