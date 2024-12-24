@@ -6,12 +6,35 @@ import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.util.concurrent.Callable;
+import java.util.function.Function;
 
 public class HashGenerator {
 
+    public enum HashAlgorithm {
+
+        MURMUR(Murmur::from),
+        SHA256(Sha256::from),
+        MD5(Md5::from);
+
+        private final Function<String, String> hashFunction;
+
+        HashAlgorithm(Function<String, String> hashFunction) {
+            this.hashFunction = hashFunction;
+        }
+
+        public String hash(String signature) {
+            return hashFunction.apply(signature);
+        }
+    }
+
     public static class DefaultHash {
+        private static final String SELECTED_ALGORITHM_PROP = "hash.algorithm";
+        private static final HashAlgorithm DEFAULT_ALGORITHM = HashAlgorithm.MD5;
+        private static final HashAlgorithm SELECTED_ALGORITHM =
+                HashAlgorithm.valueOf(System.getProperty(SELECTED_ALGORITHM_PROP, DEFAULT_ALGORITHM.name()).toUpperCase());
+
         public static String from(String signature) {
-            return Murmur.from(signature);
+            return SELECTED_ALGORITHM.hash(signature);
         }
     }
 
