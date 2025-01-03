@@ -21,8 +21,10 @@ public class InvocationRegistry {
     private long recordingIntervalStartedAtMillis = System.currentTimeMillis();
 
     public void register(String hash) {
-        BooleanHolder holder = invocations.computeIfAbsent(hash, k -> new BooleanHolder());
-        if (!holder.value) {
+        BooleanHolder holder = invocations.get(hash);
+        if (holder == null) {
+            invocations.put(hash, new BooleanHolder());
+        } else if (!holder.value) {
             holder.value = true;
         }
     }

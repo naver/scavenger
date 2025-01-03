@@ -20,7 +20,12 @@ public class MethodRegistry {
     }
 
     public String getHash(String byteBuddySignature) {
-        return byteBuddySignatureToHash.computeIfAbsent(byteBuddySignature, this::generateHash);
+        String hash = byteBuddySignatureToHash.get(byteBuddySignature);
+        if (hash == null) {
+            hash = generateHash(byteBuddySignature);
+            byteBuddySignatureToHash.put(byteBuddySignature, hash);
+        }
+        return hash;
     }
 
     private String generateHash(String byteBuddySignature) {
