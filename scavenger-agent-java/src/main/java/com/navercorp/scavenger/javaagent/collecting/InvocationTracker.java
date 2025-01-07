@@ -67,7 +67,11 @@ public class InvocationTracker {
 
     @SuppressWarnings("unused")
     @Advice.OnMethodEnter
-    public static void onInvocation(@Advice.Origin String signature) {
+    static void onInvocation(@Advice.Origin String signature) {
+        hashAndRegister(signature);
+    }
+
+    public static void hashAndRegister(String signature) {
         String hash = getMethodRegistry().getHash(signature, isLegacyCompatibilityMode());
 
         //noinspection StringEquality

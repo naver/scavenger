@@ -28,18 +28,20 @@ public class InvocationRegistry {
         Thread worker = ScavengerThreadFactory.builder()
             .name("registry")
             .build()
-            .newThread(new Thread(() -> {
-                while (!Thread.currentThread().isInterrupted()) {
-                    try {
-                        invocations[currentInvocationIndex].add(queue.take());
-                    } catch (InterruptedException e) {
-                        log.fine("[scavenger] Interrupted");
-                        Thread.currentThread().interrupt();
-                        return;
-                    }
-                }
-            }));
+            .newThread(new Thread(this::workerTask));
         worker.start();
+    }
+
+    void workerTask() {
+        while (!Thread.currentThread().isInterrupted()) {
+            try {
+                invocations[currentInvocationIndex].add(queue.take());
+            } catch (InterruptedException e) {
+                log.fine("[scavenger] Interrupted");
+                Thread.currentThread().interrupt();
+                return;
+            }
+        }
     }
 
     public void register(String hash) {
