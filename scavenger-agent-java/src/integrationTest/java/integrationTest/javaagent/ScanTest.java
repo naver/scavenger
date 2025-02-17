@@ -5,6 +5,7 @@ import static com.github.tomakehurst.wiremock.client.WireMock.givenThat;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static com.navercorp.scavenger.model.Endpoints.Agent.V5_INIT_CONFIG;
 import static integrationTest.util.AgentLogAssertionUtil.assertSampleAppOutput;
+import static integrationTest.util.AgentLogAssertionUtil.extractFromMatchingLogLines;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.grpcmock.GrpcMock.calledMethod;
 import static org.grpcmock.GrpcMock.getGlobalPort;
@@ -13,65 +14,33 @@ import static org.grpcmock.GrpcMock.unaryMethod;
 import static org.grpcmock.GrpcMock.verifyThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.lang.reflect.Method;
-import java.util.Optional;
-import java.util.Properties;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.grpcmock.GrpcMock;
-import org.grpcmock.junit5.GrpcMockExtension;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import com.navercorp.scavenger.javaagent.collecting.CodeBaseScanner;
+import com.navercorp.scavenger.javaagent.collecting.InvocationTracker;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.TestTemplate;
 import org.junit.jupiter.api.extension.ExtendWith;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.client.WireMock;
-import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
 import com.google.protobuf.util.JsonFormat;
 import integrationTest.support.AgentIntegrationTestContextProvider;
 import integrationTest.support.AgentRunner;
-import integrationTest.util.AgentLogAssertionUtil;
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
 import sample.app.NotServiceClass;
+import sample.app.SampleApp;
+import sample.app.SampleAspect;
 import sample.app.SampleService1;
-import sample.app.excluded.NotTrackedClass;
-import sample.app.excluded.NotTrackedClass2;
+import sample.app.SampleService2;
 
 import com.navercorp.scavenger.model.GetConfigResponse;
 import com.navercorp.scavenger.model.GrpcAgentServiceGrpc;
 import com.navercorp.scavenger.model.InitConfigResponse;
 import com.navercorp.scavenger.model.PublicationResponse;
 
-import sample.app.regex.ExcludeRegexClass1;
-import sample.app.regex.ExcludeRegexClass2;
-
 @ExtendWith(AgentIntegrationTestContextProvider.class)
-@ExtendWith(GrpcMockExtension.class)
 @DisplayName("codebase scan test")
-public class ScanTest {
-    private static WireMockServer wireMockServer;
-    private static ManagedChannel channel;
-
-    @BeforeAll
-    static void setUp() {
-        wireMockServer = new WireMockServer(new WireMockConfiguration().dynamicPort());
-        wireMockServer.start();
-        WireMock.configureFor(wireMockServer.port());
-
-        channel = ManagedChannelBuilder.forAddress("localhost", GrpcMock.getGlobalPort())
-            .usePlaintext()
-            .build();
-    }
-
-    @AfterAll
-    static void tearDown() {
-        Optional.ofNullable(wireMockServer).ifPresent(WireMockServer::shutdown);
-        Optional.ofNullable(channel).ifPresent(ManagedChannel::shutdownNow);
-    }
+public class ScanTest extends AbstractWireMockTest {
 
     @TestTemplate
     @DisplayName("it scans correctly")
@@ -81,22 +50,47 @@ public class ScanTest {
 
         // then
         assertSampleAppOutput(stdout);
-        assertThat(stdout).matches(scanned(SampleService1.class.getMethod("doSomething", int.class)));
-        assertThat(stdout).matches(scanned(NotServiceClass.class.getMethod("doSomething", int.class)));
-        assertThat(stdout).doesNotMatch(scanned(NotTrackedClass.class.getMethod("doSomething")));
-        assertThat(stdout).doesNotMatch(scanned(NotTrackedClass2.class.getMethod("doSomething")));
-        assertThat(stdout).doesNotMatch(scanned(ExcludeRegexClass1.class.getMethod("doSomething")));
-        assertThat(stdout).doesNotMatch(scanned(ExcludeRegexClass2.class.getMethod("doSomething")));
+        List<String> scannedMethods = extractFromMatchingLogLines(stdout, CodeBaseScanner.class, "[scavenger] ", " is scanned");
+        assertThat(scannedMethods).containsExactlyInAnyOrder(
+                "sample.app.NotServiceClass()",
+                "sample.app.NotServiceClass.doNothing()",
+                "sample.app.NotServiceClass.doSomething(int)",
+                "sample.app.SampleApp(sample.app.SampleService1)",
+                "sample.app.SampleApp.add(int,int)",
+                "sample.app.SampleApp.main(java.lang.String[])",
+                "sample.app.SampleApp.postConstruct()",
+                "sample.app.SampleAspect()",
+                "sample.app.SampleAspect.aroundSampleService(org.aspectj.lang.ProceedingJoinPoint)",
+                "sample.app.SampleAspect.logAspectLoaded()",
+                "sample.app.SampleService1(sample.app.SampleService2)",
+                "sample.app.SampleService1.doSomething(int)",
+                "sample.app.SampleService2()",
+                "sample.app.SampleService2.doSomething(int)"
+        );
+    }
+
+    @TestTemplate
+    @DisplayName("it installs advice correctly")
+    void advice(AgentRunner agentRunner) throws Exception {
+        String stdout = agentRunner.call();
+
+        List<String> installedAdvice = extractFromMatchingLogLines(stdout, InvocationTracker.class,
+                "[scavenger] Advice on ", " is installed");
+
+        assertThat(installedAdvice).containsExactlyInAnyOrder(
+                SampleApp.class.getName(),
+                SampleService1.class.getName(),
+                SampleAspect.class.getName(),
+                SampleService2.class.getName(),
+                NotServiceClass.class.getName());
     }
 
     @TestTemplate
     @DisplayName("it sends publication correctly")
     void send(AgentRunner agentRunner) throws Exception {
         // given
-        Properties properties = new Properties();
-        properties.setProperty("schedulerInitialDelayMillis", "0");
-        properties.setProperty("serverUrl", "http://localhost:" + wireMockServer.port());
-        agentRunner.setConfig(properties);
+        agentRunner.setConfigProperty("serverUrl", "http://localhost:" + wireMockServer.port());
+        agentRunner.setConfigProperty("schedulerInitialDelayMillis", "0");
 
         givenThat(
             get(V5_INIT_CONFIG + "?licenseKey=")
@@ -131,13 +125,6 @@ public class ScanTest {
             calledMethod(GrpcAgentServiceGrpc.getSendCodeBasePublicationMethod())
                 .withStatusOk()
                 .withRequest(pub -> pub.getEntryCount() == getMethodsCount(stdout)));
-    }
-
-    private static Pattern scanned(Method method) {
-        String[] split = method.toString().split(" ");
-        String signature = split[split.length - 1];
-        return AgentLogAssertionUtil.logPattern("com.navercorp.scavenger.javaagent.collecting.CodeBaseScanner",
-            "[scavenger] " + signature + " is scanned");
     }
 
     private static int getMethodsCount(String stdout) {

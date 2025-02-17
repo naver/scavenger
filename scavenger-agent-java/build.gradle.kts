@@ -1,22 +1,26 @@
-import com.github.jengelman.gradle.plugins.shadow.tasks.ConfigureShadowRelocation
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     java
     `maven-publish`
     signing
-    id("com.github.johnrengelman.shadow") version "8.0.0"
+    id("com.gradleup.shadow") version "8.3.3"
     id("io.freefair.lombok") version "8.6"
     id("org.unbroken-dome.test-sets") version "4.1.0"
 }
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(8))
+        languageVersion.set(JavaLanguageVersion.of(21))
     }
-
     withJavadocJar()
     withSourcesJar()
+}
+
+tasks.withType<JavaCompile>().matching {
+    it.name in setOf("compileJava", "compileIntegrationTestJava")
+}.configureEach {
+    options.release = 8
 }
 
 tasks.withType<ShadowJar> {
@@ -27,7 +31,9 @@ tasks.withType<ShadowJar> {
         attributes["Implementation-Version"] = project.version
     }
 
-    dependsOn("relocateShadowJar")
+    isEnableRelocation = true
+    relocationPrefix = "sc"
+
     mergeServiceFiles()
 
     minimize {
@@ -36,11 +42,6 @@ tasks.withType<ShadowJar> {
         exclude(dependency("com.squareup.okhttp3:okhttp:.*"))
     }
     exclude("**/*.kotlin_*")
-}
-
-tasks.register<ConfigureShadowRelocation>("relocateShadowJar") {
-    target = tasks.shadowJar.get()
-    prefix = "sc"
 }
 
 tasks.assemble {
@@ -71,9 +72,11 @@ dependencies {
     implementation("io.grpc:grpc-okhttp:${property("grpcVersion")}")
 
     testImplementation(platform("org.junit:junit-bom:5.8.2"))
+    testImplementation(platform("org.mockito:mockito-bom:5.13.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("org.assertj:assertj-core:3.22.0")
-    testImplementation("org.mockito:mockito-inline:4.3.1")
+    testImplementation("org.mockito:mockito-core")
+    testImplementation("org.mockito:mockito-junit-jupiter")
 }
 
 testSets {
@@ -85,6 +88,10 @@ dependencies {
     "integrationTestImplementation"("org.springframework.boot:spring-boot-starter-aop:2.5.12")
     "integrationTestImplementation"("com.github.tomakehurst:wiremock:2.27.2")
     "integrationTestImplementation"("org.grpcmock:grpcmock-junit5:0.13.0")
+
+    // JMH benchmarks
+    "integrationTestImplementation"("org.openjdk.jmh:jmh-core:1.37")
+    "integrationTestAnnotationProcessor"("org.openjdk.jmh:jmh-generator-annprocess:1.37")
 }
 
 fun javaPaths(vararg versions: Int) = versions.joinToString(",",
