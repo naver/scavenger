@@ -22,6 +22,9 @@ public class HashGenerator {
             this.hashFunction = hashFunction;
         }
 
+        /**
+         * @return the hash of the given signature as a hexadecimal string
+         */
         public String hash(String signature) {
             return hashFunction.apply(signature);
         }
@@ -41,7 +44,7 @@ public class HashGenerator {
     private static class Murmur {
         private static String from(String signature) {
             long[] x64hash = MurmurHash3.hash128x64(signature.getBytes(StandardCharsets.UTF_8));
-            return Long.toHexString(x64hash[0]) + Long.toHexString(x64hash[1]);
+            return String.format("%016x%016x", x64hash[0], x64hash[1]);
         }
     }
 
@@ -49,7 +52,7 @@ public class HashGenerator {
         private static String from(String signature) {
             MessageDigest md = callWithCheckedExceptionWrapping(() -> MessageDigest.getInstance("SHA-256"));
             md.update(signature.getBytes(StandardCharsets.UTF_8));
-            return String.format("%x", new BigInteger(1, md.digest()));
+            return String.format("%064x", new BigInteger(1, md.digest()));
         }
     }
 
@@ -57,6 +60,7 @@ public class HashGenerator {
         private static String from(String signature) {
             MessageDigest md = callWithCheckedExceptionWrapping(() -> MessageDigest.getInstance("MD5"));
             md.update(signature.getBytes(StandardCharsets.UTF_8));
+            // Ideally should be "%032x" to avoid confusion from leading zeros being dropped, do not change now, avoid compat issues
             return String.format("%x", new BigInteger(1, md.digest()));
         }
     }
