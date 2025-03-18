@@ -1,5 +1,6 @@
 package com.navercorp.scavenger.controller
 
+import com.navercorp.scavenger.model.CallStackDataPublication
 import com.navercorp.scavenger.model.CodeBasePublication
 import com.navercorp.scavenger.model.CommonPublicationData
 import com.navercorp.scavenger.model.GetConfigRequest
@@ -50,6 +51,20 @@ class GrpcAgentController(
             .build()
     }
 
+    override suspend fun sendCallStackDataPublication(request: CallStackDataPublication): PublicationResponse {
+        try {
+            validate(request)
+            agentService.savePublication(ProtoPublication.from(request))
+        } catch (e: Exception) {
+            logger.warn(e) { "grpc agent ${request.commonData.jvmUuid} from ${request.commonData.apiKey} call stack import failed: " }
+            throw e
+        }
+
+        return PublicationResponse.newBuilder()
+            .setStatus("OK")
+            .build()
+    }
+
     private fun validate(request: CodeBasePublication) {
         if (!request.hasCommonData()) {
             throw IllegalArgumentException("CommonPublicationData is a mandatory field")
@@ -69,6 +84,19 @@ class GrpcAgentController(
         }
         for (entry in request.entryList) {
             if (entry.hash.isEmpty()) {
+                throw IllegalArgumentException("hash is a mandatory field")
+            }
+        }
+
+        validate(request.commonData)
+    }
+
+    private fun validate(request: CallStackDataPublication) {
+        if (!request.hasCommonData()) {
+            throw IllegalArgumentException("CommonPublicationData is a mandatory field")
+        }
+        for (entry in request.entryList) {
+            if (entry.callee.isEmpty() || entry.callersList.isEmpty()) {
                 throw IllegalArgumentException("hash is a mandatory field")
             }
         }
