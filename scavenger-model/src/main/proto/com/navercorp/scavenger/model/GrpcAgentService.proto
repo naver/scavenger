@@ -3,6 +3,7 @@ syntax = "proto3";
 import "com/navercorp/scavenger/model/GetConfig.proto";
 import "com/navercorp/scavenger/model/CodeBasePublication.proto";
 import "com/navercorp/scavenger/model/InvocationDataPublication.proto";
+import "com/navercorp/scavenger/model/CallStackDataPublication.proto";
 
 option java_package = "com.navercorp.scavenger.model";
 option java_multiple_files = true;
@@ -11,6 +12,7 @@ service GrpcAgentService {
     rpc PollConfig (GetConfigRequest) returns (GetConfigResponse) {}
     rpc SendCodeBasePublication (CodeBasePublication) returns (PublicationResponse) {}
     rpc SendInvocationDataPublication (InvocationDataPublication) returns (PublicationResponse) {}
+    rpc SendCallStackDataPublication (CallStackDataPublication) returns (PublicationResponse) {}
 }
 
 message PublicationResponse {
