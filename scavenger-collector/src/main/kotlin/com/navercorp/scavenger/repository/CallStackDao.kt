@@ -7,9 +7,11 @@ import org.springframework.stereotype.Repository
 
 @Repository
 class CallStackDao(
-    entityJdbcProvider: EntityJdbcProvider
+    entityJdbcProvider: EntityJdbcProvider,
+    callStackRepository: CallStackRepository
 ) :
-    ExtendedJdbcDaoSupport(entityJdbcProvider) {
+    ExtendedJdbcDaoSupport(entityJdbcProvider),
+    CallStackRepository by callStackRepository {
     private val sql: CallStackSql = super.sqls(::CallStackSql)
 
     fun batchUpsert(params: List<CallStackUpsertParam>): IntArray {

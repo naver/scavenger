@@ -30,7 +30,7 @@ class CallStackSql : SqlGeneratorSupport() {
         """
         UPDATE call_stacks
         SET
-            invokedAtMillis = GREATEST(invokedAtMillis, :invokedAtMillis),
+            invokedAtMillis = GREATEST(invokedAtMillis, :invokedAtMillis)
         WHERE
             customerId = :customerId
             AND applicationId = :applicationId
