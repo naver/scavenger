@@ -34,4 +34,16 @@ class CallStackDao(
         }
         return result
     }
+
+    fun deleteAllCallStacks(customerId: Long, signatureHashes: List<String>): Int {
+        if (signatureHashes.isEmpty()) {
+            return 0
+        }
+        return update(
+            sql.deleteAllCallStacks(),
+            mapParameterSource()
+                .addValue("customerId", customerId)
+                .addValue("signatureHashes", signatureHashes)
+        )
+    }
 }

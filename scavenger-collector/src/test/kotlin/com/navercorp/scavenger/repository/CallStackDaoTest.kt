@@ -16,7 +16,7 @@ class CallStackDaoTest {
     private val customerId: Long = 2
     private val applicationId: Long = 11000016928
     private val environmentId: Long = 11000023250
-    private val callTraces: List<Pair<String, String>> = listOf("callee1" to "caller1", "callee2" to "caller2")
+    private val callTraces: List<Pair<String, String>> = listOf("callee_first" to "caller", "callee_second" to "caller")
 
     private val param = callTraces.map {
         CallStackUpsertParam(
@@ -44,5 +44,16 @@ class CallStackDaoTest {
         sut.batchUpsert(param)
 
         assertThat(sut.findAll()).size().isEqualTo(2)
+    }
+
+    @Test
+    fun deleteAllCallStacks() {
+        sut.batchUpsert(param)
+
+        assertThat(sut.findAll()).isNotEmpty
+
+        sut.deleteAllCallStacks(customerId, listOf("caller"))
+
+        assertThat(sut.findAll()).isEmpty()
     }
 }
