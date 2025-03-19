@@ -38,4 +38,15 @@ class CallStackSql : SqlGeneratorSupport() {
             AND signatureHash = :signatureHash
             AND callerSignatureHash = :callerSignatureHash
         """
+
+    fun deleteAllCallStacks(): String =
+        """
+        DELETE FROM call_stacks
+        WHERE
+            customerId = :customerId
+            AND (
+                signatureHash IN (:signatureHashes)
+                OR callerSignatureHash IN (:signatureHashes)
+                )
+        """
 }
