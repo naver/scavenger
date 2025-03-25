@@ -114,7 +114,7 @@ public class InvocationTest extends AbstractWireMockTest {
     private static Pattern invoked(Method method) {
         String signature = method.toString();
         return AgentLogAssertionUtil.logPattern("com.navercorp.scavenger.javaagent.collecting.InvocationTracker",
-            "[scavenger] method " + signature + " is invoked");
+            "[scavenger][InvocationTracker] method " + signature + " is invoked");
     }
 
     private static int getInvocationsCount(String stdout) {

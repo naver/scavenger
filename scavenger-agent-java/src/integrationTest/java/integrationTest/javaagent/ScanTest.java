@@ -78,7 +78,7 @@ public class ScanTest extends AbstractWireMockTest {
         String stdout = agentRunner.call();
 
         List<String> installedAdvice = extractFromMatchingLogLines(stdout, InvocationTracker.class,
-                "[scavenger] Advice on ", " is installed");
+                "[scavenger][InvocationTracker] Advice on ", " is installed");
 
         assertThat(installedAdvice).containsExactlyInAnyOrder(
                 SampleApp.class.getName(),

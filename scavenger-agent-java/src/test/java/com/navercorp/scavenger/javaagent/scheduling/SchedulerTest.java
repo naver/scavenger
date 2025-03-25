@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 
+import com.navercorp.scavenger.javaagent.collecting.CallStackRegistry;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -72,6 +74,9 @@ public class SchedulerTest {
     private InvocationRegistry invocationRegistry;
 
     @Mock
+    private CallStackRegistry callStackRegistry;
+
+    @Mock
     private Publisher publisher;
 
     @Mock
@@ -81,7 +86,7 @@ public class SchedulerTest {
     public void setUp() throws Exception {
         lenient().when(codeBaseScannerMock.scan())
             .thenReturn(new CodeBase(List.of(Method.createTestMethod()), "fingerprint"));
-        sut = new Scheduler(invocationRegistry, new Config(new Properties()), publisher, codeBaseScannerMock);
+        sut = new Scheduler(invocationRegistry, callStackRegistry, new Config(new Properties()), publisher, codeBaseScannerMock);
     }
 
     private void mockInvocationRegistered() {
