@@ -12,4 +12,8 @@ public class SampleService2 {
         log.info("Doing something " + p1);
         NotServiceClass.doSomething(p1 * 2);
     }
+
+    public void throwsException() {
+        throw new RuntimeException("This is a test exception");
+    }
 }
