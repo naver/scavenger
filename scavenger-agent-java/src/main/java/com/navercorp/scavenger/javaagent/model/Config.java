@@ -122,6 +122,43 @@ public class Config {
             .build();
     }
 
+    public Config copyConfigWithExcludeConstructorsTrue() {
+        Config copied = new Config(new Properties());
+
+        copied.excludeConstructors = true;
+
+        copied.enabled = this.enabled;
+        copied.location = this.location;
+        copied.appName = this.appName;
+        copied.packages = this.packages;
+        copied.codeBase = this.codeBase;
+        copied.apiKey = this.apiKey;
+        copied.serverUrl = this.serverUrl;
+        copied.excludePackages = this.excludePackages;
+        copied.additionalPackages = this.additionalPackages;
+        copied.annotations = this.annotations;
+        copied.excludeByRegex = this.excludeByRegex;
+        copied.additionalByRegex = this.additionalByRegex;
+        copied.methodVisibility = this.methodVisibility;
+        copied.excludeGetterSetter = this.excludeGetterSetter;
+        copied.environment = this.environment;
+        copied.appVersion = this.appVersion;
+        copied.hostname = this.hostname;
+        copied.httpConnectTimeoutSeconds = this.httpConnectTimeoutSeconds;
+        copied.httpReadTimeoutSeconds = this.httpReadTimeoutSeconds;
+        copied.httpWriteTimeoutSeconds = this.httpWriteTimeoutSeconds;
+        copied.schedulerInitialDelayMillis = this.schedulerInitialDelayMillis;
+        copied.schedulerIntervalMillis = this.schedulerIntervalMillis;
+        copied.forceIntervalSeconds = this.forceIntervalSeconds;
+        copied.maxMethodsCount = this.maxMethodsCount;
+        copied.callStackTraceMode = this.callStackTraceMode;
+        copied.asyncCodeBaseScanMode = this.asyncCodeBaseScanMode;
+        copied.legacyCompatibilityMode = this.legacyCompatibilityMode;
+        copied.debugMode = this.debugMode;
+
+        return copied;
+    }
+
     private String getMandatoryValue(Properties props, String key, String defaultValue) {
         String value = getStringValue(props, key, null);
 

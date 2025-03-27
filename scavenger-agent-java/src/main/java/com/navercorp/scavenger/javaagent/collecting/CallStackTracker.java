@@ -41,7 +41,7 @@ public class CallStackTracker {
     }
 
     public void installAdvice(Instrumentation inst, Config config) {
-        ElementMatcherBuilder matcherBuilder = new ElementMatcherBuilder(config);
+        ElementMatcherBuilder matcherBuilder = new ElementMatcherBuilder(config.copyConfigWithExcludeConstructorsTrue());
         Advice advice = Advice.to(CallStackTracker.class);
         AgentBuilder transform = new AgentBuilder.Default(new ByteBuddy().with(TypeValidation.DISABLED))
             .type(matcherBuilder.buildClassMatcher())
