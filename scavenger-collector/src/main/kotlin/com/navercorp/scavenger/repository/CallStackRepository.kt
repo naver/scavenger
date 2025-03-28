@@ -5,4 +5,6 @@ import com.navercorp.scavenger.spring.DelegatableJdbcRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface CallStackRepository : DelegatableJdbcRepository<CallStackEntity, Long>
+interface CallStackRepository : DelegatableJdbcRepository<CallStackEntity, Long> {
+    fun findAllByCustomerId(customerId: Long): List<CallStackEntity>
+}

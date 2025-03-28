@@ -31,29 +31,29 @@ class CallStackDaoTest {
 
     @Test
     fun batchUpsert() {
-        assertThat(sut.findAll()).isEmpty()
+        val callStacks = sut.findAll()
 
         sut.batchUpsert(param)
 
-        assertThat(sut.findAll()).isNotEmpty
+        assertThat(sut.findAll()).hasSize(callStacks.count() + param.size)
     }
 
     @Test
     fun batchUpsert_twice() {
+        val callStacks = sut.findAll()
+
         sut.batchUpsert(param)
         sut.batchUpsert(param)
 
-        assertThat(sut.findAll()).size().isEqualTo(2)
+        assertThat(sut.findAll()).hasSize(callStacks.count() + param.size)
     }
 
     @Test
     fun deleteAllCallStacks() {
         sut.batchUpsert(param)
 
-        assertThat(sut.findAll()).isNotEmpty
-
         sut.deleteAllCallStacks(customerId, listOf("caller"))
 
-        assertThat(sut.findAll()).isEmpty()
+        assertThat(sut.findAll().none { it.callerSignatureHash == "caller" }).isTrue()
     }
 }
