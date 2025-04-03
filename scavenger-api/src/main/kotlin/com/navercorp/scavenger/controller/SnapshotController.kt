@@ -2,6 +2,7 @@ package com.navercorp.scavenger.controller
 
 import com.navercorp.scavenger.dto.SnapshotDto
 import com.navercorp.scavenger.entity.SnapshotNodeEntity
+import com.navercorp.scavenger.service.CallStackService
 import com.navercorp.scavenger.service.SnapshotExportService
 import com.navercorp.scavenger.service.SnapshotNodeService
 import com.navercorp.scavenger.service.SnapshotService
@@ -27,7 +28,8 @@ import java.io.ByteArrayOutputStream
 class SnapshotController(
     private val snapshotService: SnapshotService,
     private val snapshotNodeService: SnapshotNodeService,
-    private val snapshotExportService: SnapshotExportService
+    private val snapshotExportService: SnapshotExportService,
+    private val callStackService: CallStackService
 ) {
     @GetMapping("/customers/{customerId}/snapshots")
     fun listSnapshots(@PathVariable customerId: Long): List<SnapshotDto> {
@@ -130,6 +132,15 @@ class SnapshotController(
             headers,
             HttpStatus.OK
         )
+    }
+
+    @GetMapping("/customers/{customerId}/snapshots/{snapshotId}/callers")
+    fun getCallerSignatures(
+        @PathVariable customerId: Long,
+        @PathVariable snapshotId: Long,
+        @RequestParam signature: String
+    ): List<String> {
+        return callStackService.getCallerSignatures(customerId, snapshotId, signature)
     }
 
     data class CreateSnapshotRequestParams(

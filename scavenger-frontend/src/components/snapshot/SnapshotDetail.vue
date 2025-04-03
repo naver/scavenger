@@ -19,7 +19,7 @@
               />
             </pane>
             <pane :size="100 - horizontalSize" style="overflow: auto">
-              <ResultTable :rows="tableResult" :updateSnapshotData="updateSnapshotData" :githubLink="githubLink"/>
+              <ResultTable :rows="tableResult" :updateSnapshotData="updateSnapshotData" :githubLink="githubLink" :customerId="customerId" :snapshot="this.snapshot"/>
             </pane>
           </splitpanes>
         </pane>
