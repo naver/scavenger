@@ -5,6 +5,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
+import com.navercorp.scavenger.javaagent.collecting.CallStackRegistry;
 import com.navercorp.scavenger.javaagent.collecting.InvocationRegistry;
 import io.grpc.Status;
 import io.grpc.StatusRuntimeException;
@@ -22,6 +23,7 @@ import com.navercorp.scavenger.model.InvocationDataPublication;
 @Log
 public class Scheduler implements Runnable {
     private final InvocationRegistry invocationRegistry;
+    private final CallStackRegistry callStackRegistry;
     private final Config config;
     private final Publisher publisher;
     private final CodeBaseScanner codeBaseScanner;
@@ -30,6 +32,7 @@ public class Scheduler implements Runnable {
     private final SchedulerState pollState;
     private final SchedulerState codeBasePublisherState;
     private final SchedulerState invocationDataPublisherState;
+    private final SchedulerState callStackDataPublisherState;
 
     private final int forceIntervalSeconds;
     private final int maxMethodsCount;
@@ -40,12 +43,13 @@ public class Scheduler implements Runnable {
     private InvocationDataPublication invocationDataPublication;
     private String codeBaseFingerprint;
 
-    public Scheduler(InvocationRegistry invocationRegistry, Config config) {
-        this(invocationRegistry, config, new Publisher(config), new CodeBaseScanner(config));
+    public Scheduler(InvocationRegistry invocationRegistry, CallStackRegistry callStackRegistry, Config config) {
+        this(invocationRegistry, callStackRegistry, config, new Publisher(config), new CodeBaseScanner(config));
     }
 
-    public Scheduler(InvocationRegistry invocationRegistry, Config config, Publisher publisher, CodeBaseScanner codeBaseScanner) {
+    public Scheduler(InvocationRegistry invocationRegistry, CallStackRegistry callStackRegistry, Config config, Publisher publisher, CodeBaseScanner codeBaseScanner) {
         this.invocationRegistry = invocationRegistry;
+        this.callStackRegistry = callStackRegistry;
         this.config = config;
         this.codeBaseScanner = codeBaseScanner;
         this.publisher = publisher;
@@ -66,11 +70,13 @@ public class Scheduler implements Runnable {
         this.pollState = new SchedulerState("config_poll").initialize(intervalSeconds, retryIntervalSeconds);
         this.codeBasePublisherState = new SchedulerState("codebase").initialize(intervalSeconds, retryIntervalSeconds);
         this.invocationDataPublisherState = new SchedulerState("invocation_data").initialize(intervalSeconds, retryIntervalSeconds);
+        this.callStackDataPublisherState = new SchedulerState("call_stack_data").initialize(intervalSeconds, retryIntervalSeconds);
 
         if (forceIntervalSeconds != 0) {
             this.pollState.updateIntervals(forceIntervalSeconds, forceIntervalSeconds);
             this.codeBasePublisherState.updateIntervals(forceIntervalSeconds, forceIntervalSeconds);
             this.invocationDataPublisherState.updateIntervals(forceIntervalSeconds, forceIntervalSeconds);
+            this.callStackDataPublisherState.updateIntervals(forceIntervalSeconds, forceIntervalSeconds);
         }
     }
 
@@ -117,6 +123,7 @@ public class Scheduler implements Runnable {
                 pollDynamicConfigIfNeeded();
                 publishCodeBaseIfNeeded();
                 publishInvocationDataIfNeeded();
+                publishCallStackDateIfNeeded();
             } catch (Throwable t) {
                 log.severe("[scavenger] scheduler failure: " + t);
             }
@@ -219,6 +226,22 @@ public class Scheduler implements Runnable {
                     log.log(Level.SEVERE, "[scavenger] invocation data publish failed", e);
                 }
                 invocationDataPublisherState.scheduleRetry();
+            }
+        }
+    }
+
+    public void publishCallStackDateIfNeeded() {
+        if (config.isCallStackTraceMode() && callStackDataPublisherState.isDueTime() && dynamicConfig != null && isCodeBasePublished) {
+            try {
+                publisher.publishCallStackData(callStackRegistry.getPublication(config, codeBaseFingerprint));
+                callStackDataPublisherState.scheduleNext();
+            } catch (Exception e) {
+                if (e instanceof StatusRuntimeException && ((StatusRuntimeException) e).getStatus().equals(Status.UNAVAILABLE)) {
+                    log.log(Level.SEVERE, "[scavenger] call stack data publish failed (server unavailable)");
+                } else {
+                    log.log(Level.SEVERE, "[scavenger] call stack data publish failed", e);
+                }
+                callStackDataPublisherState.scheduleRetry();
             }
         }
     }
