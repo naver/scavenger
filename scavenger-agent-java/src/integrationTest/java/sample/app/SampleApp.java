@@ -22,6 +22,7 @@ import lombok.extern.java.Log;
 public class SampleApp {
     private final int dummy = 17;
     private final SampleService1 sampleService1;
+    private final IntentionallySlowService intentionallySlowService;
 
     public static void main(String[] args) throws InterruptedException {
         log.info(SampleApp.class.getSimpleName() + " starts on Java " + System.getProperty("java.version"));
@@ -41,5 +42,6 @@ public class SampleApp {
     public void postConstruct() {
         log.info("2+2=" + add(2, 2));
         sampleService1.doSomething(1);
+        intentionallySlowService.doSlowJob();
     }
 }

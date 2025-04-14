@@ -27,6 +27,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import com.google.protobuf.util.JsonFormat;
 import integrationTest.support.AgentIntegrationTestContextProvider;
 import integrationTest.support.AgentRunner;
+import sample.app.IntentionallySlowService;
 import sample.app.NotServiceClass;
 import sample.app.SampleApp;
 import sample.app.SampleAspect;
@@ -55,7 +56,7 @@ public class ScanTest extends AbstractWireMockTest {
                 "sample.app.NotServiceClass()",
                 "sample.app.NotServiceClass.doNothing()",
                 "sample.app.NotServiceClass.doSomething(int)",
-                "sample.app.SampleApp(sample.app.SampleService1)",
+                "sample.app.SampleApp(sample.app.SampleService1,sample.app.IntentionallySlowService)",
                 "sample.app.SampleApp.add(int,int)",
                 "sample.app.SampleApp.main(java.lang.String[])",
                 "sample.app.SampleApp.postConstruct()",
@@ -65,7 +66,9 @@ public class ScanTest extends AbstractWireMockTest {
                 "sample.app.SampleService1(sample.app.SampleService2)",
                 "sample.app.SampleService1.doSomething(int)",
                 "sample.app.SampleService2()",
-                "sample.app.SampleService2.doSomething(int)"
+                "sample.app.SampleService2.doSomething(int)",
+                "sample.app.IntentionallySlowService()",
+                "sample.app.IntentionallySlowService.doSlowJob()"
         );
     }
 
@@ -82,7 +85,8 @@ public class ScanTest extends AbstractWireMockTest {
                 SampleService1.class.getName(),
                 SampleAspect.class.getName(),
                 SampleService2.class.getName(),
-                NotServiceClass.class.getName());
+                NotServiceClass.class.getName(),
+                IntentionallySlowService.class.getName());
     }
 
     @TestTemplate
