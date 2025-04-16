@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -180,6 +181,47 @@ public class CodeBaseScannerTest {
             void scanRecursively() throws IOException {
                 List<Method> actual = scanner.scan().getMethods();
                 assertThat(actual).isNotEmpty();
+            }
+        }
+
+        @Nested
+        @DisplayName("if com.example.demo.service.TestRegexService excluded by regex")
+        class FilterExcludeByRegexTest {
+
+            @BeforeEach
+            public void setFilter() {
+                String file = Objects.requireNonNull(getClass().getClassLoader().getResource("scavenger-demo-1.1.3-SNAPSHOT.jar")).getFile();
+                config.setCodeBase(Collections.singletonList(file));
+                config.setExcludeByRegex(Collections.singletonList(Pattern.compile("^com\\.example\\.demo\\.service\\..*TestRegex.*$")));
+                scanner = new CodeBaseScanner(config);
+            }
+
+            @Test
+            @DisplayName("it finds correct number of methods")
+            void scanFilterClassesByRegex() throws IOException {
+                List<Method> actual = scanner.scan().getMethods();
+                assertThat(actual).hasSize(67);
+            }
+        }
+
+        @Nested
+        @DisplayName("if com.example.demo.service.TestRegexService is set as an additional regex and @RestController is filtered")
+        class FilterAdditionalByRegexTest {
+
+            @BeforeEach
+            public void setFilter() {
+                String file = Objects.requireNonNull(getClass().getClassLoader().getResource("scavenger-demo-1.1.3-SNAPSHOT.jar")).getFile();
+                config.setCodeBase(Collections.singletonList(file));
+                config.setAnnotations(Collections.singletonList("org.springframework.web.bind.annotation.RestController"));
+                config.setAdditionalByRegex(Collections.singletonList(Pattern.compile("^com\\.example\\.demo\\.service\\..*TestRegex.*$")));
+                scanner = new CodeBaseScanner(config);
+            }
+
+            @Test
+            @DisplayName("it finds correct number of methods")
+            void scanFilterClassesByRegex() throws IOException {
+                List<Method> actual = scanner.scan().getMethods();
+                assertThat(actual).hasSize(18);
             }
         }
     }

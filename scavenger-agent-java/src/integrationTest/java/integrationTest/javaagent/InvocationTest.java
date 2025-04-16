@@ -47,28 +47,8 @@ import com.navercorp.scavenger.model.InitConfigResponse;
 import com.navercorp.scavenger.model.PublicationResponse;
 
 @ExtendWith(AgentIntegrationTestContextProvider.class)
-@ExtendWith(GrpcMockExtension.class)
 @DisplayName("invocation track test")
-public class InvocationTest {
-    private static WireMockServer wireMockServer;
-    private static ManagedChannel channel;
-
-    @BeforeAll
-    static void setUp() {
-        wireMockServer = new WireMockServer(new WireMockConfiguration().dynamicPort());
-        wireMockServer.start();
-        WireMock.configureFor(wireMockServer.port());
-
-        channel = ManagedChannelBuilder.forAddress("localhost", GrpcMock.getGlobalPort())
-            .usePlaintext()
-            .build();
-    }
-
-    @AfterAll
-    static void tearDown() {
-        Optional.ofNullable(wireMockServer).ifPresent(WireMockServer::shutdown);
-        Optional.ofNullable(channel).ifPresent(ManagedChannel::shutdownNow);
-    }
+public class InvocationTest extends AbstractWireMockTest {
 
     @TestTemplate
     @DisplayName("it tracks correctly")
@@ -88,10 +68,8 @@ public class InvocationTest {
     @DisplayName("it sends publication correctly")
     void send(AgentRunner agentRunner) throws Exception {
         // given
-        Properties properties = new Properties();
-        properties.setProperty("serverUrl", "http://localhost:" + wireMockServer.port());
-        properties.setProperty("schedulerInitialDelayMillis", "0");
-        agentRunner.setConfig(properties);
+        agentRunner.setConfigProperty("serverUrl", "http://localhost:" + wireMockServer.port());
+        agentRunner.setConfigProperty("schedulerInitialDelayMillis", "0");
 
         givenThat(
             get(V5_INIT_CONFIG + "?licenseKey=")

@@ -3,9 +3,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
-    val kotlinVersion = "1.8.10"
-    val springBootVersion = "2.5.12"
-    val springDependencyManagementVersion = "1.0.11.RELEASE"
+    val kotlinVersion = "1.9.24"
+    val springBootVersion = "3.2.4"
+    val springDependencyManagementVersion = "1.1.4"
 
     kotlin("jvm") version kotlinVersion
     id("org.gradle.idea")
@@ -36,11 +36,11 @@ dependencies {
     implementation("com.navercorp.spring:spring-boot-starter-data-jdbc-plus-sql:${property("springDataJdbcPlusVersion")}")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
-    implementation("mysql:mysql-connector-java")
+    implementation("com.mysql:mysql-connector-j")
     implementation("org.apache.commons:commons-lang3")
     implementation("com.h2database:h2:2.1.210")
     implementation("org.liquibase:liquibase-core")
-    implementation("io.github.microutils:kotlin-logging-jvm:2.1.23")
+    implementation("io.github.oshai:kotlin-logging-jvm:5.1.0")
     implementation("net.ttddyy:datasource-proxy:1.7")
     implementation("com.github.vertical-blank:sql-formatter:2.0.4")
     implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.9.0")
@@ -50,17 +50,17 @@ dependencies {
 configure<DependencyManagementExtension> {
     imports {
         mavenBom(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
-        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2020.0.4")
     }
 }
 
 kotlin {
-    jvmToolchain(11)
+    jvmToolchain(21)
 }
 
 tasks.withType<KotlinCompile> {
     kotlinOptions {
         freeCompilerArgs = listOf("-Xjsr305=strict")
+        javaParameters = true
     }
 }
 

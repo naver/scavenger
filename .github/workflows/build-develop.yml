@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Upload
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Event File
           path: ${{ github.event_path }}
@@ -22,7 +22,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: '11'
+          java-version: '21'
       - name: Gradle Caching
         uses: actions/cache@v3
         with:
@@ -35,7 +35,7 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew :scavenger-agent-java:clean scavenger-agent-java:build
       - name: Upload test results
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: scavenger-agent-java
@@ -48,7 +48,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: '11'
+          java-version: '21'
       - name: Gradle Caching
         uses: actions/cache@v3
         with:
@@ -62,7 +62,7 @@ jobs:
         run: ./gradlew :scavenger-collector:clean scavenger-collector:build
       - name: Upload Test Results
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: scavenger-collector
           path: scavenger-collector/build/test-results
@@ -74,7 +74,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: '11'
+          java-version: '21'
       - name: Gradle Caching
         uses: actions/cache@v3
         with:
@@ -88,7 +88,7 @@ jobs:
         run: ./gradlew :scavenger-api:clean scavenger-api:build
       - name: Upload Test Results
         if: always()
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: scavenger-api
           path: scavenger-api/build/test-results
@@ -115,7 +115,7 @@ jobs:
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
-          java-version: '11'
+          java-version: '21'
       - name: Gradle Caching
         uses: actions/cache@v3
         with:

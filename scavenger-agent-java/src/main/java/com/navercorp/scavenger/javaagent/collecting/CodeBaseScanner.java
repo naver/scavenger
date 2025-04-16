@@ -13,6 +13,7 @@ import java.util.Objects;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 import java.util.logging.Level;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.objectweb.asm.ClassReader;
@@ -34,6 +35,8 @@ public class CodeBaseScanner {
     private final List<String> packagePaths;
     private final List<String> excludePackagePaths;
     private final List<String> additionalPackagePaths;
+    private final List<Pattern> excludeByRegex;
+    private final List<Pattern> additionalByRegex;
 
     public CodeBaseScanner(Config config) {
         this.config = config;
@@ -41,6 +44,8 @@ public class CodeBaseScanner {
         this.packagePaths = replaceDotToSlash(packagesWithEndingDot);
         this.excludePackagePaths = replaceDotToSlash(config.getExcludePackagesWithEndingDot());
         this.additionalPackagePaths = replaceDotToSlash(config.getAdditionalPackagesWithEndingDot());
+        this.excludeByRegex = config.getExcludeByRegex();
+        this.additionalByRegex = config.getAdditionalByRegex();
     }
 
     public CodeBase scan() throws IOException {
@@ -157,7 +162,8 @@ public class CodeBaseScanner {
         return clazz != null
             && !isInterface(clazz)
             && isIncludedByPackage(clazz)
-            && (isIncludedByAnnotation(clazz) || isAdditionalPackage(clazz));
+            && (isIncludedByAnnotation(clazz) || isAdditionalPackage(clazz) || isAdditionalByRegex(clazz))
+            && !isExcludedByRegex(clazz);
     }
 
     private boolean isIncludedByPackage(ClassNode clazz) {
@@ -176,6 +182,11 @@ public class CodeBaseScanner {
 
     private boolean isAdditionalPackage(ClassNode clazz) {
         return additionalPackagePaths.stream().anyMatch(clazz.name::startsWith);
+    }
+
+    private boolean isAdditionalByRegex(ClassNode clazz) {
+        String className = clazz.name.replaceAll("/", ".");
+        return additionalByRegex.stream().anyMatch(pattern -> pattern.matcher(className).matches());
     }
 
     // filter applies to only class not method
@@ -260,6 +271,11 @@ public class CodeBaseScanner {
 
     private boolean isExcludedSinceTrivial(Method method) {
         return method.getName().equals("toString") && method.getParameterTypes().isEmpty();
+    }
+
+    private boolean isExcludedByRegex(ClassNode clazz) {
+        String className = clazz.name.replaceAll("/", ".");
+        return excludeByRegex.stream().anyMatch(pattern -> pattern.matcher(className).matches());
     }
 
     private static ClassNode getNode(byte[] bytes) {

@@ -1,7 +1,6 @@
 package com.navercorp.scavenger.javaagent.collecting;
 
 import java.lang.instrument.Instrumentation;
-import java.util.logging.Logger;
 
 import net.bytebuddy.ByteBuddy;
 import net.bytebuddy.agent.builder.AgentBuilder;
@@ -11,37 +10,28 @@ import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.dynamic.scaffold.TypeValidation;
 import net.bytebuddy.utility.JavaModule;
 
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.java.Log;
 
 import com.navercorp.scavenger.javaagent.model.Config;
 
 @Log
 public class InvocationTracker {
-    @Getter
-    @Setter
-    private static InvocationRegistry invocationRegistry = new InvocationRegistry();
+    private final InvocationRegistry invocationRegistry;
+    private final MethodRegistry methodRegistry;
+    private final boolean isDebugMode;
 
-    @Getter
-    private static final MethodRegistry methodRegistry = new MethodRegistry();
+    private static InvocationTracker INSTANCE;
 
-    @Setter
-    @Getter
-    private static boolean legacyCompatibilityMode = false;
-
-    @Setter
-    @Getter
-    private static boolean debugMode = false;
-
-    public static Logger getLog() {
-        return log;
+    public InvocationTracker(InvocationRegistry invocationRegistry,
+                             MethodRegistry methodRegistry,
+                             boolean isDebugMode) {
+        this.invocationRegistry = invocationRegistry;
+        this.methodRegistry = methodRegistry;
+        this.isDebugMode = isDebugMode;
+        INSTANCE = this;
     }
 
-    public static void installAdvice(Instrumentation inst, Config config) {
-        setLegacyCompatibilityMode(config.isLegacyCompatibilityMode());
-        setDebugMode(config.isDebugMode());
-
+    public void installAdvice(Instrumentation inst, Config config) {
         ElementMatcherBuilder matcherBuilder = new ElementMatcherBuilder(config);
         Advice advice = Advice.to(InvocationTracker.class);
         AgentBuilder transform = new AgentBuilder.Default(new ByteBuddy().with(TypeValidation.DISABLED))
@@ -49,7 +39,7 @@ public class InvocationTracker {
             .transform((builder, typeDescription, classLoader, module, protectionDomain) ->
                 builder.visit(advice.on(matcherBuilder.buildMethodMatcher(typeDescription)))
             );
-        if (isDebugMode()) {
+        if (isDebugMode) {
             transform = transform.with(new AgentBuilder.Listener.Adapter() {
                 @Override
                 public void onTransformation(
@@ -63,19 +53,20 @@ public class InvocationTracker {
             });
         }
         transform.installOn(inst);
+        log.info("[scavenger] Advice is installed on all matching methods");
     }
 
     @SuppressWarnings("unused")
     @Advice.OnMethodEnter
-    public static void onInvocation(@Advice.Origin String signature) {
-        String hash = getMethodRegistry().getHash(signature, isLegacyCompatibilityMode());
+    static void onInvocation(@Advice.Origin String signature) {
+        hashAndRegister(signature);
+    }
 
-        //noinspection StringEquality
-        if (hash != MethodRegistry.SYNTHETIC_SIGNATURE_HASH) {
-            if (isDebugMode()) {
-                getLog().info("[scavenger] method " + signature + " is invoked - " + hash);
-            }
-            getInvocationRegistry().register(hash);
+    public static void hashAndRegister(String signature) {
+        String hash = INSTANCE.methodRegistry.getHash(signature);
+        if (INSTANCE.isDebugMode) {
+            log.info("[scavenger] method " + signature + " is invoked - " + hash);
         }
+        INSTANCE.invocationRegistry.register(hash);
     }
 }

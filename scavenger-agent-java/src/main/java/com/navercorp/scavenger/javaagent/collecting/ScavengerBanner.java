@@ -3,6 +3,7 @@ package com.navercorp.scavenger.javaagent.collecting;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import com.navercorp.scavenger.javaagent.model.Config;
@@ -41,6 +42,8 @@ public class ScavengerBanner {
         printlnIfNotEmpty(out, format("exclude package", config.getExcludePackages()));
         printlnIfNotEmpty(out, format("annotation", config.getAnnotations()));
         printlnIfNotEmpty(out, format("additional package", config.getAdditionalPackages()));
+        printlnIfNotEmpty(out, formatWithPattern("exclude by regex", config.getExcludeByRegex()));
+        printlnIfNotEmpty(out, formatWithPattern("additional by regex", config.getAdditionalByRegex()));
         printlnIfNotEmpty(out, format("method visibility", config.getMethodVisibility().toString()));
         printlnIfNotEmpty(out, format("exclude constructors", Boolean.toString(config.isExcludeConstructors())));
         printlnIfNotEmpty(out, format("exclude setters, getters", Boolean.toString(config.isExcludeGetterSetter())));
@@ -66,6 +69,12 @@ public class ScavengerBanner {
     private String format(String key, List<String> values) {
         return values.stream()
             .map(value -> format(key, value))
+            .collect(Collectors.joining("\n"));
+    }
+
+    private String formatWithPattern(String key, List<Pattern> values) {
+        return values.stream()
+            .map(value -> format(key, value.toString()))
             .collect(Collectors.joining("\n"));
     }
 }

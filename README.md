@@ -59,7 +59,7 @@ You can find the user guide at the following location link.
 Scavenger welcomes any contributions from users.<br/>
 Pull requests are the best way to propose changes to the codebase. We actively welcome your pull requests:
 
-1. Fork the repo and create your branch from master.
+1. Fork the repo and create your branch from develop.
 2. If you've added code that should be tested, add tests.
 3. Ensure the test suite passes.
 4. Issue that pull request!

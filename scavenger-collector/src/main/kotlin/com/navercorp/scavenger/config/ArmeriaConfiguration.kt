@@ -1,5 +1,6 @@
 package com.navercorp.scavenger.config
 
+import com.linecorp.armeria.common.grpc.GrpcExceptionHandlerFunction
 import com.linecorp.armeria.server.ServerBuilder
 import com.linecorp.armeria.server.grpc.GrpcService
 import com.linecorp.armeria.server.healthcheck.HealthChecker
@@ -47,8 +48,11 @@ class ArmeriaConfiguration(
             serviceBuilder.service("prefix:/", tomcatService)
                 .service(GrpcService.builder()
                     .addService(grpcAgentController)
-                    .addExceptionMapping(IllegalArgumentException::class.java, Status.INVALID_ARGUMENT)
-                    .addExceptionMapping(LicenseKeyNotFoundException::class.java, Status.UNAUTHENTICATED)
+                    .exceptionHandler(GrpcExceptionHandlerFunction.builder()
+                        .on(IllegalArgumentException::class.java, Status.INVALID_ARGUMENT)
+                        .on(LicenseKeyNotFoundException::class.java, Status.UNAUTHENTICATED)
+                        .build()
+                    )
                     .maxRequestMessageLength(maxMessageSize)
                     .build()
                 )

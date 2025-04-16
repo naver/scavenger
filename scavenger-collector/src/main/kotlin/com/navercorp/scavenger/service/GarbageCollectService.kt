@@ -8,13 +8,13 @@ import com.navercorp.scavenger.repository.CustomerDao
 import com.navercorp.scavenger.repository.InvocationDao
 import com.navercorp.scavenger.repository.JvmDao
 import com.navercorp.scavenger.repository.MethodDao
-import mu.KotlinLogging
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Service
 import org.springframework.transaction.support.TransactionTemplate
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-import javax.annotation.PostConstruct
+import jakarta.annotation.PostConstruct
 import kotlin.system.measureTimeMillis
 
 @Service

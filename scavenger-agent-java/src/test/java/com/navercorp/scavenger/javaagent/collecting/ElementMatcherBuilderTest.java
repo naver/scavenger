@@ -2,6 +2,7 @@ package com.navercorp.scavenger.javaagent.collecting;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.lang.annotation.Annotation;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -16,6 +17,7 @@ import org.objectweb.asm.Opcodes;
 
 import net.bytebuddy.description.annotation.AnnotationDescription;
 import net.bytebuddy.description.method.MethodDescription;
+import net.bytebuddy.description.type.TypeDescription.Generic.OfNonGenericType;
 import net.bytebuddy.description.type.TypeDescription;
 import net.bytebuddy.dynamic.scaffold.InstrumentedType;
 import net.bytebuddy.matcher.ElementMatcher;
@@ -26,7 +28,7 @@ import com.navercorp.scavenger.javaagent.model.Config;
 @DisplayName("ElementMatcherBuilder class")
 public class ElementMatcherBuilderTest {
     TypeDescription withClazzNameWithPackage(String clazzName) {
-        return InstrumentedType.Default.of(clazzName, TypeDescription.Generic.OBJECT, 0);
+        return InstrumentedType.Default.of(clazzName, OfNonGenericType.ForLoadedType.of(Object.class), 0);
     }
 
     TypeDescription withAnnotations(String clazzName, String annotationName) {
@@ -37,21 +39,44 @@ public class ElementMatcherBuilderTest {
         List<AnnotationDescription> annotations = annotationNames.stream()
             .map(annotationName ->
                 AnnotationDescription.Builder.ofType(
-                    InstrumentedType.Default.of(annotationName, TypeDescription.Generic.ANNOTATION, Opcodes.ACC_ANNOTATION)
+                    InstrumentedType.Default.of(annotationName, OfNonGenericType.ForLoadedType.of(Annotation.class), Opcodes.ACC_ANNOTATION)
                 ).build()
             ).collect(Collectors.toList());
 
-        return InstrumentedType.Default.of(clazzName, TypeDescription.Generic.OBJECT, 0)
+        return InstrumentedType.Default.of(clazzName, OfNonGenericType.ForLoadedType.of(Object.class), 0)
             .withAnnotations(annotations);
     }
 
     MethodDescription withModifiers(int modifiers) {
-        return new MethodDescription.Latent(TypeDescription.OBJECT, new MethodDescription.Token(modifiers));
+        return new MethodDescription.Latent(TypeDescription.ForLoadedType.of(Object.class), new MethodDescription.Token(modifiers));
     }
 
     @Nested
     @DisplayName("buildClassMatcher method")
     class BuildClassMatcherMethodTest {
+
+        @Nested
+        @DisplayName("when synthetic classes are present")
+        class SyntheticMethodTest {
+            ElementMatcher<TypeDescription> matcher;
+
+            @BeforeEach
+            public void prepareMatcher() {
+                Properties props = new Properties();
+                props.setProperty("packages", "com");
+                Config config = new Config(props);
+                ElementMatcherBuilder builder = new ElementMatcherBuilder(config);
+                matcher = builder.buildClassMatcher();
+            }
+
+            @Test
+            @DisplayName("it returns false for synthetic class methods")
+            void emptyString() {
+                assertThat(matcher.matches(withClazzNameWithPackage("com.pkg.SampleService2$$FastClassBySpringCGLIB$$7c08ba38"))).isFalse();
+                assertThat(matcher.matches(withClazzNameWithPackage("com.pkg.SampleService1$$EnhancerBySpringCGLIB$$1cdd7e7b"))).isFalse();
+                assertThat(matcher.matches(withClazzNameWithPackage("com.pkg.SampleService1$$EnhancerBySpringCGLIB$$1cdd7e7b$$FastClassBySpringCGLIB$$6b3308cd"))).isFalse();
+            }
+        }
 
         @Nested
         @DisplayName("if package is set")
@@ -335,6 +360,89 @@ public class ElementMatcherBuilderTest {
             void packagePrivateMethods() {
                 assertThat(matcher.matches(withModifiers(0))).isFalse();
             }
+        }
+    }
+
+    @Nested
+    @DisplayName("if excludeByRegex is set")
+    class excludeByRegexTest {
+        ElementMatcher<TypeDescription> matcher;
+
+        @BeforeEach
+        public void prepareMatcher() {
+            Properties props = new Properties();
+            props.setProperty("packages", "com.example.demo");
+            props.setProperty("excludeByRegex", "^com\\.example\\.demo\\.service\\..*TestRegex.*$");
+            Config config = new Config(props);
+            ElementMatcherBuilder builder = new ElementMatcherBuilder(config);
+            matcher = builder.buildClassMatcher();
+        }
+
+        @Test
+        @DisplayName("it returns false for empty string")
+        void emptyString() {
+            assertThat(matcher.matches(withClazzNameWithPackage(""))).isFalse();
+        }
+
+        @Test
+        @DisplayName("it returns false if matched with exclude regex pattern")
+        void unmatched() {
+            assertThat(matcher.matches(withClazzNameWithPackage("com.example.demo.service.TestRegexService"))).isFalse();
+            assertThat(matcher.matches(withClazzNameWithPackage("com.example.demo.service.test.TestRegexService"))).isFalse();
+        }
+    }
+
+    @Nested
+    @DisplayName("if additionalByRegex is set")
+    class AdditionalByRegexTest {
+        ElementMatcher<TypeDescription> matcher;
+
+        @BeforeEach
+        public void prepareMatcher() {
+            Properties props = new Properties();
+            props.setProperty("packages", "com.example.demo");
+            props.setProperty("annotations", "com.example.annotation");
+            props.setProperty("additionalByRegex", "^com\\.example\\.demo\\..*TestRegex.*$");
+            Config config = new Config(props);
+            ElementMatcherBuilder builder = new ElementMatcherBuilder(config);
+            matcher = builder.buildClassMatcher();
+        }
+
+        @Test
+        @DisplayName("it returns true if matched with additional regex and annotations")
+        void matched() {
+            assertThat(matcher.matches(
+                withAnnotations("com.example.demo.Clazz", "com.example.annotation")
+            )).isTrue();
+            assertThat(matcher.matches(
+                withAnnotations("com.example.demo.test.Clazz", "com.example.annotation")
+            )).isTrue();
+            assertThat(matcher.matches(
+                withAnnotations("com.example.demo.TestRegexClazz", "com.other.annotation")
+            )).isTrue();
+            assertThat(matcher.matches(
+                withAnnotations(
+                    "com.example.demo.test.TestRegexClazz",
+                    Arrays.asList("com.other.annotation", "com.example.annotation")
+                )
+            )).isTrue();
+            assertThat(matcher.matches(
+                withClazzNameWithPackage("com.example.demo.TestRegexClazz")
+            )).isTrue();
+        }
+
+        @Test
+        @DisplayName("it returns false for unmatched type")
+        void unmatched() {
+            assertThat(matcher.matches(
+                withAnnotations("com.example.Clazz", "com.example.annotation")
+            )).isFalse();
+            assertThat(matcher.matches(
+                withAnnotations("com.example.demo.Clazz", "com.example.annotation.test")
+            )).isFalse();
+            assertThat(matcher.matches(
+                withAnnotations("com.example.demo.Clazz", "com.com.example.annotation")
+            )).isFalse();
         }
     }
 }
