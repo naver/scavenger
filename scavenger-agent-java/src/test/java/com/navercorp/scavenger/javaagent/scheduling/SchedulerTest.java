@@ -15,6 +15,10 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Properties;
 
+import com.navercorp.scavenger.javaagent.collecting.CallStackRegistry;
+
+import com.navercorp.scavenger.model.CallStackDataPublication;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -72,6 +76,9 @@ public class SchedulerTest {
     private InvocationRegistry invocationRegistry;
 
     @Mock
+    private CallStackRegistry callStackRegistry;
+
+    @Mock
     private Publisher publisher;
 
     @Mock
@@ -81,7 +88,9 @@ public class SchedulerTest {
     public void setUp() throws Exception {
         lenient().when(codeBaseScannerMock.scan())
             .thenReturn(new CodeBase(List.of(Method.createTestMethod()), "fingerprint"));
-        sut = new Scheduler(invocationRegistry, new Config(new Properties()), publisher, codeBaseScannerMock);
+        Properties properties = new Properties();
+        properties.setProperty("callStackTraceMode", "true");
+        sut = new Scheduler(invocationRegistry, callStackRegistry, new Config(properties), publisher, codeBaseScannerMock);
     }
 
     private void mockInvocationRegistered() {
@@ -96,18 +105,32 @@ public class SchedulerTest {
             );
     }
 
+    private void mockCallStackRegistered() {
+        when(callStackRegistry.getPublication(any(), anyString()))
+            .thenReturn(
+                CallStackDataPublication.newBuilder()
+                    .setCommonData(sampleCommonData)
+                    .addEntry(CallStackDataPublication.CallStackDataEntry.newBuilder()
+                        .setCallee("callee")
+                        .addCallers("caller")
+                        .build())
+                    .build()
+            );
+    }
+
     @Nested
     @DisplayName("run method")
     class RunMethod {
 
         @Nested
-        @DisplayName("if invocation is registered")
-        class PollSucceedInvocationRegistered {
+        @DisplayName("if invocation, call stack is registered")
+        class PollSucceedInvocationAndCallStacksRegistered {
 
             @BeforeEach
             public void setUpAndRun() {
                 when(publisher.pollDynamicConfig()).thenReturn(configResponse);
                 mockInvocationRegistered();
+                mockCallStackRegistered();
 
                 sut.run();
             }
@@ -129,11 +152,17 @@ public class SchedulerTest {
             void publishInvocationData() {
                 verify(publisher).publishInvocationData(any());
             }
+
+            @Test
+            @DisplayName("it publishes call stack data")
+            void publishCallStackData() {
+                verify(publisher).publishCallStackData(any());
+            }
         }
 
         @Nested
-        @DisplayName("if there is no invocation registered")
-        class NoInvocationTest {
+        @DisplayName("if there is no invocation and call stack registered")
+        class NoInvocationAndCallStackTest {
 
             @BeforeEach
             public void setUpAndRun() {
@@ -157,6 +186,12 @@ public class SchedulerTest {
             @DisplayName("it publishes invocation")
             void doesNotPublishInvocationData() {
                 verify(publisher).publishInvocationData(any());
+            }
+
+            @Test
+            @DisplayName("it publishes call stack")
+            void doesNotPublishCallStackData() {
+                verify(publisher).publishCallStackData(any());
             }
         }
 
@@ -241,9 +276,43 @@ public class SchedulerTest {
             }
 
             @Test
-            @DisplayName("it tries to publish codebase three times")
+            @DisplayName("it tries to publish invocation three times")
             void publishThreeTimes() {
                 verify(publisher, times(3)).publishInvocationData(any());
+            }
+        }
+
+        @Nested
+        @DisplayName("if call stack publish failed")
+        class CallStackPublishTest {
+
+            @BeforeEach
+            public void setUpAndRunThreeTimes() throws IOException {
+                when(publisher.pollDynamicConfig())
+                    .thenReturn(configResponse);
+
+                mockCallStackRegistered();
+
+                doThrow(new RuntimeException())
+                    .when(publisher)
+                    .publishCallStackData(any());
+
+                // when
+                sut.run();
+                sut.run();
+                sut.run();
+            }
+
+            @Test
+            @DisplayName("it runs getPublication only once")
+            void getOnce() {
+                verify(callStackRegistry, atMostOnce()).getPublication(any(), anyString());
+            }
+
+            @Test
+            @DisplayName("it tries to publish call stack three times")
+            void publishThreeTimes() {
+                verify(publisher, times(3)).publishCallStackData(any());
             }
         }
     }
@@ -291,6 +360,12 @@ public class SchedulerTest {
             @DisplayName("it publishes last invocations before shutdown")
             void lastInvocations() {
                 verify(publisher, times(2)).publishInvocationData(any());
+            }
+
+            @Test
+            @DisplayName("it publishes last call stacks before shutdown")
+            void lastCallStacks() {
+                verify(publisher, times(2)).publishCallStackData(any());
             }
 
             @Test
