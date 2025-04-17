@@ -8,6 +8,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 
 import com.google.protobuf.util.JsonFormat;
+
+import com.navercorp.scavenger.model.CallStackDataPublication;
+
 import lombok.extern.java.Log;
 import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
@@ -109,6 +112,12 @@ public class Publisher {
         log.info("[scavenger] publishing invocation data: " + pub.getEntryCount() + " invocations");
         getGrpcClient().sendInvocationDataPublication(pub);
         log.info("[scavenger] invocation data published");
+    }
+
+    public void publishCallStackData(CallStackDataPublication pub) {
+        log.info("[scavenger] publishing call stack data: " + pub.getEntryCount() + " call stacks");
+        getGrpcClient().sendCallStackDataPublication(pub);
+        log.info("[scavenger] call stack data published");
     }
 
     public String getInitConfigRequestEndpoint() {

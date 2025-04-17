@@ -53,6 +53,7 @@ public class Config {
     private Integer forceIntervalSeconds;
     private Integer maxMethodsCount;
 
+    private boolean callStackTraceMode = false;
     private boolean asyncCodeBaseScanMode = false;
     private boolean legacyCompatibilityMode = false;
     private boolean debugMode = false;
@@ -89,6 +90,7 @@ public class Config {
         forceIntervalSeconds = getIntValue(props, "forceIntervalSeconds", 0);
         maxMethodsCount = getIntValue(props, "maxMethodsCount", 100000);
 
+        callStackTraceMode = getBooleanValue(props, "callStackTraceMode", callStackTraceMode);
         asyncCodeBaseScanMode = getBooleanValue(props, "asyncCodeBaseScanMode", asyncCodeBaseScanMode);
         legacyCompatibilityMode = getBooleanValue(props, "legacyCompatibilityMode", legacyCompatibilityMode);
         debugMode = getBooleanValue(props, "debugMode", debugMode);

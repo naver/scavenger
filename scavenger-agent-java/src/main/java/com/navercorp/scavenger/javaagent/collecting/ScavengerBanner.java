@@ -48,6 +48,7 @@ public class ScavengerBanner {
         printlnIfNotEmpty(out, format("exclude constructors", Boolean.toString(config.isExcludeConstructors())));
         printlnIfNotEmpty(out, format("exclude setters, getters", Boolean.toString(config.isExcludeGetterSetter())));
         printlnIfNotEmpty(out, format("hostname", config.getHostname()));
+        printlnIfNotEmpty(out, format("call stack trace mode", Boolean.toString(config.isCallStackTraceMode())));
         printlnIfNotEmpty(out, format("async code base scan mode", Boolean.toString(config.isAsyncCodeBaseScanMode())));
         printlnIfNotEmpty(out, format("legacy compatibility mode", Boolean.toString(config.isLegacyCompatibilityMode())));
         if (config.getForceIntervalSeconds() != 0) {
