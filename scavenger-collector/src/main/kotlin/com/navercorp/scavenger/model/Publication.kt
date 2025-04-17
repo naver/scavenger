@@ -1,5 +1,6 @@
 package com.navercorp.scavenger.model
 
+import com.navercorp.scavenger.dto.CallStackImportDto
 import com.navercorp.scavenger.dto.CodeBaseImportDto
 import com.navercorp.scavenger.dto.CommonImportDto
 import com.navercorp.scavenger.dto.CommonImportResultDto
@@ -23,6 +24,10 @@ sealed interface CodeBaseImportable {
 
 sealed interface InvocationImportable {
     fun getInvocationImportDto(commonImportResultDto: CommonImportResultDto): InvocationImportDto
+}
+
+sealed interface CallStackImportable {
+    fun getCallStackImportDto(commonImportResultDto: CommonImportResultDto): CallStackImportDto
 }
 
 sealed class ProtoPublication private constructor(val commonData: CommonPublicationData) : Publication {
@@ -81,9 +86,30 @@ sealed class ProtoPublication private constructor(val commonData: CommonPublicat
             }
     }
 
+    data class CallStackData(val pub: CallStackDataPublication) : ProtoPublication(pub.commonData), CallStackImportable {
+        override fun getCallStackImportDto(commonImportResultDto: CommonImportResultDto): CallStackImportDto =
+            with(commonImportResultDto) {
+                CallStackImportDto(
+                    customerId = customerId,
+                    applicationId = applicationId,
+                    environmentId = environmentId,
+                    callTraces = pub.entryList.flatMap { entry ->
+                        entry.callersList.map { caller ->
+                            CallStackImportDto.CallTrace(
+                                caller = caller,
+                                callee = entry.callee
+                            )
+                        }
+                    }.sortedWith(compareBy<CallStackImportDto.CallTrace> { it.callee }.thenBy { it.caller }),
+                    invokedAtMillis = pub.recordingIntervalStartedAtMillis
+                )
+            }
+    }
+
     companion object {
         fun from(pub: CodeBasePublication) = CodeBase(pub)
         fun from(pub: InvocationDataPublication) = InvocationData(pub)
+        fun from(pub: CallStackDataPublication) = CallStackData(pub)
     }
 }
 

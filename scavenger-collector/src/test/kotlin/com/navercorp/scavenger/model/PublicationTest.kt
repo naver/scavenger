@@ -1,5 +1,6 @@
 package com.navercorp.scavenger.model
 
+import com.navercorp.scavenger.dto.CallStackImportDto
 import com.navercorp.scavenger.dto.CommonImportResultDto
 import com.navercorp.scavenger.model.CodeBasePublication.CodeBaseEntry
 import com.navercorp.scavenger.util.HashGenerator.Md5
@@ -172,6 +173,35 @@ class PublicationTest {
                 ).getInvocationImportDto(commonImportResultDto).invocations
             )
                 .isEqualTo(listOf(Md5.from("TestClass.method()"), Md5.from("signature()")).sorted())
+        }
+
+        @Test
+        @DisplayName("it should be sorted by callee and then caller")
+        fun getCallStackImportDto_sortByCalleeAndThenCaller() {
+            assertThat(
+                ProtoPublication.CallStackData(
+                    CallStackDataPublication.newBuilder()
+                        .setCommonData(SamplePublications.commonPublicationData)
+                        .addEntry(
+                            CallStackDataPublication.CallStackDataEntry.newBuilder()
+                                .setCallee("callee2")
+                                .addCallers("caller2-2")
+                                .addCallers("caller2-1")
+                                .build()
+                        )
+                        .addEntry(
+                            CallStackDataPublication.CallStackDataEntry.newBuilder()
+                                .setCallee("callee1")
+                                .addCallers("caller1")
+                                .build()
+                        )
+                        .build()
+                ).getCallStackImportDto(commonImportResultDto).callTraces
+            ).isEqualTo(listOf(
+                CallStackImportDto.CallTrace("callee1", "caller1"),
+                CallStackImportDto.CallTrace("callee2", "caller2-1"),
+                CallStackImportDto.CallTrace("callee2", "caller2-2")
+            ))
         }
     }
 }
