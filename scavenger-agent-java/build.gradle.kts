@@ -23,6 +23,10 @@ tasks.withType<JavaCompile>().matching {
     options.release = 8
 }
 
+tasks.withType<Javadoc>().configureEach {
+    (options as StandardJavadocDocletOptions).addStringOption("Xdoclint:none", "-quiet")
+}
+
 tasks.withType<ShadowJar> {
     archiveFileName.set("${project.name}-${project.version}.jar")
 
@@ -71,7 +75,7 @@ dependencies {
     implementation("io.grpc:grpc-stub:${property("grpcVersion")}")
     implementation("io.grpc:grpc-okhttp:${property("grpcVersion")}")
 
-    testImplementation(platform("org.junit:junit-bom:5.8.2"))
+    testImplementation(platform("org.junit:junit-bom:5.11.0"))
     testImplementation(platform("org.mockito:mockito-bom:5.13.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
     testImplementation("org.assertj:assertj-core:3.22.0")
