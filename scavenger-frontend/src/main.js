@@ -23,7 +23,10 @@ import {
   faCaretDown,
   faFolderTree,
   faEllipsisVertical,
-  faFileExport
+  faFileExport,
+  faLink,
+  faUpRightFromSquare,
+  faBars
 } from "@fortawesome/free-solid-svg-icons";
 import {faGithub} from "@fortawesome/free-brands-svg-icons";
 import "element-plus/dist/index.css";
@@ -56,6 +59,9 @@ iconRegister.add(
   faFolderTree,
   faEllipsisVertical,
   faFileExport,
+  faLink,
+  faUpRightFromSquare,
+  faBars
 );
 app.component("FontAwesomeIcon", FontAwesomeIcon);
 

@@ -5,6 +5,10 @@ import java.io.IOException;
 import java.lang.instrument.Instrumentation;
 import java.util.logging.Level;
 
+import com.navercorp.scavenger.javaagent.collecting.CallStackRegistry;
+
+import com.navercorp.scavenger.javaagent.collecting.CallStackTracker;
+
 import lombok.extern.java.Log;
 
 import com.navercorp.scavenger.javaagent.collecting.InvocationRegistry;
@@ -40,11 +44,19 @@ public class ScavengerAgent {
         new ScavengerBanner(config).printBanner(System.out);
 
         InvocationRegistry invocationRegistry = new InvocationRegistry();
-        InvocationTracker tracker = new InvocationTracker(
+        MethodRegistry methodRegistry = new MethodRegistry(config.isLegacyCompatibilityMode());
+        InvocationTracker invocationTracker = new InvocationTracker(
                 invocationRegistry,
-                new MethodRegistry(config.isLegacyCompatibilityMode()),
+                methodRegistry,
                 config.isDebugMode());
-        Scheduler scheduler = new Scheduler(invocationRegistry, config);
+
+        CallStackRegistry callStackRegistry = new CallStackRegistry();
+        CallStackTracker callStackTracker = new CallStackTracker(
+            callStackRegistry,
+            methodRegistry,
+            config.isDebugMode());
+
+        Scheduler scheduler = new Scheduler(invocationRegistry, callStackRegistry, config);
 
         if (!config.isAsyncCodeBaseScanMode()) {
             boolean scanSuccessful = scheduler.scanCodeBase();
@@ -54,7 +66,12 @@ public class ScavengerAgent {
             }
         }
 
-        tracker.installAdvice(inst, config);
+        invocationTracker.installAdvice(inst, config);
+
+        if (config.isCallStackTraceMode()) {
+            callStackTracker.installAdvice(inst, config);
+        }
+
         scheduler.start();
         Runtime.getRuntime().addShutdownHook(new ShutdownHook(scheduler));
     }

@@ -4,6 +4,7 @@ import com.navercorp.scavenger.entity.AgentStateEntity
 import com.navercorp.scavenger.entity.CodeBaseFingerprintEntity
 import com.navercorp.scavenger.entity.JvmEntity
 import com.navercorp.scavenger.repository.AgentStateDao
+import com.navercorp.scavenger.repository.CallStackDao
 import com.navercorp.scavenger.repository.CodeBaseFingerprintDao
 import com.navercorp.scavenger.repository.InvocationDao
 import com.navercorp.scavenger.repository.JvmDao
@@ -41,6 +42,9 @@ class GarbageCollectServiceTest {
 
     @Autowired
     lateinit var invocationDao: InvocationDao
+
+    @Autowired
+    lateinit var callStackDao: CallStackDao
 
     val customerId = 1L
 
@@ -194,6 +198,9 @@ class GarbageCollectServiceTest {
             assertThat(methodDao.findAllByCustomerId(customerId).filter { it.garbage }).hasSize(2)
             val invocations = invocationDao.findAllByCustomerId(customerId)
             assertThat(invocations).hasSizeGreaterThan(0)
+            val callStacks = callStackDao.findAllByCustomerId(customerId)
+            assertThat(callStacks).hasSizeGreaterThan(0)
+
             sut.sweepMethods(customerId, min!!)
             assertThat(methodDao.findAllByCustomerId(customerId))
                 .describedAs("nothing is deleted when the 1 week is not passed since last seen")
@@ -209,6 +216,10 @@ class GarbageCollectServiceTest {
             assertThat(invocationsAfter)
                 .describedAs("invocations should be deleted as well")
                 .hasSizeLessThan(invocations.size)
+            val callStackAfter = callStackDao.findAllByCustomerId(customerId)
+            assertThat(callStackAfter)
+                .describedAs("callStacks should be deleted as well")
+                .hasSizeLessThan(callStacks.size)
             sut.sweepMethods(customerId, Instant.now())
             assertThat(methodDao.findAllByCustomerId(customerId))
                 .describedAs("nothing more is deleted when no marking is done")

@@ -48,12 +48,12 @@ public class InvocationTracker {
                     JavaModule module,
                     boolean loaded,
                     DynamicType dynamicType) {
-                    log.info("[scavenger] Advice on " + typeDescription.getActualName() + " is installed");
+                    log.info("[scavenger][InvocationTracker] Advice on " + typeDescription.getActualName() + " is installed");
                 }
             });
         }
         transform.installOn(inst);
-        log.info("[scavenger] Advice is installed on all matching methods");
+        log.info("[scavenger][InvocationTracker] Advice is installed on all matching methods");
     }
 
     @SuppressWarnings("unused")
@@ -65,7 +65,7 @@ public class InvocationTracker {
     public static void hashAndRegister(String signature) {
         String hash = INSTANCE.methodRegistry.getHash(signature);
         if (INSTANCE.isDebugMode) {
-            log.info("[scavenger] method " + signature + " is invoked - " + hash);
+            log.info("[scavenger][InvocationTracker] method " + signature + " is invoked - " + hash);
         }
         INSTANCE.invocationRegistry.register(hash);
     }

@@ -25,4 +25,12 @@ public class BenchmarkTest {
         agentRunner.setShouldLogOutput(true);
         agentRunner.call();
     }
+
+    @TestTemplate
+    @DisplayName("JMH benchmark trace call stack mode")
+    void benchCallStackTraceMode(AgentRunner agentRunner) throws Exception {
+        agentRunner.setConfigProperty("callStackTraceMode", "true");
+        agentRunner.setShouldLogOutput(true);
+        agentRunner.call();
+    }
 }

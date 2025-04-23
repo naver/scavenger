@@ -53,6 +53,7 @@ public class Config {
     private Integer forceIntervalSeconds;
     private Integer maxMethodsCount;
 
+    private boolean callStackTraceMode = false;
     private boolean asyncCodeBaseScanMode = false;
     private boolean legacyCompatibilityMode = false;
     private boolean debugMode = false;
@@ -89,6 +90,7 @@ public class Config {
         forceIntervalSeconds = getIntValue(props, "forceIntervalSeconds", 0);
         maxMethodsCount = getIntValue(props, "maxMethodsCount", 100000);
 
+        callStackTraceMode = getBooleanValue(props, "callStackTraceMode", callStackTraceMode);
         asyncCodeBaseScanMode = getBooleanValue(props, "asyncCodeBaseScanMode", asyncCodeBaseScanMode);
         legacyCompatibilityMode = getBooleanValue(props, "legacyCompatibilityMode", legacyCompatibilityMode);
         debugMode = getBooleanValue(props, "debugMode", debugMode);
@@ -118,6 +120,43 @@ public class Config {
             .setCodeBaseFingerprint("to-be-replaced")
             .setApiKey(getApiKey())
             .build();
+    }
+
+    public Config copyConfigWithExcludeConstructorsTrue() {
+        Config copied = new Config(new Properties());
+
+        copied.excludeConstructors = true;
+
+        copied.enabled = this.enabled;
+        copied.location = this.location;
+        copied.appName = this.appName;
+        copied.packages = this.packages;
+        copied.codeBase = this.codeBase;
+        copied.apiKey = this.apiKey;
+        copied.serverUrl = this.serverUrl;
+        copied.excludePackages = this.excludePackages;
+        copied.additionalPackages = this.additionalPackages;
+        copied.annotations = this.annotations;
+        copied.excludeByRegex = this.excludeByRegex;
+        copied.additionalByRegex = this.additionalByRegex;
+        copied.methodVisibility = this.methodVisibility;
+        copied.excludeGetterSetter = this.excludeGetterSetter;
+        copied.environment = this.environment;
+        copied.appVersion = this.appVersion;
+        copied.hostname = this.hostname;
+        copied.httpConnectTimeoutSeconds = this.httpConnectTimeoutSeconds;
+        copied.httpReadTimeoutSeconds = this.httpReadTimeoutSeconds;
+        copied.httpWriteTimeoutSeconds = this.httpWriteTimeoutSeconds;
+        copied.schedulerInitialDelayMillis = this.schedulerInitialDelayMillis;
+        copied.schedulerIntervalMillis = this.schedulerIntervalMillis;
+        copied.forceIntervalSeconds = this.forceIntervalSeconds;
+        copied.maxMethodsCount = this.maxMethodsCount;
+        copied.callStackTraceMode = this.callStackTraceMode;
+        copied.asyncCodeBaseScanMode = this.asyncCodeBaseScanMode;
+        copied.legacyCompatibilityMode = this.legacyCompatibilityMode;
+        copied.debugMode = this.debugMode;
+
+        return copied;
     }
 
     private String getMandatoryValue(Properties props, String key, String defaultValue) {
