@@ -5,7 +5,7 @@ import com.navercorp.scavenger.dto.CommonImportDto
 import com.navercorp.scavenger.dto.CommonImportResultDto
 import com.navercorp.scavenger.dto.InvocationImportDto
 import com.navercorp.scavenger.exception.UnknownPublicationException
-import com.navercorp.scavenger.util.HashGenerator
+import com.navercorp.scavenger.util.HashGenerator.DefaultHash
 import io.codekvast.javaagent.model.v4.CodeBasePublication4
 import io.codekvast.javaagent.model.v4.CommonPublicationData4
 import io.codekvast.javaagent.model.v4.InvocationDataPublication4
@@ -117,7 +117,7 @@ sealed class LegacyPublication private constructor(val commonData: CommonPublica
                             modifiers = it.methodSignature.modifiers,
                             packageName = it.methodSignature.packageName,
                             parameterTypes = it.methodSignature.parameterTypes,
-                            signatureHash = HashGenerator.Md5.from(it.signature)
+                            signatureHash = DefaultHash.from(it.signature)
                         )
                     }.sortedBy { it.signatureHash }
 
@@ -141,7 +141,7 @@ sealed class LegacyPublication private constructor(val commonData: CommonPublica
                     environmentId = environmentId,
                     invocations = pub.invocations
                         .filterNot { syntheticSignaturePattern.matcher(it).matches() }
-                        .map { HashGenerator.Md5.from(it) }
+                        .map { DefaultHash.from(it) }
                         .sorted(),
                     invokedAtMillis = pub.recordingIntervalStartedAtMillis,
                 )
