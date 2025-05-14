@@ -111,8 +111,7 @@ public class SchedulerTest {
                 CallStackDataPublication.newBuilder()
                     .setCommonData(sampleCommonData)
                     .addEntry(CallStackDataPublication.CallStackDataEntry.newBuilder()
-                        .setCallee("callee")
-                        .addCallers("caller")
+                        .addAllSignature(List.of("signature1", "signature2"))
                         .build())
                     .build()
             );

@@ -17,7 +17,9 @@ import sample.app.SampleService1;
 import sample.app.SampleService2;
 
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import static integrationTest.util.AgentLogAssertionUtil.assertSampleAppOutput;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -37,18 +39,18 @@ public class CallStackTest extends AbstractWireMockTest {
         // then
         assertAll(
             () -> assertSampleAppOutput(stdout),
-            () -> assertThat(stdout).matches(invoked(SampleApp.class.getMethod("add", int.class, int.class))),
-            () -> assertThat(stdout).matches(invoked(SampleService1.class.getMethod("doSomething", int.class))),
+            () -> assertThat(stdout).matches(invoked(SampleApp.class.getMethod("add", int.class, int.class), SampleApp.class.getMethod("privateAdd", int.class, int.class))),
             () -> assertThat(stdout).matches(exited(SampleService1.class.getMethod("throwsException"))),
             () -> assertThat(stdout).matches(exited(SampleService2.class.getMethod("throwsException")))
+
         );
     }
 
-    private static Pattern invoked(Method method) {
+    private Pattern invoked(Method... methods) {
+        String callTraceHash = Arrays.stream(methods).map(method -> methodRegistry.getHash(method.toString())).collect(Collectors.joining("->"));
         return AgentLogAssertionUtil.logPattern("com.navercorp.scavenger.javaagent.collecting.CallStackTracker",
-            "[scavenger][CallStackTracker] method " + method.toString() + " is invoked by");
+            "[scavenger][CallStackTracker] call trace recorded:" + callTraceHash);
     }
-
     private Pattern exited(Method method) {
         String signature = methodRegistry.getHash(method.toString());
         return AgentLogAssertionUtil.logPattern("com.navercorp.scavenger.javaagent.collecting.CallStackTracker",

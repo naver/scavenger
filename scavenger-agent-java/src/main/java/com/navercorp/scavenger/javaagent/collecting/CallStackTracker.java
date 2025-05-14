@@ -17,11 +17,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.instrument.Instrumentation;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Log
 public class CallStackTracker {
     private static final ConcurrentHashMap<Long, ArrayDeque<String>> CALL_STACKS = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Long, ArrayDeque<String>> CALL_TRACES = new ConcurrentHashMap<>();
 
     @Getter
     private final CallStackRegistry callStackRegistry;
@@ -71,18 +74,14 @@ public class CallStackTracker {
     }
 
     public static void saveCallTraceOnEnter(String signature) {
-        ArrayDeque<String> currentThreadCallStack = CALL_STACKS.computeIfAbsent(Thread.currentThread().getId(), k -> new ArrayDeque<>());
+        long threadId = Thread.currentThread().getId();
+        ArrayDeque<String> callStack = CALL_STACKS.computeIfAbsent(threadId, k -> new ArrayDeque<>());
+        ArrayDeque<String> callTrace = CALL_TRACES.computeIfAbsent(threadId, k -> new ArrayDeque<>());
+
         String callee = INSTANCE.methodRegistry.getHash(signature);
 
-        if (!currentThreadCallStack.isEmpty()) {
-            String caller = currentThreadCallStack.peekLast();
-            INSTANCE.callStackRegistry.register(caller, callee);
-            if (INSTANCE.isDebugMode) {
-                log.info("[scavenger][CallStackTracker] method " + signature + " is invoked by " + caller);
-            }
-        }
-
-        currentThreadCallStack.addLast(callee);
+        callStack.addLast(callee);
+        callTrace.addLast(callee);
     }
 
     @Advice.OnMethodExit(onThrowable = Throwable.class)
@@ -91,10 +90,25 @@ public class CallStackTracker {
     }
 
     public static void updateCallStackOnExit() {
-        ArrayDeque<String> currentThreadCallStack = CALL_STACKS.get(Thread.currentThread().getId());
-        String signature = currentThreadCallStack.pollLast();
+        long threadId = Thread.currentThread().getId();
+        ArrayDeque<String> callStack = CALL_STACKS.get(threadId);
+        String signature = callStack.pollLast();
         if (INSTANCE.isDebugMode) {
             log.info("[scavenger][CallStackTracker] method " + signature + " exited");
+        }
+
+        // 스택이 비면 root 호출자 종료 → trace 저장 시점
+        if (callStack.isEmpty()) {
+            ArrayDeque<String> callTrace = CALL_TRACES.get(threadId);
+            List<String> fullTrace = new ArrayList<>(callTrace);
+            INSTANCE.callStackRegistry.register(fullTrace);
+
+            if (INSTANCE.isDebugMode) {
+                log.info("[scavenger][CallStackTracker] call trace recorded: " + String.join("->", fullTrace));
+            }
+
+            callTrace.clear();
+
         }
     }
 }

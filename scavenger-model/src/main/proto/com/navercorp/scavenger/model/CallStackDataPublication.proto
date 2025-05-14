@@ -7,9 +7,9 @@ option java_multiple_files = true;
 
 message CallStackDataPublication {
     message CallStackDataEntry {
-        string callee = 1;
-        repeated string callers = 2;
+        repeated string signature = 1;
     }
+
 
     CommonPublicationData common_data = 1;
     repeated CallStackDataEntry entry = 2;

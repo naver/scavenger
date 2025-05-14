@@ -33,11 +33,11 @@ public class CallStackRegistryTest {
     }
 
     private void registerCallStack() {
-        sut.register(caller, callee);
+        sut.register(List.of("caller", "callee"));
     }
 
-    private void registerCallStack(String caller, String callee) {
-        sut.register(caller, callee);
+    private void registerCallStack(String... callStack) {
+        sut.register(List.of(callStack));
     }
 
     @Nested
@@ -54,9 +54,9 @@ public class CallStackRegistryTest {
         void containsCallStack() {
             CallStackDataPublication.CallStackDataEntry callStack = getCallStack().getFirst();
             assertAll(
-                () -> assertThat(callStack.getCallersList().size()).isEqualTo(1),
-                () -> assertThat(callStack.getCallersList().getFirst()).isEqualTo(caller),
-                () -> assertThat(callStack.getCallee()).isEqualTo(callee)
+                () -> assertThat(callStack.getSignatureList().size()).isEqualTo(2),
+                () -> assertThat(callStack.getSignatureList().getFirst()).isEqualTo("caller"),
+                () -> assertThat(callStack.getSignatureList().get(1)).isEqualTo("callee")
             );
         }
 
@@ -111,7 +111,7 @@ public class CallStackRegistryTest {
                 sut.getPublication(config, codeBaseFingerprint);
                 List<CallStackDataPublication.CallStackDataEntry> callStack = getCallStack();
                 for (CallStackDataPublication.CallStackDataEntry callStackDataEntry : callStack) {
-                    assertThat(callStackDataEntry.getCallersList()).isEmpty();
+                    assertThat(callStackDataEntry.getSignatureList()).isEmpty();
                 }
             }
         }
@@ -132,9 +132,9 @@ public class CallStackRegistryTest {
             void alternating() {
                 CallStackDataPublication.CallStackDataEntry callStack = getCallStack().getFirst();
                 assertAll(
-                    () -> assertThat(callStack.getCallersList().size()).isEqualTo(1),
-                    () -> assertThat(callStack.getCallersList().getFirst()).isEqualTo("new-caller"),
-                    () -> assertThat(callStack.getCallee()).isEqualTo("new-callee")
+                    () -> assertThat(callStack.getSignatureList().size()).isEqualTo(2),
+                    () -> assertThat(callStack.getSignature(0)).isEqualTo("new-caller"),
+                    () -> assertThat(callStack.getSignature(1)).isEqualTo("new-callee")
                 );
             }
         }

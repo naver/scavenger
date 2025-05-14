@@ -93,14 +93,14 @@ sealed class ProtoPublication private constructor(val commonData: CommonPublicat
                     customerId = customerId,
                     applicationId = applicationId,
                     environmentId = environmentId,
-                    callTraces = pub.entryList.flatMap { entry ->
-                        entry.callersList.map { caller ->
-                            CallStackImportDto.CallTrace(
-                                caller = caller,
-                                callee = entry.callee
-                            )
-                        }
-                    }.sortedWith(compareBy<CallStackImportDto.CallTrace> { it.callee }.thenBy { it.caller }),
+                    // callTraces = pub.entryList.flatMap { entry ->
+                    //     entry.callersList.map { caller ->
+                    //         CallStackImportDto.CallTrace(
+                    //             caller = caller,
+                    //             callee = entry.callee
+                    //         )
+                    //     }
+                    // }.sortedWith(compareBy<CallStackImportDto.CallTrace> { it.callee }.thenBy { it.caller }),
                     invokedAtMillis = pub.recordingIntervalStartedAtMillis
                 )
             }

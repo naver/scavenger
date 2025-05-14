@@ -54,7 +54,7 @@ class GrpcAgentController(
     override suspend fun sendCallStackDataPublication(request: CallStackDataPublication): PublicationResponse {
         try {
             validate(request)
-            agentService.savePublication(ProtoPublication.from(request))
+            // agentService.savePublication(ProtoPublication.from(request))
         } catch (e: Exception) {
             logger.warn(e) { "grpc agent ${request.commonData.jvmUuid} from ${request.commonData.apiKey} call stack import failed: " }
             throw e
@@ -96,7 +96,7 @@ class GrpcAgentController(
             throw IllegalArgumentException("CommonPublicationData is a mandatory field")
         }
         for (entry in request.entryList) {
-            if (entry.callee.isEmpty() || entry.callersList.isEmpty()) {
+            if (entry.signatureList.isEmpty()) {
                 throw IllegalArgumentException("(callee||callers) is a mandatory field")
             }
         }

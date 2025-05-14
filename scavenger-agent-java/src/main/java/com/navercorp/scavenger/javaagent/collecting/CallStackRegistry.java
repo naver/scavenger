@@ -3,35 +3,40 @@ package com.navercorp.scavenger.javaagent.collecting;
 import com.navercorp.scavenger.javaagent.model.Config;
 import com.navercorp.scavenger.model.CallStackDataPublication;
 
+import com.navercorp.scavenger.util.HashGenerator;
+
 import lombok.extern.java.Log;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Log
 public class CallStackRegistry {
-    private final Map<String, Set<String>> callStacks = new ConcurrentHashMap<>();
+    private final Map<String, List<String>> callTraces = new ConcurrentHashMap<>();
     private long recordingIntervalStartedAtMillis = System.currentTimeMillis();
 
-    public void register(String caller, String callee) {
-        Set<String> callers = callStacks.computeIfAbsent(callee, k -> new HashSet<>());
-        callers.add(caller);
+    public void register(List<String> callTrace) {
+        String callTraceJoined = String.join("-", callTrace);
+        String callTraceHash = HashGenerator.Md5.from(callTraceJoined);
+        callTraces.put(callTraceHash, callTrace);
     }
 
     public CallStackDataPublication getPublication(Config config, String codeBaseFingerprint) {
-        Set<CallStackDataPublication.CallStackDataEntry> dataEntries = new HashSet<>();
-        callStacks.forEach((callee, callers) -> {
-            if (!callers.isEmpty()) {
-                CallStackDataPublication.CallStackDataEntry callStackDataEntry = CallStackDataPublication.CallStackDataEntry.newBuilder()
-                    .setCallee(callee)
-                    .addAllCallers(callers)
+        List<CallStackDataPublication.CallStackDataEntry> dataEntries = new ArrayList<>();
+        Iterator<Map.Entry<String, List<String>>> iterator = callTraces.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Map.Entry<String, List<String>> entry = iterator.next();
+            CallStackDataPublication.CallStackDataEntry callStackDataEntry =
+                CallStackDataPublication.CallStackDataEntry.newBuilder()
+                    .addAllSignature(entry.getValue())
                     .build();
-                dataEntries.add(callStackDataEntry);
-                callers.clear();
-            }
-        });
+            dataEntries.add(callStackDataEntry);
+
+            iterator.remove();
+        }
 
         long oldRecordingIntervalStartedAtMillis = recordingIntervalStartedAtMillis;
         recordingIntervalStartedAtMillis = System.currentTimeMillis();
