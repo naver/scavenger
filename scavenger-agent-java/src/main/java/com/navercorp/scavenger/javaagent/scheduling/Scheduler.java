@@ -131,7 +131,9 @@ public class Scheduler implements Runnable {
                 pollDynamicConfigIfNeeded();
                 publishCodeBaseIfNeeded();
                 publishInvocationDataIfNeeded();
-                publishCallStackDateIfNeeded();
+                if (config.isCallStackTraceMode()) {
+                    publishCallStackDateIfNeeded();
+                }
             } catch (Throwable t) {
                 log.severe("[scavenger] scheduler failure: " + t);
             }
@@ -245,7 +247,7 @@ public class Scheduler implements Runnable {
     }
 
     public void publishCallStackDateIfNeeded() {
-        if (config.isCallStackTraceMode() && callStackDataPublisherState.isDueTime() && dynamicConfig != null && isCodeBasePublished) {
+        if (callStackDataPublisherState.isDueTime() && dynamicConfig != null && isCodeBasePublished) {
             try {
                 if (callStackDataPublication == null) {
                     callStackDataPublication = callStackRegistry
