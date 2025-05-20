@@ -4,13 +4,7 @@ import com.navercorp.spring.data.jdbc.plus.sql.support.SqlGeneratorSupport
 
 class CallStackSql : SqlGeneratorSupport() {
 
-    fun selectCallerSignatures(
-        customerId: Long,
-        applicationIds: List<Long>,
-        environmentIds: List<Long>,
-        signature: String,
-        invokedAtMillis: Long?,
-    ): String =
+    fun selectCallerSignatures(): String =
         """
         SELECT
             caller_methods.signature AS callerSignature

@@ -96,8 +96,11 @@ class GrpcAgentController(
             throw IllegalArgumentException("CommonPublicationData is a mandatory field")
         }
         for (entry in request.entryList) {
-            if (entry.callee.isEmpty() || entry.callersList.isEmpty()) {
-                throw IllegalArgumentException("(callee||callers) is a mandatory field")
+            if (entry.callee.isEmpty()) {
+                throw IllegalArgumentException("callee is a mandatory field")
+            }
+            if (entry.callersList.isEmpty()) {
+                throw IllegalArgumentException("callers is a mandatory field")
             }
         }
 

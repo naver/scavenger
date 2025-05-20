@@ -18,13 +18,7 @@ class CallStackDao(
         invokedAtMillis: Long?,
     ): List<String> {
         return select(
-            sql.selectCallerSignatures(
-                customerId,
-                applicationIds,
-                environmentIds,
-                signature,
-                invokedAtMillis
-            ),
+            sql.selectCallerSignatures(),
             mapParameterSource()
                 .addValue("customerId", customerId)
                 .addValue("applicationIds", applicationIds)

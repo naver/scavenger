@@ -5,7 +5,9 @@ import com.navercorp.scavenger.model.CallStackDataPublication;
 
 import lombok.extern.java.Log;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Log
@@ -20,18 +22,16 @@ public class CallStackRegistry {
 
     public CallStackDataPublication getPublication(Config config, String codeBaseFingerprint) {
         Set<CallStackDataPublication.CallStackDataEntry> dataEntries = new HashSet<>();
-        for (Map.Entry<String, Set<String>> entry : callStacks.entrySet()) {
-            String callee = entry.getKey();
-            Set<String> callers = entry.getValue();
+        callStacks.forEach((callee, callers) -> {
             if (!callers.isEmpty()) {
-                CallStackDataPublication.CallStackDataEntry CallStackDataEntry = CallStackDataPublication.CallStackDataEntry.newBuilder()
+                CallStackDataPublication.CallStackDataEntry callStackDataEntry = CallStackDataPublication.CallStackDataEntry.newBuilder()
                     .setCallee(callee)
                     .addAllCallers(callers)
                     .build();
-                dataEntries.add(CallStackDataEntry);
+                dataEntries.add(callStackDataEntry);
                 callers.clear();
             }
-        }
+        });
 
         long oldRecordingIntervalStartedAtMillis = recordingIntervalStartedAtMillis;
         recordingIntervalStartedAtMillis = System.currentTimeMillis();
