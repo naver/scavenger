@@ -88,6 +88,10 @@ public class SchedulerTest {
     public void setUp() throws Exception {
         lenient().when(codeBaseScannerMock.scan())
             .thenReturn(new CodeBase(List.of(Method.createTestMethod()), "fingerprint"));
+        sut = new Scheduler(invocationRegistry, callStackRegistry, new Config(new Properties()), publisher, codeBaseScannerMock);
+    }
+
+    public void setCallStackTraceMode() {
         Properties properties = new Properties();
         properties.setProperty("callStackTraceMode", "true");
         sut = new Scheduler(invocationRegistry, callStackRegistry, new Config(properties), publisher, codeBaseScannerMock);
@@ -123,14 +127,13 @@ public class SchedulerTest {
     class RunMethod {
 
         @Nested
-        @DisplayName("if invocation, call stack is registered")
-        class PollSucceedInvocationAndCallStacksRegistered {
+        @DisplayName("if invocation is registered")
+        class PollSucceedInvocationRegistered {
 
             @BeforeEach
             public void setUpAndRun() {
                 when(publisher.pollDynamicConfig()).thenReturn(configResponse);
                 mockInvocationRegistered();
-                mockCallStackRegistered();
 
                 sut.run();
             }
@@ -152,17 +155,31 @@ public class SchedulerTest {
             void publishInvocationData() {
                 verify(publisher).publishInvocationData(any());
             }
+        }
+
+        @Nested
+        @DisplayName("if callStack is registered")
+        class CallStackRegistered {
+
+            @BeforeEach
+            public void setUpAndRun() {
+                setCallStackTraceMode();
+                when(publisher.pollDynamicConfig()).thenReturn(configResponse);
+                mockCallStackRegistered();
+
+                sut.run();
+            }
 
             @Test
-            @DisplayName("it publishes call stack data")
+            @DisplayName("it publishes callStack data")
             void publishCallStackData() {
                 verify(publisher).publishCallStackData(any());
             }
         }
 
         @Nested
-        @DisplayName("if there is no invocation and call stack registered")
-        class NoInvocationAndCallStackTest {
+        @DisplayName("if there is no invocation registered")
+        class NoInvocationTest {
 
             @BeforeEach
             public void setUpAndRun() {
@@ -184,13 +201,25 @@ public class SchedulerTest {
 
             @Test
             @DisplayName("it publishes invocation")
-            void doesNotPublishInvocationData() {
+            void publishInvocationData() {
                 verify(publisher).publishInvocationData(any());
+            }
+        }
+
+        @Nested
+        @DisplayName("if there is no callStack registered")
+        class NoCallStackTest {
+
+            @BeforeEach
+            public void setUpAndRun() {
+                setCallStackTraceMode();
+                when(publisher.pollDynamicConfig()).thenReturn(configResponse);
+                sut.run();
             }
 
             @Test
             @DisplayName("it publishes call stack")
-            void doesNotPublishCallStackData() {
+            void publishCallStackData() {
                 verify(publisher).publishCallStackData(any());
             }
         }
@@ -288,6 +317,8 @@ public class SchedulerTest {
 
             @BeforeEach
             public void setUpAndRunThreeTimes() throws IOException {
+                setCallStackTraceMode();
+
                 when(publisher.pollDynamicConfig())
                     .thenReturn(configResponse);
 
@@ -344,6 +375,46 @@ public class SchedulerTest {
             @BeforeEach
             public void runsAndShutdown() throws IOException {
                 mockInvocationRegistered();
+                when(publisher.pollDynamicConfig()).thenReturn(configResponse);
+
+                sut.run();
+                sut.shutdown();
+            }
+
+            @Test
+            @DisplayName("it polls dynamic config")
+            void pollConfig() {
+                verify(publisher).pollDynamicConfig();
+            }
+
+            @Test
+            @DisplayName("it publishes last invocations before shutdown")
+            void lastInvocations() {
+                verify(publisher, times(2)).publishInvocationData(any());
+            }
+
+            @Test
+            @DisplayName("it does not publish call stack when disable callStackTraceMode")
+            void callStackDoesNotPublished() {
+                verify(publisher, times(0)).publishCallStackData(any());
+            }
+
+            @Test
+            @DisplayName("it does not publish additional codebase")
+            void codeBasePublishedOnlyOnce() {
+                verify(publisher, atMostOnce()).publishCodeBase(any());
+            }
+        }
+
+        @Nested
+        @DisplayName("if published successfully with callStackTraceMode")
+        class CallStackTraceModeTest {
+
+            @BeforeEach
+            public void runsAndShutdown() throws IOException {
+                setCallStackTraceMode();
+                mockInvocationRegistered();
+                mockCallStackRegistered();
                 when(publisher.pollDynamicConfig()).thenReturn(configResponse);
 
                 sut.run();
