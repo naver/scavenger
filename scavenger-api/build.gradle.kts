@@ -20,6 +20,8 @@ repositories {
     mavenCentral()
 }
 
+extra["tomcat.version"] = "10.1.42"
+
 dependencies {
     implementation(project(":scavenger-entity"))
     implementation(project(":scavenger-schema"))
