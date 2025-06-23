@@ -17,6 +17,8 @@ plugins {
     id("com.adarshr.test-logger") version "3.0.0"
 }
 
+extra["tomcat.version"] = "10.1.42"
+
 dependencies {
     implementation(project(":scavenger-entity"))
     implementation(project(":scavenger-model"))
