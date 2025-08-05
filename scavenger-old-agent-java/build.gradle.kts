@@ -146,7 +146,7 @@ tasks.named<Test>("integrationTest") {
 
     systemProperty("integrationTest.codekvastAgent", tasks.shadowJar.get().outputs.files.asPath)
     systemProperty("integrationTest.classpath", "build/classes/java/integrationTest:$integrationTestRuntimeClasspath")
-    systemProperty("integrationTest.javaPaths", javaPath(7))
+    systemProperty("integrationTest.javaPaths", javaPath(8))
 }
 
 publishing {
