@@ -16,7 +16,7 @@ public class CallStackRegistry {
     private long recordingIntervalStartedAtMillis = System.currentTimeMillis();
 
     public void register(String caller, String callee) {
-        Set<String> callers = callStacks.computeIfAbsent(callee, k -> new HashSet<>());
+        Set<String> callers = callStacks.computeIfAbsent(callee, k -> ConcurrentHashMap.newKeySet());
         callers.add(caller);
     }
 
