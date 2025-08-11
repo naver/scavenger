@@ -17,11 +17,21 @@ import org.jetbrains.annotations.NotNull;
 
 import java.lang.instrument.Instrumentation;
 import java.util.ArrayDeque;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Log
 public class CallStackTracker {
     private static final ConcurrentHashMap<Long, ArrayDeque<String>> CALL_STACKS = new ConcurrentHashMap<>();
+
+    private final ScheduledExecutorService emptyCallStacksCleaner = Executors.newSingleThreadScheduledExecutor(r -> {
+        Thread thread = new Thread(r);
+        thread.setDaemon(true);
+        return thread;
+    });
 
     @Getter
     private final CallStackRegistry callStackRegistry;
@@ -38,6 +48,8 @@ public class CallStackTracker {
         this.methodRegistry = methodRegistry;
         this.isDebugMode = isDebugMode;
         INSTANCE = this;
+        startCallStackCleanup();
+
     }
 
     public void installAdvice(Instrumentation inst, Config config) {
@@ -92,9 +104,36 @@ public class CallStackTracker {
 
     public static void updateCallStackOnExit() {
         ArrayDeque<String> currentThreadCallStack = CALL_STACKS.get(Thread.currentThread().getId());
-        String signature = currentThreadCallStack.pollLast();
-        if (INSTANCE.isDebugMode) {
-            log.info("[scavenger][CallStackTracker] method " + signature + " exited");
+        if (!currentThreadCallStack.isEmpty()) {
+            String signature = currentThreadCallStack.pollLast();
+
+            if (INSTANCE.isDebugMode) {
+                log.info("[scavenger][CallStackTracker] method " + signature + " exited");
+            }
         }
+    }
+
+    private void startCallStackCleanup() {
+        emptyCallStacksCleaner.scheduleAtFixedRate(() -> {
+            if (INSTANCE.isDebugMode) {
+                log.info("[scavenger][CallStackTracker] Start call stacks cleanup");
+            }
+            try {
+                for (Map.Entry<Long, ArrayDeque<String>> entry : CALL_STACKS.entrySet()) {
+                    if (entry.getValue().isEmpty()) {
+                        CALL_STACKS.remove(entry.getKey());
+                        if (INSTANCE.isDebugMode) {
+                            log.info("[scavenger][CallStackTracker] Removed empty call stack for threadId: " + entry.getKey());
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                log.severe("[scavenger][CallStackTracker] Failed to clean up empty call stacks" + e);
+            }
+
+            if (INSTANCE.isDebugMode) {
+                log.info("[scavenger][CallStackTracker] Finish call stacks cleanup");
+            }
+        }, 1, 1, TimeUnit.MINUTES);
     }
 }
