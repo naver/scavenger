@@ -23,15 +23,15 @@ public class CallStackRegistry {
     public CallStackDataPublication getPublication(Config config, String codeBaseFingerprint) {
         Set<CallStackDataPublication.CallStackDataEntry> dataEntries = new HashSet<>();
         callStacks.forEach((callee, callers) -> {
-            if (!callers.isEmpty()) {
-                CallStackDataPublication.CallStackDataEntry callStackDataEntry = CallStackDataPublication.CallStackDataEntry.newBuilder()
+            CallStackDataPublication.CallStackDataEntry callStackDataEntry = CallStackDataPublication.CallStackDataEntry.newBuilder()
                     .setCallee(callee)
                     .addAllCallers(callers)
                     .build();
-                dataEntries.add(callStackDataEntry);
-                callers.clear();
-            }
+            dataEntries.add(callStackDataEntry);
+            callers.clear();
         });
+
+        removeEmptyCallStacks(dataEntries);
 
         long oldRecordingIntervalStartedAtMillis = recordingIntervalStartedAtMillis;
         recordingIntervalStartedAtMillis = System.currentTimeMillis();
@@ -44,5 +44,15 @@ public class CallStackRegistry {
             .addAllEntry(dataEntries)
             .setRecordingIntervalStartedAtMillis(oldRecordingIntervalStartedAtMillis)
             .build();
+    }
+
+    private void removeEmptyCallStacks(Set<CallStackDataPublication.CallStackDataEntry> dataEntries) {
+        for (CallStackDataPublication.CallStackDataEntry dataEntry : dataEntries) {
+            String callee = dataEntry.getCallee();
+            Set<String> callers = callStacks.get(callee);
+            if (callers.isEmpty()) {
+                callStacks.remove(callee);
+            }
+        }
     }
 }
