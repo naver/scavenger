@@ -13,8 +13,6 @@ import net.bytebuddy.dynamic.DynamicType;
 import net.bytebuddy.dynamic.scaffold.TypeValidation;
 import net.bytebuddy.utility.JavaModule;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.lang.instrument.Instrumentation;
 import java.util.ArrayDeque;
 import java.util.Map;
@@ -64,11 +62,11 @@ public class CallStackTracker {
             transform = transform.with(new AgentBuilder.Listener.Adapter() {
                 @Override
                 public void onTransformation(
-                    @NotNull TypeDescription typeDescription,
+                    TypeDescription typeDescription,
                     ClassLoader classLoader,
                     JavaModule module,
                     boolean loaded,
-                    @NotNull DynamicType dynamicType) {
+                    DynamicType dynamicType) {
                     log.info("[scavenger][CallStackTracker] Advice on " + typeDescription.getActualName() + " is installed");
                 }
             });
@@ -104,7 +102,7 @@ public class CallStackTracker {
 
     public static void updateCallStackOnExit() {
         ArrayDeque<String> currentThreadCallStack = CALL_STACKS.get(Thread.currentThread().getId());
-        if (!currentThreadCallStack.isEmpty()) {
+        if (currentThreadCallStack != null && !currentThreadCallStack.isEmpty()) {
             String signature = currentThreadCallStack.pollLast();
 
             if (INSTANCE.isDebugMode) {
