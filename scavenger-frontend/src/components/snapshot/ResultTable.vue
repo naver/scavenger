@@ -1,4 +1,3 @@
-"
 <template>
   <el-scrollbar>
     <el-table :data="rows" header-row-class-name="table-header" border style="width: 100%" size="small">
@@ -23,6 +22,9 @@
               <a v-if="githubLink(scope.row)" :href="githubLink(scope.row)" class="function-box">
                 <font-awesome-icon icon="fa-brands fa-github"/>
               </a>
+              <a v-if="isMethod(scope.row)" @click="showCaller(scope.row.signature)" class="function-box">
+                <font-awesome-icon icon="fa-solid fa-link"/>
+              </a>
             </span>
           </div>
         </template>
@@ -37,14 +39,25 @@
       </el-table-column>
     </el-table>
   </el-scrollbar>
+  <CallTraceDialog :dialogTableVisible="dialogTableVisible" :callee="callee" :callers="callers" @showCaller="showCaller"/>
 </template>
 <script>
 import copy from "copy-to-clipboard";
 import {getFilePath, openLink, toPercentageStr} from "../util/util";
 import {ElNotification} from "element-plus";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import CallTraceDialog from "@/components/snapshot/CallTraceDialog.vue";
 
 export default {
-  props: ["rows", "updateSnapshotData", "githubLink"],
+  components: {CallTraceDialog, FontAwesomeIcon},
+  props: ["rows", "updateSnapshotData", "githubLink", "customerId", "snapshot"],
+  data() {
+    return {
+      dialogTableVisible: false,
+      callee: "",
+      callers: []
+    };
+  },
   methods: {
     toPercentageStr(percentage) {
       return toPercentageStr(percentage);
@@ -75,6 +88,20 @@ export default {
       } else {
         this.updateSnapshotData(signature);
       }
+    },
+    isMethod(row) {
+      return row.type.value === "METHOD";
+    },
+    showCaller(signature) {
+      this.callee = signature;
+      this.$http.get(`/customers/${this.customerId}/snapshots/${this.snapshot.id}/callers?signature=${signature}`)
+        .then(response => {
+          this.dialogTableVisible = true;
+          this.callers = response.data;
+        })
+        .catch(() => {
+          ElNotification.error({message: "fail show call stack"});
+        });
     },
   },
 };

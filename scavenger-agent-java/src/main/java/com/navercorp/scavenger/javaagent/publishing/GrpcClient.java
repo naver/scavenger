@@ -7,6 +7,8 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.navercorp.scavenger.model.CallStackDataPublication;
+
 import io.grpc.ManagedChannel;
 import io.grpc.okhttp.OkHttpChannelBuilder;
 import lombok.extern.java.Log;
@@ -56,6 +58,12 @@ public class GrpcClient implements AutoCloseable {
         createNewChannelIfShutdown();
 
         return stub.sendInvocationDataPublication(request);
+    }
+
+    public PublicationResponse sendCallStackDataPublication(CallStackDataPublication request) {
+        createNewChannelIfShutdown();
+
+        return stub.sendCallStackDataPublication(request);
     }
 
     @Override

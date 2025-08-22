@@ -114,6 +114,10 @@ class SnapshotService(
         return snapshotDao.findAllByCustomerId(customerId).map { SnapshotDto.from(it) }
     }
 
+    fun getSnapshot(snapshotId: Long): SnapshotEntity {
+        return snapshotDao.findById(snapshotId).orElseThrow()
+    }
+
     companion object {
         const val SNAPSHOT_LIMIT = 20
     }

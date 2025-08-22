@@ -15,4 +15,8 @@ public class SampleService1 {
         log.info("Doing something " + p1);
         sampleService2.doSomething(p1 * 2);
     }
+
+    public void throwsException() {
+        sampleService2.throwsException();
+    }
 }

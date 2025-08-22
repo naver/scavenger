@@ -3,6 +3,7 @@ package com.navercorp.scavenger.service
 import com.navercorp.scavenger.leader.EventListener
 import com.navercorp.scavenger.leader.LeadershipContext
 import com.navercorp.scavenger.repository.AgentStateDao
+import com.navercorp.scavenger.repository.CallStackDao
 import com.navercorp.scavenger.repository.CodeBaseFingerprintDao
 import com.navercorp.scavenger.repository.CustomerDao
 import com.navercorp.scavenger.repository.InvocationDao
@@ -25,6 +26,7 @@ class GarbageCollectService(
     val agentStateDao: AgentStateDao,
     val methodDao: MethodDao,
     val invocationDao: InvocationDao,
+    val callStackDao: CallStackDao,
     val intervalService: IntervalService,
     val leadershipService: LeadershipService,
     val operationService: OperationService,
@@ -169,6 +171,9 @@ class GarbageCollectService(
                     }
                     invocationDao.deleteAllInvocations(customerId, signatureHashes).also {
                         logger.info { "[$customerId] $signatureHashes garbage invocations are deleted" }
+                    }
+                    callStackDao.deleteAllCallStacks(customerId, signatureHashes).also {
+                        logger.info { "[$customerId] $signatureHashes garbage call stacks are deleted" }
                     }
                 }
             }

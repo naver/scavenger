@@ -1,5 +1,6 @@
 package com.navercorp.scavenger.service
 
+import com.navercorp.scavenger.model.CallStackImportable
 import com.navercorp.scavenger.model.CodeBaseImportable
 import com.navercorp.scavenger.model.InvocationImportable
 import com.navercorp.scavenger.model.Publication
@@ -13,7 +14,8 @@ import java.util.concurrent.CompletableFuture
 class PublicationImportService(
     val commonImportService: CommonImportService,
     val codeBaseImportService: CodeBaseImportService,
-    val invocationImportService: InvocationImportService
+    val invocationImportService: InvocationImportService,
+    val callStackImportService: CallStackImportService
 ) {
     val logger = KotlinLogging.logger {}
 
@@ -27,6 +29,7 @@ class PublicationImportService(
                 when (pub) {
                     is CodeBaseImportable -> codeBaseImportService.import(pub.getCodeBaseImportDto(commonImportResultDto))
                     is InvocationImportable -> invocationImportService.import(pub.getInvocationImportDto(commonImportResultDto))
+                    is CallStackImportable -> callStackImportService.import(pub.getCallStackImportDto(commonImportResultDto))
                 }
             } catch (t: Throwable) {
                 logger.error(t) { "[$customerId] error occurred while importing pub" }

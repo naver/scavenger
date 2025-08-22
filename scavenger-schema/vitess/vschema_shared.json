@@ -153,6 +153,18 @@
                     "name": "hash"
                 }
             ]
+        },
+        "call_stacks": {
+            "column_vindexes": [
+                {
+                    "column": "customerId",
+                    "name": "hash"
+                }
+            ],
+            "auto_increment": {
+                "column": "id",
+                "sequence": "call_stacks_sequence"
+            }
         }
     }
 }
