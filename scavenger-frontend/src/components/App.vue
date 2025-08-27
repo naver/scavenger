@@ -68,7 +68,12 @@ export default {
           this.$http.get(`/customers/_query?name=${this.$route.params.customerId}`)
             .then(res => this.customerId = res.data.id)
             .then(() => this.updateSnapshot())
-            .then(() => this.updateGithubMappings());
+            .then(() => this.updateGithubMappings())
+            .then(() => {
+              if (this.$route.params.snapshotId !== undefined) {
+                this.updateCallStacks();
+              }
+            });
 
           this.currentCustomer = this.$route.params.customerId;
         }
@@ -124,6 +129,12 @@ export default {
             return 0;
           });
           useStore().githubMappings = res.data;
+        });
+    },
+    updateCallStacks() {
+      this.$http.get(`/customers/${this.customerId}/snapshots/${this.$route.params.snapshotId}/callstacks`)
+        .then(res => {
+          useStore().callStacks = res.data;
         });
     },
     navigateCustomer(path) {

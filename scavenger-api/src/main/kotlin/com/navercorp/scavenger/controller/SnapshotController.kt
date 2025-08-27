@@ -134,13 +134,12 @@ class SnapshotController(
         )
     }
 
-    @GetMapping("/customers/{customerId}/snapshots/{snapshotId}/callers")
-    fun getCallerSignatures(
+    @GetMapping("/customers/{customerId}/snapshots/{snapshotId}/callstacks")
+    fun getCallStackMap(
         @PathVariable customerId: Long,
         @PathVariable snapshotId: Long,
-        @RequestParam signature: String
-    ): List<String> {
-        return callStackService.getCallerSignatures(customerId, snapshotId, signature)
+    ): Map<String, List<String>> {
+        return snapshotService.getCallStackMap(customerId, snapshotId)
     }
 
     data class CreateSnapshotRequestParams(
