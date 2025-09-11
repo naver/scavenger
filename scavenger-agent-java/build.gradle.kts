@@ -4,14 +4,14 @@ plugins {
     java
     `maven-publish`
     signing
-    id("com.gradleup.shadow") version "8.3.3"
-    id("io.freefair.lombok") version "8.6"
+    id("com.gradleup.shadow") version "8.3.9"
+    id("io.freefair.lombok") version "8.14.2"
     id("org.unbroken-dome.test-sets") version "4.1.0"
 }
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
+        languageVersion.set(JavaLanguageVersion.of(24))
     }
     withJavadocJar()
     withSourcesJar()
@@ -67,9 +67,9 @@ repositories {
 
 dependencies {
     implementation(project(":scavenger-model"))
-    implementation("net.bytebuddy:byte-buddy:1.14.3")
-    implementation("org.ow2.asm:asm:9.5")
-    implementation("org.ow2.asm:asm-tree:9.5")
+    implementation("net.bytebuddy:byte-buddy:1.17.7")
+    implementation("org.ow2.asm:asm:9.8")
+    implementation("org.ow2.asm:asm-tree:9.8")
     implementation("com.squareup.okhttp3:okhttp:3.14.9")
     implementation("com.google.protobuf:protobuf-java-util:${property("protobufVersion")}")
     implementation("io.grpc:grpc-stub:${property("grpcVersion")}")
@@ -119,7 +119,7 @@ tasks.named<Test>("integrationTest") {
 
     systemProperty("integrationTest.scavengerAgent", tasks.shadowJar.get().outputs.files.asPath)
     systemProperty("integrationTest.classpath", "build/classes/java/integrationTest:$integrationTestRuntimeClasspath")
-    systemProperty("integrationTest.javaPaths", javaPaths(8, 11, 17, 21))
+    systemProperty("integrationTest.javaPaths", javaPaths(8, 11, 17, 21, 24))
 }
 
 tasks.withType<ProcessResources> {

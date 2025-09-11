@@ -4,10 +4,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class BridgeService(myService: MyService) {
-    val aa: Any
-    init {
-        aa = myService
-    }
+    private val aa: Any = myService
 
     fun doSth(): Int {
         return (aa as MyService).test()

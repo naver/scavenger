@@ -5,7 +5,7 @@ plugins {
     java
     `maven-publish`
     signing
-    id("io.freefair.lombok") version "8.6"
+    id("io.freefair.lombok") version "8.14.2"
     id("com.github.johnrengelman.shadow") version "8.0.0"
     id("org.unbroken-dome.test-sets") version "4.1.0"
 }
