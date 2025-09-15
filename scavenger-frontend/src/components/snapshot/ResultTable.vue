@@ -22,7 +22,7 @@
               <a v-if="githubLink(scope.row)" :href="githubLink(scope.row)" class="function-box">
                 <font-awesome-icon icon="fa-brands fa-github"/>
               </a>
-              <a v-if="isMethod(scope.row)" @click="showCaller(scope.row.signature)" class="function-box">
+              <a v-if="isMethod(scope.row)" @click="showCallStackTree(scope.row.signature)" class="function-box">
                 <font-awesome-icon icon="fa-solid fa-link"/>
               </a>
             </span>
@@ -39,23 +39,23 @@
       </el-table-column>
     </el-table>
   </el-scrollbar>
-  <CallTraceDialog :dialogTableVisible="dialogTableVisible" :callee="callee" :callers="callers" @showCaller="showCaller"/>
+  <CallStackTreeDialog :dialogTableVisible="dialogTableVisible" :call-stack="callStack"/>
 </template>
 <script>
 import copy from "copy-to-clipboard";
 import {getFilePath, openLink, toPercentageStr} from "../util/util";
 import {ElNotification} from "element-plus";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
-import CallTraceDialog from "@/components/snapshot/CallTraceDialog.vue";
+import CallStackTreeDialog from "@/components/snapshot/CallStackTreeDialog.vue";
+import {useStore} from "../util/store";
 
 export default {
-  components: {CallTraceDialog, FontAwesomeIcon},
+  components: {CallStackTreeDialog, FontAwesomeIcon},
   props: ["rows", "updateSnapshotData", "githubLink", "customerId", "snapshot"],
   data() {
     return {
       dialogTableVisible: false,
-      callee: "",
-      callers: []
+      callStack: [],
     };
   },
   methods: {
@@ -92,17 +92,30 @@ export default {
     isMethod(row) {
       return row.type.value === "METHOD";
     },
-    showCaller(signature) {
-      this.callee = signature;
-      this.$http.get(`/customers/${this.customerId}/snapshots/${this.snapshot.id}/callers?signature=${signature}`)
-        .then(response => {
-          this.dialogTableVisible = true;
-          this.callers = response.data;
-        })
-        .catch(() => {
-          ElNotification.error({message: "fail show call stack"});
-        });
+    showCallStackTree(signature) {
+      this.callStack = [this.buildCallStackTree(signature, useStore().callStacks)];
+      this.dialogTableVisible = true;
     },
+    buildCallStackTree(targetCallee, callStackMap, visited = new Set()) {
+      if (visited.has(targetCallee)) {
+        return {
+          signature: targetCallee,
+          callers: []
+        };
+      }
+
+      visited.add(targetCallee);
+
+      const callerSignatures = callStackMap[targetCallee] || [];
+      const callers = callerSignatures.map(signature =>
+        this.buildCallStackTree(signature, callStackMap, visited)
+      );
+
+      return {
+        signature: targetCallee,
+        callers: callers
+      };
+    }
   },
 };
 </script>

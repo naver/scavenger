@@ -1,5 +1,6 @@
 package com.navercorp.scavenger.repository
 
+import com.navercorp.scavenger.entity.CallStackSignatureDbRow
 import com.navercorp.scavenger.repository.sql.CallStackSql
 import com.navercorp.spring.data.jdbc.plus.sql.provider.EntityJdbcProvider
 import org.springframework.stereotype.Repository
@@ -10,22 +11,20 @@ class CallStackDao(
 ) : ExtendedJdbcDaoSupport(entityJdbcProvider) {
     private val sql: CallStackSql = super.sqls(::CallStackSql)
 
-    fun findCallerSignatures(
+    fun findAllCallStacks(
         customerId: Long,
         applicationIds: List<Long>,
         environmentIds: List<Long>,
-        signature: String,
         invokedAtMillis: Long?,
-    ): List<String> {
+    ): List<CallStackSignatureDbRow> {
         return select(
-            sql.selectCallerSignatures(),
+            sql.selectAllCallStacks(),
             mapParameterSource()
                 .addValue("customerId", customerId)
                 .addValue("applicationIds", applicationIds)
                 .addValue("environmentIds", environmentIds)
-                .addValue("signature", signature)
                 .addValue("invokedAtMillis", invokedAtMillis),
-            String::class.java
+            CallStackSignatureDbRow::class.java
         )
     }
 }

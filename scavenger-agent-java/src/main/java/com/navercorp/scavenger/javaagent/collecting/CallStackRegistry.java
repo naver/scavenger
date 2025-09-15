@@ -23,12 +23,14 @@ public class CallStackRegistry {
     public CallStackDataPublication getPublication(Config config, String codeBaseFingerprint) {
         Set<CallStackDataPublication.CallStackDataEntry> dataEntries = new HashSet<>();
         callStacks.forEach((callee, callers) -> {
-            CallStackDataPublication.CallStackDataEntry callStackDataEntry = CallStackDataPublication.CallStackDataEntry.newBuilder()
+            if (!callers.isEmpty()) {
+                CallStackDataPublication.CallStackDataEntry callStackDataEntry = CallStackDataPublication.CallStackDataEntry.newBuilder()
                     .setCallee(callee)
                     .addAllCallers(callers)
                     .build();
-            dataEntries.add(callStackDataEntry);
-            callers.clear();
+                dataEntries.add(callStackDataEntry);
+                callers.clear();
+            }
         });
 
         removeEmptyCallStacks(dataEntries);

@@ -185,6 +185,7 @@ export default {
             .find(child => this.isStartsWithSignature(querySignature, child.signature)).signature;
         }
         await this.updateSnapshotData(signature);
+        await this.loadCallStacks();
       }
     },
     async updateSnapshotData(nextSignature) {
@@ -288,6 +289,10 @@ export default {
         obj.maxHeight = 0;
         return obj;
       });
+    },
+    async loadCallStacks() {
+      const response = await this.$http.get(`/customers/${this.customerId}/snapshots/${this.$route.params.snapshotId}/callstacks`);
+      useStore().callStacks = response.data;
     },
     getAbbreviatedLabel(label) {
       const firstSplit = label.split("(");

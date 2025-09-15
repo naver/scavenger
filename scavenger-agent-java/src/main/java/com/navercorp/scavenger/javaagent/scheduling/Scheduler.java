@@ -14,7 +14,6 @@ import io.grpc.StatusRuntimeException;
 import lombok.extern.java.Log;
 
 import com.navercorp.scavenger.javaagent.collecting.CodeBaseScanner;
-import com.navercorp.scavenger.javaagent.collecting.InvocationTracker;
 import com.navercorp.scavenger.javaagent.model.CodeBase;
 import com.navercorp.scavenger.javaagent.model.Config;
 import com.navercorp.scavenger.javaagent.publishing.Publisher;
@@ -113,7 +112,7 @@ public class Scheduler implements Runnable {
 
                 if (config.isCallStackTraceMode()) {
                     callStackDataPublisherState.scheduleNow();
-                    publishCallStackDateIfNeeded();
+                    publishCallStackDataIfNeeded();
                 }
             }
         }
@@ -132,7 +131,7 @@ public class Scheduler implements Runnable {
                 publishCodeBaseIfNeeded();
                 publishInvocationDataIfNeeded();
                 if (config.isCallStackTraceMode()) {
-                    publishCallStackDateIfNeeded();
+                    publishCallStackDataIfNeeded();
                 }
             } catch (Throwable t) {
                 log.severe("[scavenger] scheduler failure: " + t);
@@ -246,7 +245,7 @@ public class Scheduler implements Runnable {
         }
     }
 
-    public void publishCallStackDateIfNeeded() {
+    public void publishCallStackDataIfNeeded() {
         if (callStackDataPublisherState.isDueTime() && dynamicConfig != null && isCodeBasePublished) {
             try {
                 if (callStackDataPublication == null) {

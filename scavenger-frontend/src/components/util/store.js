@@ -12,6 +12,7 @@ export const useStore = defineStore('store', {
           children: []
         }
       },
+      callStacks: {},
       githubMappings: [],
       applications: null,
       environments: null,
