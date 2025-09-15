@@ -34,6 +34,9 @@
         "github_mappings_sequence": {
             "type": "sequence"
         },
-        "leadership": {}
+        "leadership": {},
+        "call_stacks_sequence": {
+            "type": "sequence"
+        }
     }
 }
