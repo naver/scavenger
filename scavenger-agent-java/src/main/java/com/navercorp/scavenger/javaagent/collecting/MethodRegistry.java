@@ -50,6 +50,7 @@ public class MethodRegistry {
                 isParenthesisFound = true;
             }
         }
-        return byteBuddySignature.substring(begin, end);
+        int throwsIndex = byteBuddySignature.indexOf(" throws ", begin);
+        return byteBuddySignature.substring(begin, throwsIndex >= 0 ? throwsIndex : end);
     }
 }

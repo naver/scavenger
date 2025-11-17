@@ -47,4 +47,10 @@ public class MethodRegistryTest {
                 .isEqualTo("sample.app.NotServiceClass.doNothing()");
     }
 
+    @Test
+    void extractSignatureWithThrows() {
+        assertThat(
+            MethodRegistry.extractSignature("public static void sample.app.NotServiceClass.doNothing() throws RuntimeException"))
+            .isEqualTo("sample.app.NotServiceClass.doNothing()");
+    }
 }
