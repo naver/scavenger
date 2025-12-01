@@ -14,7 +14,7 @@ import com.google.common.annotations.VisibleForTesting;
 import lombok.Value;
 
 import com.navercorp.scavenger.model.CodeBasePublication;
-import com.navercorp.scavenger.util.HashGenerator;
+import com.navercorp.scavenger.util.HashGenerator.DefaultHash;
 
 @Value
 public class Method {
@@ -111,7 +111,7 @@ public class Method {
             .setModifiers(defaultIfNull(this.modifiers, ""))
             .setPackageName(defaultIfNull(packageName, ""))
             .setParameterTypes(defaultIfNull(this.parameterTypes, ""))
-            .setSignatureHash(HashGenerator.Md5.from(signature))
+            .setSignatureHash(DefaultHash.from(signature))
             .build();
     }
 

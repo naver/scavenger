@@ -3,7 +3,7 @@ package com.navercorp.scavenger.model
 import com.navercorp.scavenger.dto.CallStackImportDto
 import com.navercorp.scavenger.dto.CommonImportResultDto
 import com.navercorp.scavenger.model.CodeBasePublication.CodeBaseEntry
-import com.navercorp.scavenger.util.HashGenerator.Md5
+import com.navercorp.scavenger.util.HashGenerator.DefaultHash
 import com.navercorp.scavenger.util.SamplePublications
 import io.codekvast.javaagent.model.v4.CodeBaseEntry4
 import io.codekvast.javaagent.model.v4.CodeBasePublication4
@@ -73,14 +73,14 @@ class PublicationTest {
                     ).getCodeBaseImportDto(commonImportResultDto).entries
                 ).hasSize(2)
                     .extracting("signatureHash")
-                    .isEqualTo(listOf(Md5.from(targetSignature), Md5.from(CodeBaseEntry4.sampleCodeBaseEntry().signature)).sorted())
+                    .isEqualTo(listOf(DefaultHash.from(targetSignature), DefaultHash.from(CodeBaseEntry4.sampleCodeBaseEntry().signature)).sorted())
             }
         }
 
         @Nested
         @DisplayName("if invocation data contains SpringCGLIB generated method")
         inner class Invocation {
-            private val cglibHash = Md5.from(cglibSignature)
+            private val cglibHash = DefaultHash.from(cglibSignature)
 
             @Test
             @DisplayName("it ignores it")
@@ -118,7 +118,7 @@ class PublicationTest {
                             )
                             .build()
                     ).getInvocationImportDto(commonImportResultDto).invocations
-                ).isEqualTo(listOf(Md5.from(targetSignature), Md5.from("signature()")).sorted())
+                ).isEqualTo(listOf(DefaultHash.from(targetSignature), DefaultHash.from("signature()")).sorted())
             }
         }
     }
@@ -130,10 +130,10 @@ class PublicationTest {
 
         private val codeBaseEntries = listOf(
             CodeBaseEntry.newBuilder()
-                .setSignatureHash((Md5.from("TestClass.method()")))
+                .setSignatureHash(DefaultHash.from("TestClass.method()"))
                 .build(),
             CodeBaseEntry.newBuilder()
-                .setSignatureHash((Md5.from("signature()")))
+                .setSignatureHash(DefaultHash.from("signature()"))
                 .build()
         )
 
@@ -150,7 +150,7 @@ class PublicationTest {
                     .getCodeBaseImportDto(commonImportResultDto).entries
             )
                 .extracting("signatureHash")
-                .isEqualTo(listOf(Md5.from("TestClass.method()"), Md5.from("signature()")).sorted())
+                .isEqualTo(listOf(DefaultHash.from("TestClass.method()"), DefaultHash.from("signature()")).sorted())
         }
 
         @Test
@@ -162,17 +162,17 @@ class PublicationTest {
                         .setCommonData(SamplePublications.commonPublicationData)
                         .addEntry(
                             InvocationDataPublication.InvocationDataEntry.newBuilder()
-                                .setHash(Md5.from("signature()"))
+                                .setHash(DefaultHash.from("signature()"))
                         )
                         .addEntry(
                             InvocationDataPublication.InvocationDataEntry.newBuilder()
-                                .setHash(Md5.from("TestClass.method()"))
+                                .setHash(DefaultHash.from("TestClass.method()"))
                         )
                         .setRecordingIntervalStartedAtMillis(0)
                         .build()
                 ).getInvocationImportDto(commonImportResultDto).invocations
             )
-                .isEqualTo(listOf(Md5.from("TestClass.method()"), Md5.from("signature()")).sorted())
+                .isEqualTo(listOf(DefaultHash.from("TestClass.method()"), DefaultHash.from("signature()")).sorted())
         }
 
         @Test
