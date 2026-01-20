@@ -3,24 +3,24 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
-    val kotlinVersion = "1.9.24"
-    val springBootVersion = "3.2.4"
-    val springDependencyManagementVersion = "1.1.4"
+    val kotlinVersion = "2.3.0"
+    val springBootVersion = "3.5.9"
+    val springDependencyManagementVersion = "1.1.7"
 
     kotlin("jvm") version kotlinVersion
     id("org.gradle.idea")
     id("io.spring.dependency-management") version springDependencyManagementVersion
-    id("org.jlleitschuh.gradle.ktlint") version "11.0.0"
+    id("org.jlleitschuh.gradle.ktlint") version "14.0.1"
     id("org.jetbrains.kotlin.plugin.spring") version kotlinVersion
     id("org.springframework.boot") version springBootVersion
-    id("com.adarshr.test-logger") version "3.0.0"
+    id("com.adarshr.test-logger") version "4.0.0"
 }
 
 repositories {
     mavenCentral()
 }
 
-extra["tomcat.version"] = "10.1.45"
+extra["tomcat.version"] = "10.1.50"
 
 dependencies {
     implementation(project(":scavenger-entity"))
@@ -40,12 +40,12 @@ dependencies {
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
     implementation("com.mysql:mysql-connector-j")
     implementation("org.apache.commons:commons-lang3")
-    implementation("com.h2database:h2:2.1.210")
+    implementation("com.h2database:h2:2.3.232")
     implementation("org.liquibase:liquibase-core")
-    implementation("io.github.oshai:kotlin-logging-jvm:5.1.0")
-    implementation("net.ttddyy:datasource-proxy:1.7")
-    implementation("com.github.vertical-blank:sql-formatter:2.0.4")
-    implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.9.0")
+    implementation("io.github.oshai:kotlin-logging-jvm:7.0.3")
+    implementation("net.ttddyy:datasource-proxy:1.11.0")
+    implementation("com.github.vertical-blank:sql-formatter:2.0.5")
+    implementation("com.github.doyaaaaaken:kotlin-csv-jvm:1.10.0")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
@@ -56,12 +56,12 @@ configure<DependencyManagementExtension> {
 }
 
 kotlin {
-    jvmToolchain(21)
+    jvmToolchain(25)
 }
 
 tasks.withType<KotlinCompile> {
-    kotlinOptions {
-        freeCompilerArgs = listOf("-Xjsr305=strict")
+    compilerOptions {
+        freeCompilerArgs.addAll(listOf("-Xjsr305=strict"))
         javaParameters = true
     }
 }
