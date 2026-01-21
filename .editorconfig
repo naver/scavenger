@@ -274,10 +274,9 @@ ij_java_wrap_comments = false
 ij_java_wrap_first_method_in_call_chain = false
 ij_java_wrap_long_lines = false
 
-[*.{kt,kts}]
-ktlint_standard_import-ordering = disabled
-ktlint_standard_indent = disabled
-ktlint_standard_string-template-indent = disabled
+[*.{kt, kts}]
+# noinspection EditorConfigKeyCorrectness
+disabled_rules = import-ordering, indent
 ij_continuation_indent_size = 4
 ij_kotlin_align_in_columns_case_branch = false
 ij_kotlin_align_multiline_binary_operation = false

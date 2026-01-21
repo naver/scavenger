@@ -73,7 +73,6 @@ dependencies {
     implementation("org.ow2.asm:asm-tree:9.9")
     implementation("com.squareup.okhttp3:okhttp:3.14.9")
     implementation("com.google.protobuf:protobuf-java-util:${property("protobufVersion")}")
-    implementation("io.grpc:grpc-stub:${property("grpcVersion")}")
     implementation("io.grpc:grpc-okhttp:${property("grpcVersion")}")
 
     testImplementation(platform("org.junit:junit-bom:5.12.2"))
