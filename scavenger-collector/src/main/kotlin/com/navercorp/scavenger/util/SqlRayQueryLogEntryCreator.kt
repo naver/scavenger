@@ -26,7 +26,8 @@ class SqlRayQueryLogEntryCreator : QueryLogEntryCreator {
         execInfo: ExecutionInfo,
         queryInfoList: List<QueryInfo>,
         writeDataSourceName: Boolean,
-        writeConnectionId: Boolean
+        writeConnectionId: Boolean,
+        writeIsolationLevel: Boolean
     ): String {
         val result = StringBuilder()
         for (queryInfo in queryInfoList) {
