@@ -33,13 +33,13 @@ interface DelegatableJdbcRepository<T : Any, ID : Any> : JdbcRepository<T, ID> {
 
     override fun <S : T> insert(entity: S): S
 
-    override fun <S : T> insertAll(entities: MutableIterable<S>?): MutableIterable<S>
+    override fun <S : T> insertAll(entities: MutableIterable<S>?): MutableList<S>
 
     override fun <S : T> save(entity: S): S
 
-    override fun <S : T> saveAll(entities: MutableIterable<S>): MutableIterable<S>
+    override fun <S : T> saveAll(entities: MutableIterable<S>): MutableList<S>
 
     override fun <S : T> update(entity: S): S
 
-    override fun <S : T> updateAll(entities: MutableIterable<S>?): MutableIterable<S>
+    override fun <S : T> updateAll(entities: MutableIterable<S>?): MutableList<S>
 }
