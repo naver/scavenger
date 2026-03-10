@@ -12,6 +12,9 @@ interface JvmRepository : DelegatableJdbcRepository<JvmEntity, String> {
     fun countByCustomerIdAndApplicationId(customerId: Long, applicationId: Long): Long
     fun countByCustomerIdAndEnvironmentId(customerId: Long, environmentId: Long): Long
 
+    @Query("SELECT MAX(j.publishedAt) FROM jvms j WHERE j.customerId = :customerId")
+    fun findLatestPublishedAt(@Param("customerId") customerId: Long): java.time.Instant?
+
     @Modifying
     @Query("DELETE FROM jvms WHERE customerId = :customerId AND applicationId = :applicationId")
     fun deleteByCustomerIdAndApplicationId(customerId: Long, applicationId: Long): Long

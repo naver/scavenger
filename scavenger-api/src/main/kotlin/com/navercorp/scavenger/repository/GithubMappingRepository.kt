@@ -18,4 +18,7 @@ interface GithubMappingRepository : DelegatableJdbcRepository<GithubMappingEntit
     @Modifying
     @Query("DELETE FROM github_mappings WHERE customerId = :customerId")
     fun deleteByCustomerId(@Param("customerId") customerId: Long): Long
+
+    @Query("SELECT gm.* FROM github_mappings gm WHERE gm.url IN (:urls)")
+    fun findAllByUrlIn(@Param("urls") urls: List<String>): List<GithubMappingEntity>
 }

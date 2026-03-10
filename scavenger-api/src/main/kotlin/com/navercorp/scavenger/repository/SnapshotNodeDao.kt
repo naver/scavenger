@@ -7,6 +7,13 @@ import com.navercorp.spring.data.jdbc.plus.sql.provider.EntityJdbcProvider
 import com.navercorp.spring.data.jdbc.plus.sql.support.JdbcDaoSupport
 import org.springframework.stereotype.Repository
 
+data class SnapshotMethodUsageSummary(
+    val snapshotId: Long,
+    val usedMethodCount: Long,
+    val unusedMethodCount: Long,
+    val totalMethodCount: Long
+)
+
 @Repository
 class SnapshotNodeDao(
     entityJdbcProvider: EntityJdbcProvider,
@@ -31,6 +38,53 @@ class SnapshotNodeDao(
         jdbcOperations.batchUpdate(
             sql.insert(),
             entities.map { beanParameterSource(it) }.toTypedArray()
+        )
+    }
+
+    fun findAllUnusedMethodNodes(
+        customerId: Long,
+        snapshotId: Long,
+        signaturePrefix: String? = null,
+        limit: Int = 100
+    ): List<SnapshotNodeEntity> {
+        return select(
+            sql.selectAllUnusedMethodNodes(signaturePrefix),
+            mapParameterSource()
+                .addValue("customerId", customerId)
+                .addValue("snapshotId", snapshotId)
+                .addValue("signaturePrefix", signaturePrefix)
+                .addValue("limit", limit),
+            SnapshotNodeEntity::class.java
+        )
+    }
+
+    fun countMethodUsageSummary(
+        customerId: Long,
+        snapshotIds: List<Long>
+    ): List<SnapshotMethodUsageSummary> {
+        return select(
+            sql.countMethodUsageSummary(),
+            mapParameterSource()
+                .addValue("customerId", customerId)
+                .addValue("snapshotIds", snapshotIds),
+            SnapshotMethodUsageSummary::class.java
+        )
+    }
+
+    fun findMethodsNotInvokedSince(
+        customerId: Long,
+        snapshotId: Long,
+        sinceMillis: Long,
+        limit: Int = 100
+    ): List<SnapshotNodeEntity> {
+        return select(
+            sql.selectMethodsNotInvokedSince(),
+            mapParameterSource()
+                .addValue("customerId", customerId)
+                .addValue("snapshotId", snapshotId)
+                .addValue("sinceMillis", sinceMillis)
+                .addValue("limit", limit),
+            SnapshotNodeEntity::class.java
         )
     }
 

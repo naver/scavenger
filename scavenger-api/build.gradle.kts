@@ -18,11 +18,14 @@ plugins {
 
 repositories {
     mavenCentral()
+    maven { url = uri("https://repo.spring.io/milestone") }
 }
 
 extra["tomcat.version"] = "10.1.50"
 
 dependencies {
+    implementation(platform("org.springframework.ai:spring-ai-bom:1.1.2"))
+    implementation("org.springframework.ai:spring-ai-starter-mcp-server-webmvc")
     implementation(project(":scavenger-entity"))
     implementation(project(":scavenger-schema"))
     implementation(kotlin("stdlib-jdk8"))

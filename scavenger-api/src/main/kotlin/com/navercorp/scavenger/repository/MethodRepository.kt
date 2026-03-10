@@ -12,6 +12,19 @@ interface MethodRepository : DelegatableJdbcRepository<MethodEntity, String> {
     @Query("SELECT count(DISTINCT signatureHash) FROM methods WHERE customerId = :customerId AND garbage = FALSE")
     fun countMethodSignatureHashByCustomerId(@Param("customerId") customerId: Long): Int
 
+    @Query(
+        """
+        SELECT * FROM methods
+        WHERE customerId = :customerId
+          AND garbage = FALSE
+          AND signature IN (:signatures)
+        """
+    )
+    fun findAllByCustomerIdAndSignatureIn(
+        @Param("customerId") customerId: Long,
+        @Param("signatures") signatures: List<String>
+    ): List<MethodEntity>
+
     @Modifying
     @Query("DELETE FROM methods WHERE customerId = :customerId")
     fun deleteByCustomerId(@Param("customerId") customerId: Long): Long

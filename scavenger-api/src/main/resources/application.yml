@@ -8,8 +8,19 @@ server:
 
 scavenger:
   collector-server-url: ${COLLECTOR_URL}
+  mcp:
+    default-group-id: ${SCAVENGER_MCP_GROUP_ID:default-group}
 
 spring:
+  ai:
+    mcp:
+      server:
+        name: scavenger-mcp
+        version: 1.0.0
+        type: SYNC
+        protocol: STREAMABLE
+        streamable-http:
+          mcp-endpoint: /mcp
   profiles:
     active: local
   main:

@@ -52,6 +52,70 @@ class SnapshotNodeSql : SqlGeneratorSupport() {
             )
         """.trimIndent()
 
+    fun selectAllUnusedMethodNodes(signaturePrefix: String?): String =
+        """
+        SELECT
+            id,
+            type,
+            parent,
+            usedCount,
+            signature,
+            snapshotId,
+            customerId,
+            unusedCount,
+            lastInvokedAtMillis
+        FROM
+            snapshot_nodes
+        WHERE
+            customerId = :customerId
+            AND snapshotId = :snapshotId
+            AND type = 'METHOD'
+            AND usedCount = 0
+            ${if (signaturePrefix != null) "AND signature LIKE concat(:signaturePrefix, '%')" else ""}
+        ORDER BY signature
+        LIMIT :limit
+        """.trimIndent()
+
+    fun countMethodUsageSummary(): String =
+        """
+        SELECT
+            snapshotId,
+            SUM(CASE WHEN usedCount > 0 THEN 1 ELSE 0 END) AS usedMethodCount,
+            SUM(CASE WHEN usedCount = 0 THEN 1 ELSE 0 END) AS unusedMethodCount,
+            COUNT(*) AS totalMethodCount
+        FROM
+            snapshot_nodes
+        WHERE
+            customerId = :customerId
+            AND snapshotId IN (:snapshotIds)
+            AND type = 'METHOD'
+        GROUP BY snapshotId
+        """.trimIndent()
+
+    fun selectMethodsNotInvokedSince(): String =
+        """
+        SELECT
+            id,
+            type,
+            parent,
+            usedCount,
+            signature,
+            snapshotId,
+            customerId,
+            unusedCount,
+            lastInvokedAtMillis
+        FROM
+            snapshot_nodes
+        WHERE
+            customerId = :customerId
+            AND snapshotId = :snapshotId
+            AND type = 'METHOD'
+            AND lastInvokedAtMillis IS NOT NULL
+            AND lastInvokedAtMillis < :sinceMillis
+        ORDER BY lastInvokedAtMillis DESC
+        LIMIT :limit
+        """.trimIndent()
+
     fun selectAllBySignatureContaining(id: Long?): String =
         """
         SELECT
