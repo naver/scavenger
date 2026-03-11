@@ -31,8 +31,8 @@ class ScavengerMcpServiceTest {
     private lateinit var snapshotNodeDao: SnapshotNodeDao
 
     val customerName = "demo"
-    val snapshotIdAllDead: Long = 1  // 5 METHOD nodes, all usedCount=0
-    val snapshotIdMixed: Long = 2    // hello(used), getMyService(used), additional/get/doSth(unused)
+    val snapshotIdAllDead: Long = 1 // 5 METHOD nodes, all usedCount=0
+    val snapshotIdMixed: Long = 2 // hello(used), getMyService(used), additional/get/doSth(unused)
 
     @Test
     fun listCustomers() {
