@@ -23,4 +23,17 @@ class GithubMappingRepositoryTest {
 
         assertThat(sut.findAllByCustomerId(1)).hasSize(0)
     }
+
+    @Test
+    fun `findAllByUrlIn returns mapping for known URL`() {
+        val url = "https://github_url/tree/develop/scavenger-demo/src/main/kotlin/com/example/demo"
+        val result = sut.findAllByUrlIn(listOf(url))
+        assertThat(result).hasSize(1)
+        assertThat(result.first().url).isEqualTo(url)
+    }
+
+    @Test
+    fun `findAllByUrlIn returns empty for unknown URL`() {
+        assertThat(sut.findAllByUrlIn(listOf("https://unknown-url/repo"))).isEmpty()
+    }
 }

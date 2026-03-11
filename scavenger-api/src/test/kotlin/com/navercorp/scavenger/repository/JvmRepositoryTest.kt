@@ -34,4 +34,14 @@ class JvmRepositoryTest {
         sut.deleteByCustomerIdAndEnvironmentId(1, 1)
         assertThat(sut.countByCustomerIdAndEnvironmentId(1, 1)).isEqualTo(0)
     }
+
+    @Test
+    fun `findLatestPublishedAt returns instant for existing customer`() {
+        assertThat(sut.findLatestPublishedAt(1L)).isNotNull
+    }
+
+    @Test
+    fun `findLatestPublishedAt returns null for nonexistent customer`() {
+        assertThat(sut.findLatestPublishedAt(9999L)).isNull()
+    }
 }
