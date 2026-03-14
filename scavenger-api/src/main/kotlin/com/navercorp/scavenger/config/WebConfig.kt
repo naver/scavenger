@@ -1,22 +1,31 @@
 package com.navercorp.scavenger.config
 
+import com.navercorp.scavenger.mcp.ScavengerMcpProperties
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.MDC
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.Ordered
 import org.springframework.http.HttpHeaders
 import org.springframework.web.servlet.HandlerInterceptor
+import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.EnableWebMvc
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
-import jakarta.servlet.http.HttpServletRequest
-import jakarta.servlet.http.HttpServletResponse
 
 @EnableWebMvc
 @Configuration
-class WebConfig : WebMvcConfigurer {
+class WebConfig(
+    private val mcpProperties: ScavengerMcpProperties
+) : WebMvcConfigurer {
     override fun addInterceptors(registry: InterceptorRegistry) {
         registry.addInterceptor(MdcLoggingInterceptor())
+    }
+
+    override fun addCorsMappings(registry: CorsRegistry) {
+        registerMcpCors(registry.addMapping("/mcp"))
+        registerMcpCors(registry.addMapping("/mcp/**"))
     }
 
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
@@ -73,5 +82,13 @@ class WebConfig : WebMvcConfigurer {
             REQUEST_URI("requestUri"),
             REQUEST_PARAMS("requestParams")
         }
+    }
+
+    private fun registerMcpCors(registration: org.springframework.web.servlet.config.annotation.CorsRegistration) {
+        registration
+            .allowedOriginPatterns(*mcpProperties.allowedOrigins.toTypedArray())
+            .allowedMethods("GET", "POST", "DELETE", "OPTIONS")
+            .allowedHeaders("Content-Type", "Accept", "Mcp-Session-Id")
+            .exposedHeaders("Mcp-Session-Id")
     }
 }

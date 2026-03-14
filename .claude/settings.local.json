@@ -1,0 +1,28 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git checkout:*)",
+      "Bash(git am:*)",
+      "Bash(rm /Users/suhyeon/workspace/scavenger/scavenger-api/build.gradle.kts.rej && git add -A && git status)",
+      "Bash(git restore:*)",
+      "Bash(git -C /Users/suhyeon/workspace/scavenger status)",
+      "Bash(git -C /Users/suhyeon/workspace/scavenger add doc/mcp-guide.md && git -C /Users/suhyeon/workspace/scavenger commit -m \"$\\(cat <<'EOF'\ndocs: add MCP guide document\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git -C /Users/suhyeon/workspace/scavenger remote add fork https://github.com/tngusdl3719/scavenger.git && git -C /Users/suhyeon/workspace/scavenger push fork feature/mcp)",
+      "Bash(gh pr:*)",
+      "Bash(find /Users/suhyeon/workspace/scavenger -name \"*McpController*\" -o -name \"*McpApi*\" 2>/dev/null | head -5)",
+      "Bash(find /Users/suhyeon/workspace/scavenger -name \"*.gradle*\" -type f | head -1 | xargs cat | grep -A 20 \"testImplementation\")",
+      "Bash(find /Users/suhyeon/workspace/scavenger -path \"*liquibase*\" -o -path \"*changelog*\" -o -path \"*db/*\" | grep -E \"\\\\.\\(sql|xml|yaml|yml\\)$\" | head -20)",
+      "Bash(./gradlew test:*)",
+      "Bash(grep -rE \"failures=\\\\\"[^0]|errors=\\\\\"[^0]\" /Users/suhyeon/workspace/scavenger/scavenger-api/build/test-results/test/*.xml | grep -v 'failures=\"0\"' | head -10)",
+      "Bash(grep 'failures=\\\\|errors=' /Users/suhyeon/workspace/scavenger/scavenger-api/build/test-results/test/*.xml | grep -v '\"0\"' | head -10)",
+      "Bash(./gradlew jacocoTestReport -p scavenger-api 2>&1 | tail -5)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(./gradlew ktlintTestSourceSetCheck -p scavenger-api 2>&1 | grep -A 3 \"violation\\\\|Error\\\\|\\\\.kt:\")",
+      "Bash(./gradlew ktlintFormat -p scavenger-api 2>&1 | tail -10)",
+      "Bash(./gradlew ktlintTestSourceSetCheck -p scavenger-api 2>&1 | tail -5)",
+      "Bash(git -C /Users/suhyeon/workspace/scavenger add scavenger-api/src/test/kotlin/com/navercorp/scavenger/mcp/ScavengerMcpServiceTest.kt && git -C /Users/suhyeon/workspace/scavenger commit -m \"style: fix ktlint violations in ScavengerMcpServiceTest\" && git -C /Users/suhyeon/workspace/scavenger push fork feature/mcp)"
+    ]
+  }
+}

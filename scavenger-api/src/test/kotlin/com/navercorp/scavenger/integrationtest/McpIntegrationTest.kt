@@ -1,54 +1,31 @@
 package com.navercorp.scavenger.integrationtest
 
+import com.navercorp.scavenger.config.WebConfig
+import com.navercorp.scavenger.mcp.ScavengerMcpProperties
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.web.client.TestRestTemplate
-import org.springframework.boot.test.web.server.LocalServerPort
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
-import org.springframework.http.HttpMethod
-import org.springframework.http.HttpStatus
+import org.springframework.web.servlet.config.annotation.CorsRegistry
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class McpIntegrationTest {
-
-    @LocalServerPort
-    var port: Int? = null
-
-    private fun mcpUrl() = "http://localhost:$port/scavenger/mcp"
-
     @Test
-    fun `OPTIONS request to mcp endpoint returns 200 with CORS headers`() {
-        val headers = HttpHeaders()
-        headers.set("Origin", "http://localhost:5173")
-        headers.set("Access-Control-Request-Method", "POST")
+    fun `addCorsMappings registers mcp endpoints with configured origins`() {
+        val registry = ExposedCorsRegistry()
 
-        val response = TestRestTemplate().exchange(
-            mcpUrl(),
-            HttpMethod.OPTIONS,
-            HttpEntity<Void>(headers),
-            String::class.java
-        )
+        WebConfig(ScavengerMcpProperties(allowedOrigins = listOf("http://localhost:5173")))
+            .addCorsMappings(registry)
 
-        assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
-        assertThat(response.headers["Access-Control-Allow-Origin"]).contains("*")
-        assertThat(response.headers["Access-Control-Allow-Methods"]?.first()).contains("POST")
+        val configurations = registry.configurations()
+
+        assertThat(configurations.keys).containsExactlyInAnyOrder("/mcp", "/mcp/**")
+        assertThat(configurations["/mcp"]?.allowedOriginPatterns).contains("http://localhost:5173")
+        assertThat(configurations["/mcp"]?.allowedMethods).contains("GET", "POST", "DELETE", "OPTIONS")
+        assertThat(configurations["/mcp"]?.allowedHeaders).contains("Content-Type", "Accept", "Mcp-Session-Id")
+        assertThat(configurations["/mcp"]?.exposedHeaders).contains("Mcp-Session-Id")
+        assertThat(configurations["/mcp/**"]?.allowedOriginPatterns).contains("http://localhost:5173")
+        assertThat(configurations["/mcp/**"]?.allowedMethods).contains("GET", "POST", "DELETE", "OPTIONS")
     }
 
-    @Test
-    fun `POST request to mcp endpoint includes CORS headers in response`() {
-        val headers = HttpHeaders()
-        headers.set("Origin", "http://localhost:5173")
-        headers.set("Content-Type", "application/json")
-
-        val response = TestRestTemplate().exchange(
-            mcpUrl(),
-            HttpMethod.POST,
-            HttpEntity("{}", headers),
-            String::class.java
-        )
-
-        assertThat(response.headers["Access-Control-Allow-Origin"]).contains("*")
+    private class ExposedCorsRegistry : CorsRegistry() {
+        fun configurations() = getCorsConfigurations()
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.data.jdbc.repository.query.Modifying
 import org.springframework.data.jdbc.repository.query.Query
 import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
+import java.time.Instant
 
 @Repository
 interface JvmRepository : DelegatableJdbcRepository<JvmEntity, String> {
@@ -13,7 +14,7 @@ interface JvmRepository : DelegatableJdbcRepository<JvmEntity, String> {
     fun countByCustomerIdAndEnvironmentId(customerId: Long, environmentId: Long): Long
 
     @Query("SELECT MAX(j.publishedAt) FROM jvms j WHERE j.customerId = :customerId")
-    fun findLatestPublishedAt(@Param("customerId") customerId: Long): java.time.Instant?
+    fun findLatestPublishedAt(@Param("customerId") customerId: Long): Instant?
 
     @Modifying
     @Query("DELETE FROM jvms WHERE customerId = :customerId AND applicationId = :applicationId")

@@ -10,6 +10,7 @@ scavenger:
   collector-server-url: ${COLLECTOR_URL}
   mcp:
     default-group-id: ${SCAVENGER_MCP_GROUP_ID:default-group}
+    allowed-origins: ${SCAVENGER_MCP_ALLOWED_ORIGINS:*}
 
 spring:
   ai:

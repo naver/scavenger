@@ -1,18 +1,12 @@
 package com.navercorp.scavenger.repository
 
+import com.navercorp.scavenger.dto.SnapshotMethodUsageSummaryDto
 import com.navercorp.scavenger.entity.SnapshotExportDbRow
 import com.navercorp.scavenger.entity.SnapshotNodeEntity
 import com.navercorp.scavenger.repository.sql.SnapshotNodeSql
 import com.navercorp.spring.data.jdbc.plus.sql.provider.EntityJdbcProvider
 import com.navercorp.spring.data.jdbc.plus.sql.support.JdbcDaoSupport
 import org.springframework.stereotype.Repository
-
-data class SnapshotMethodUsageSummary(
-    val snapshotId: Long,
-    val usedMethodCount: Long,
-    val unusedMethodCount: Long,
-    val totalMethodCount: Long
-)
 
 @Repository
 class SnapshotNodeDao(
@@ -61,13 +55,13 @@ class SnapshotNodeDao(
     fun countMethodUsageSummary(
         customerId: Long,
         snapshotIds: List<Long>
-    ): List<SnapshotMethodUsageSummary> {
+    ): List<SnapshotMethodUsageSummaryDto> {
         return select(
             sql.countMethodUsageSummary(),
             mapParameterSource()
                 .addValue("customerId", customerId)
                 .addValue("snapshotIds", snapshotIds),
-            SnapshotMethodUsageSummary::class.java
+            SnapshotMethodUsageSummaryDto::class.java
         )
     }
 

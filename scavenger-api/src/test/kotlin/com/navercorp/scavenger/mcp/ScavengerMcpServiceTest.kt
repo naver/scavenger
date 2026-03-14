@@ -30,196 +30,224 @@ class ScavengerMcpServiceTest {
     @Autowired
     private lateinit var snapshotNodeDao: SnapshotNodeDao
 
-    val customerName = "demo"
-    val snapshotIdAllDead: Long = 1 // 5 METHOD nodes, all usedCount=0
-    val snapshotIdMixed: Long = 2 // hello(used), getMyService(used), additional/get/doSth(unused)
+    private val customerName = "demo"
+    private val snapshotIdAllDead = 1L
+    private val snapshotIdMixed = 2L
 
     @Test
     fun listCustomers() {
         val result = sut.listCustomers()
+
         assertThat(result).isNotEmpty
-        assertThat(result.map { it["name"] }).contains(customerName)
+        assertThat(result.map { it.name }).contains(customerName)
     }
 
     @Test
     fun listApplications() {
         val result = sut.listApplications(customerName)
+
         assertThat(result).isNotEmpty
-        assertThat(result.first()).containsKeys("id", "name", "jvmCount", "invocationCount", "createdAt")
+        assertThat(result.first().name).isNotBlank()
+        assertThat(result.first().jvmCount).isNotNegative
+        assertThat(result.first().snapshotCount).isNotNegative
     }
 
     @Test
     fun listEnvironments() {
         val result = sut.listEnvironments(customerName)
+
         assertThat(result).isNotEmpty
-        assertThat(result.first()).containsKeys("id", "name")
+        assertThat(result.first().name).isNotBlank()
+        assertThat(result.first().snapshotCount).isNotNegative
     }
 
     @Test
     fun listSnapshots() {
         val result = sut.listSnapshots(customerName)
+
         assertThat(result).hasSizeGreaterThanOrEqualTo(2)
-        assertThat(result.first()).containsKeys("id", "name", "createdAt", "filterInvokedAtMillis")
+        assertThat(result.first().name).isNotBlank()
+        assertThat(result.first().applications).isNotNull()
     }
 
     @Test
     fun `getSnapshotTree returns root packages when parent is empty`() {
         val result = sut.getSnapshotTree(customerName, snapshotIdAllDead, "")
+
         assertThat(result).isNotEmpty
-        assertThat(result.map { it["type"] }).contains("PACKAGE")
+        assertThat(result.map { it.type }).contains("PACKAGE")
     }
 
     @Test
     fun `getSnapshotTree returns children for given parent`() {
         val result = sut.getSnapshotTree(customerName, snapshotIdAllDead, "com.example.demo")
+
         assertThat(result).isNotEmpty
-        assertThat(result.map { it["parent"] }).allMatch { it == "com.example.demo" }
+        assertThat(result).allMatch { it.parent == "com.example.demo" }
     }
 
     @Test
     fun searchMethods() {
         val result = sut.searchMethods(customerName, snapshotIdAllDead, "MyController")
+
         assertThat(result).isNotEmpty
-        assertThat(result.map { it["signature"] as String }).allMatch { it.contains("MyController") }
+        assertThat(result).allMatch { it.signature.contains("MyController") }
     }
 
     @Test
     fun `isMethodUsed returns used status for each matched method`() {
         val result = sut.isMethodUsed(customerName, snapshotIdMixed, "hello")
+
         assertThat(result).isNotEmpty
-        assertThat(result.filter { it["isUsed"] == true }).isNotEmpty
-        assertThat(result.first()).containsKeys("signature", "isUsed", "lastInvokedAtMillis", "lastInvokedDate")
+        assertThat(result).anyMatch { it.isUsed }
+        assertThat(result.first().lastInvokedDate).isNotBlank()
     }
 
     @Test
     fun `getDeadCode returns dead methods in snapshot`() {
-        // snapshot 1 may be refreshed by IntegrationTests — verify non-empty and correct type only
         val result = sut.getDeadCode(customerName, snapshotIdAllDead, null, 100)
+
         assertThat(result).isNotEmpty
-        assertThat(result.map { it["type"] }).allMatch { it == "METHOD" }
+        assertThat(result).allMatch { it.type == "METHOD" }
     }
 
     @Test
     fun `getDeadCode returns only unused methods in mixed snapshot`() {
-        // snapshotId=2: hello and getMyService are used, the other 3 are dead
         val result = sut.getDeadCode(customerName, snapshotIdMixed, null, 100)
+
         assertThat(result).hasSize(3)
     }
 
     @Test
     fun `getDeadCode filters by packagePrefix`() {
         val result = sut.getDeadCode(customerName, snapshotIdAllDead, "com.example.demo.additional", 100)
+
         assertThat(result).isNotEmpty
-        assertThat(result.map { it["signature"] as String }).allMatch { it.startsWith("com.example.demo.additional") }
+        assertThat(result).allMatch { it.signature.startsWith("com.example.demo.additional") }
     }
 
     @Test
     fun `getClassUsageSummary returns mixed usage for MyController in snapshot 2`() {
         val result = sut.getClassUsageSummary(customerName, snapshotIdMixed, "com.example.demo.MyController")
-        assertThat(result["className"]).isEqualTo("com.example.demo.MyController")
-        assertThat(result["totalMethods"] as Int).isEqualTo(3)
-        assertThat(result["usedMethods"] as Int).isEqualTo(2)
-        assertThat(result["unusedMethods"] as Int).isEqualTo(1)
+
+        assertThat(result.className).isEqualTo("com.example.demo.MyController")
+        assertThat(result.totalMethods).isEqualTo(3)
+        assertThat(result.usedMethods).isEqualTo(2)
+        assertThat(result.unusedMethods).isEqualTo(1)
+        assertThat(result.methods).hasSize(3)
     }
 
     @Test
     fun `getPackageUsageSummary returns usage ratio and children`() {
-        // snapshot 2: 2 used methods in com.example.demo.MyController → non-zero ratio
         val result = sut.getPackageUsageSummary(customerName, snapshotIdMixed, "com.example.demo")
-        assertThat(result["packageName"]).isEqualTo("com.example.demo")
-        assertThat(result["usageRatio"]).isNotEqualTo("N/A")
-        assertThat(result["children"] as List<*>).isNotEmpty
+
+        assertThat(result.packageName).isEqualTo("com.example.demo")
+        assertThat(result.usageRatio).isNotEqualTo("N/A")
+        assertThat(result.children).isNotEmpty
     }
 
     @Test
     fun `analyzeCleanupCandidates returns candidates with LOW confidence for public methods`() {
         val result = sut.analyzeCleanupCandidates(customerName, snapshotIdAllDead, null, 100)
+
         assertThat(result).isNotEmpty
-        assertThat(result.map { it["confidence"] }).allMatch { it == "LOW" }
-        assertThat(result.first()).containsKeys("signature", "className", "visibility", "confidence", "reason")
+        assertThat(result).allMatch { it.confidence == "LOW" }
+        assertThat(result.first().signature).isNotBlank()
+        assertThat(result.first().reason).isNotBlank()
     }
 
     @Test
     fun getSnapshotUsageSummary() {
         val result = sut.getSnapshotUsageSummary(customerName)
+        val snapshot1 = result.first { it.snapshotId == snapshotIdAllDead }
+
         assertThat(result).isNotEmpty
-        val snapshot1 = result.first { it["snapshotId"] == snapshotIdAllDead }
-        assertThat(snapshot1["totalMethods"] as Long).isGreaterThan(0)
-        assertThat(result.first()).containsKeys("snapshotId", "snapshotName", "totalMethods", "usedMethods", "unusedMethods", "usageRatio")
+        assertThat(snapshot1.totalMethods).isGreaterThan(0)
+        assertThat(snapshot1.snapshotName).isNotBlank()
     }
 
     @Test
     fun getUsageOverview() {
         val result = sut.getUsageOverview(customerName)
-        assertThat(result["customerName"]).isEqualTo(customerName)
-        assertThat(result["totalMethodsTracked"] as Int).isGreaterThan(0)
-        assertThat(result["applications"] as List<*>).isNotEmpty
-        assertThat(result["environments"] as List<*>).isNotEmpty
+
+        assertThat(result.customerName).isEqualTo(customerName)
+        assertThat(result.summary.methodCount).isGreaterThan(0)
+        assertThat(result.applications).isNotEmpty
+        assertThat(result.environments).isNotEmpty
     }
 
     @Test
     fun `getMethodsNotInvokedSinceLastDeploy auto-detects deploy time and returns methods`() {
-        // JVM publishedAt ≈ 1646027053948ms; hello and getMyService lastInvokedAt=1646027014967 < publishedAt
         val result = sut.getMethodsNotInvokedSinceLastDeploy(customerName, snapshotIdMixed, null, 100)
-        assertThat(result["error"]).isNull()
-        assertThat(result["totalCount"] as Int).isEqualTo(2)
-        assertThat(result).containsKeys("sinceMillis", "sinceDate", "totalCount", "methods")
+
+        assertThat(result.error).isFalse()
+        assertThat(result.totalCount).isEqualTo(2)
+        assertThat(result.sinceMillis).isNotNull()
+        assertThat(result.methods).hasSize(2)
     }
 
     @Test
     fun `getMethodsNotInvokedSinceLastDeploy uses manual sinceMillis when provided`() {
-        // sinceMillis set to very small value — no method has lastInvokedAt < 0
         val result = sut.getMethodsNotInvokedSinceLastDeploy(customerName, snapshotIdMixed, 0L, 100)
-        assertThat(result["totalCount"] as Int).isEqualTo(0)
+
+        assertThat(result.totalCount).isEqualTo(0)
     }
 
     @Test
     fun `resolveWorkspaceByGitUrl finds workspace for known GitHub URL`() {
-        val url = "https://github_url/tree/develop/scavenger-demo/src/main/kotlin/com/example/demo"
-        val result = sut.resolveWorkspaceByGitUrl(url)
-        assertThat(result["found"]).isEqualTo(true)
-        assertThat(result["workspaces"] as List<*>).isNotEmpty
+        val result = sut.resolveWorkspaceByGitUrl("https://github_url/tree/develop/scavenger-demo/src/main/kotlin/com/example/demo")
+
+        assertThat(result.found).isTrue()
+        assertThat(result.workspaces).isNotEmpty
+        assertThat(result.workspaces.first().customer.name).isEqualTo(customerName)
     }
 
     @Test
     fun `resolveWorkspaceByGitUrl returns not found for unknown URL`() {
         val result = sut.resolveWorkspaceByGitUrl("https://unknown-url/repo")
-        assertThat(result["found"]).isEqualTo(false)
+
+        assertThat(result.found).isFalse()
     }
 
     @Test
     @Transactional
     fun `createSnapshot creates a new snapshot and returns its metadata`() {
         val result = sut.createSnapshot(customerName, "mcp-test-snapshot", listOf(1L), listOf(1L), 0L, "")
-        assertThat(result["name"]).isEqualTo("mcp-test-snapshot")
-        assertThat(result["id"]).isNotNull
-        assertThat(result).containsKeys("id", "name", "createdAt", "packages")
+
+        assertThat(result.name).isEqualTo("mcp-test-snapshot")
+        assertThat(result.id).isNotNull()
+        assertThat(result.applications).contains(1L)
     }
 
     @Test
     @Transactional
     fun `refreshSnapshot returns success status`() {
         val result = sut.refreshSnapshot(customerName, snapshotIdAllDead)
-        assertThat(result["snapshotId"]).isEqualTo(snapshotIdAllDead)
-        assertThat(result["status"]).isEqualTo("refreshed")
+
+        assertThat(result.snapshotId).isEqualTo(snapshotIdAllDead)
+        assertThat(result.status).isEqualTo("refreshed")
     }
 
     @Test
     @Transactional
-    fun `getMethodsNotInvokedSinceLastDeploy returns error map when no JVM data exists`() {
+    fun `getMethodsNotInvokedSinceLastDeploy returns error DTO when no JVM data exists`() {
         jvmRepository.deleteByCustomerId(1L)
+
         val result = sut.getMethodsNotInvokedSinceLastDeploy(customerName, snapshotIdMixed, null, 100)
-        assertThat(result["error"]).isEqualTo(true)
-        assertThat(result["message"] as String).contains("sinceMillis")
+
+        assertThat(result.error).isTrue()
+        assertThat(result.message).contains("sinceMillis")
     }
 
     @Test
     @Transactional
     fun `getSnapshotUsageSummary returns NA for snapshot with no method nodes`() {
         snapshotNodeDao.deleteAllByCustomerIdAndSnapshotId(1L, snapshotIdMixed)
+
         val result = sut.getSnapshotUsageSummary(customerName)
-        val emptySnapshot = result.first { it["snapshotId"] == snapshotIdMixed }
-        assertThat(emptySnapshot["usageRatio"]).isEqualTo("N/A")
+        val emptySnapshot = result.first { it.snapshotId == snapshotIdMixed }
+
+        assertThat(emptySnapshot.usageRatio).isEqualTo("N/A")
     }
 
     @Test
@@ -231,9 +259,11 @@ class ScavengerMcpServiceTest {
         githubMappingRepository.save(
             GithubMappingEntity(customerId = otherCustomer.id, basePackage = "com.other", url = "https://other-group-url/repo")
         )
+
         val result = sut.resolveWorkspaceByGitUrl("https://other-group-url/repo")
-        assertThat(result["found"]).isEqualTo(false)
-        assertThat(result["message"] as String).contains("default-group")
+
+        assertThat(result.found).isFalse()
+        assertThat(result.message).contains("default-group")
     }
 
     @Test
