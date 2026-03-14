@@ -180,7 +180,6 @@ class ScavengerMcpServiceTest {
     fun `getMethodsNotInvokedSinceLastDeploy auto-detects deploy time and returns methods`() {
         val result = sut.getMethodsNotInvokedSinceLastDeploy(customerName, snapshotIdMixed, null, 100)
 
-        assertThat(result.error).isFalse()
         assertThat(result.totalCount).isEqualTo(2)
         assertThat(result.sinceMillis).isNotNull()
         assertThat(result.methods).hasSize(2)
@@ -230,13 +229,12 @@ class ScavengerMcpServiceTest {
 
     @Test
     @Transactional
-    fun `getMethodsNotInvokedSinceLastDeploy returns error DTO when no JVM data exists`() {
+    fun `getMethodsNotInvokedSinceLastDeploy throws when no JVM data exists`() {
         jvmRepository.deleteByCustomerId(1L)
 
-        val result = sut.getMethodsNotInvokedSinceLastDeploy(customerName, snapshotIdMixed, null, 100)
-
-        assertThat(result.error).isTrue()
-        assertThat(result.message).contains("sinceMillis")
+        assertThatThrownBy { sut.getMethodsNotInvokedSinceLastDeploy(customerName, snapshotIdMixed, null, 100) }
+            .isInstanceOf(IllegalStateException::class.java)
+            .hasMessageContaining("sinceMillis")
     }
 
     @Test

@@ -217,13 +217,7 @@ class ScavengerMcpService(
         val customerId = resolveCustomerId(customerName)
         val cappedLimit = limit.coerceIn(1, 500)
         val deployTime = sinceMillis ?: jvmRepository.findLatestPublishedAt(customerId)?.toEpochMilli()
-
-        if (deployTime == null) {
-            return McpMethodsNotInvokedSinceLastDeployResultDto(
-                error = true,
-                message = "No JVM deployment data found. Specify sinceMillis manually."
-            )
-        }
+            ?: throw IllegalStateException("No JVM deployment data found. Specify sinceMillis manually.")
 
         val methods = snapshotNodeDao.findMethodsNotInvokedSince(customerId, snapshotId, deployTime, cappedLimit)
 
