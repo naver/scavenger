@@ -7,12 +7,11 @@ import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.navercorp.scavenger.model.CallStackDataPublication;
-
 import io.grpc.ManagedChannel;
 import io.grpc.okhttp.OkHttpChannelBuilder;
 import lombok.extern.java.Log;
 
+import com.navercorp.scavenger.model.CallStackDataPublication;
 import com.navercorp.scavenger.model.CodeBasePublication;
 import com.navercorp.scavenger.model.GetConfigRequest;
 import com.navercorp.scavenger.model.GetConfigResponse;
@@ -29,14 +28,14 @@ public class GrpcClient implements AutoCloseable {
     private static final Pattern DATA_SIZE_PATTERN = Pattern.compile("^([+\\-]?\\d+)([a-zA-Z]{0,2})$");
 
     private final String host;
-
+    private final boolean useTls;
     private ManagedChannel channel;
     private GrpcAgentServiceGrpc.GrpcAgentServiceBlockingStub stub;
 
-    public GrpcClient(String host) {
-        log.info("[scavenger] creating new grpc client. host is " + host);
+    public GrpcClient(String host, boolean useTls) {
+        log.info("[scavenger] creating new grpc client. host is " + host + " tls=" + useTls);
         this.host = host;
-
+        this.useTls = useTls;
         createNewChannelIfShutdown();
     }
 
@@ -98,10 +97,16 @@ public class GrpcClient implements AutoCloseable {
     }
 
     private ManagedChannel createChannel(int maxMessageSize) {
-        return OkHttpChannelBuilder.forTarget(this.host)
-            .maxInboundMessageSize(maxMessageSize)
-            .usePlaintext()
-            .build();
+        OkHttpChannelBuilder okHttpChannelBuilder = OkHttpChannelBuilder.forTarget(this.host)
+            .maxInboundMessageSize(maxMessageSize);
+
+        if (useTls) {
+            okHttpChannelBuilder.useTransportSecurity();
+        } else {
+            okHttpChannelBuilder.usePlaintext();
+        }
+
+        return okHttpChannelBuilder.build();
     }
 
     private int maxMessageSize() {
