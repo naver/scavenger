@@ -90,7 +90,8 @@ public class Publisher {
     private GrpcClient getGrpcClient() {
         if (grpcClient == null) {
             boolean useTls = config.getServerUrl().startsWith("https://");
-            grpcClient = new GrpcClient(getInitConfigResponse().getCollectorUrl(), useTls);
+            String collectorUrl = getInitConfigResponse().getCollectorUrl();
+            grpcClient = useTls ? GrpcClient.tls(collectorUrl) : GrpcClient.plaintext(collectorUrl);
         }
 
         return grpcClient;

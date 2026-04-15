@@ -32,7 +32,15 @@ public class GrpcClient implements AutoCloseable {
     private ManagedChannel channel;
     private GrpcAgentServiceGrpc.GrpcAgentServiceBlockingStub stub;
 
-    public GrpcClient(String host, boolean useTls) {
+    public static GrpcClient plaintext(String host) {
+        return new GrpcClient(host, false);
+    }
+
+    public static GrpcClient tls(String host) {
+        return new GrpcClient(host, true);
+    }
+
+    private GrpcClient(String host, boolean useTls) {
         log.info("[scavenger] creating new grpc client. host is " + host + " tls=" + useTls);
         this.host = host;
         this.useTls = useTls;
