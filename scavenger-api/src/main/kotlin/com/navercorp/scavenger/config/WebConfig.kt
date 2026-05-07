@@ -1,5 +1,6 @@
 package com.navercorp.scavenger.config
 
+import com.navercorp.scavenger.mcp.ApiKeyAuthInterceptor
 import org.slf4j.MDC
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.Ordered
@@ -14,9 +15,13 @@ import jakarta.servlet.http.HttpServletResponse
 
 @EnableWebMvc
 @Configuration
-class WebConfig : WebMvcConfigurer {
+class WebConfig(
+    private val apiKeyAuthInterceptor: ApiKeyAuthInterceptor
+) : WebMvcConfigurer {
     override fun addInterceptors(registry: InterceptorRegistry) {
         registry.addInterceptor(MdcLoggingInterceptor())
+        registry.addInterceptor(apiKeyAuthInterceptor)
+            .addPathPatterns("/mcp", "/mcp/**")
     }
 
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {
