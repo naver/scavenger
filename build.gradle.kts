@@ -1,7 +1,7 @@
 plugins {
     idea
     id("net.researchgate.release") version "3.1.0"
-    kotlin("jvm") version "2.3.0" apply false
+    kotlin("jvm") version "2.3.21" apply false
 }
 
 allprojects {
