@@ -1,5 +1,5 @@
 plugins {
-    val kotlinVersion = "2.3.0"
+    val kotlinVersion = "2.3.21"
 
     java
     kotlin("jvm") version kotlinVersion
