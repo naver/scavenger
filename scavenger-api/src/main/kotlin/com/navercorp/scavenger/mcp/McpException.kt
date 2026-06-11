@@ -9,8 +9,5 @@ class McpException(val error: McpError) : RuntimeException(error.message) {
 
         fun methodNotFound(message: String, hint: String? = null): McpException =
             McpException(McpError(McpError.Code.METHOD_NOT_FOUND, message, hint))
-
-        fun internalError(message: String, retryable: Boolean = false): McpException =
-            McpException(McpError(McpError.Code.INTERNAL_ERROR, message, retryable = retryable))
     }
 }
