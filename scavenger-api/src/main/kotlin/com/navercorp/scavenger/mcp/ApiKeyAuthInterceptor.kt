@@ -29,7 +29,13 @@ class ApiKeyAuthInterceptor(
             return reject(response, MISSING_KEY_ERROR)
         }
 
-        val customer = customerRepository.findByLicenseKey(licenseKey).orElse(null)
+        val customer = try {
+            customerRepository.findByLicenseKey(licenseKey).orElse(null)
+        } catch (e: Exception) {
+            // MCP clients must always receive the JSON envelope, never Spring's default error page
+            logger.error(e) { "Unexpected error during MCP license resolution" }
+            return reject(response, LOOKUP_FAILED_ERROR, HttpStatus.INTERNAL_SERVER_ERROR)
+        }
         if (customer == null) {
             logger.warn { "MCP auth rejected: unknown licenseKey suffix=${licenseKey.takeLast(4)}" }
             return reject(response, INVALID_KEY_ERROR)
@@ -39,8 +45,12 @@ class ApiKeyAuthInterceptor(
         return true
     }
 
-    private fun reject(response: HttpServletResponse, error: McpError): Boolean {
-        response.status = HttpStatus.UNAUTHORIZED.value()
+    private fun reject(
+        response: HttpServletResponse,
+        error: McpError,
+        status: HttpStatus = HttpStatus.UNAUTHORIZED,
+    ): Boolean {
+        response.status = status.value()
         response.contentType = MediaType.APPLICATION_JSON_VALUE
         response.characterEncoding = Charsets.UTF_8.name()
         objectMapper.writeValue(response.writer, McpResponse.failure(error))
@@ -57,6 +67,11 @@ class ApiKeyAuthInterceptor(
             code = McpError.Code.AUTH_INVALID,
             message = "Invalid licenseKey.",
             hint = "Verify the licenseKey value against the Scavenger workspace.",
+        )
+        private val LOOKUP_FAILED_ERROR = McpError(
+            code = McpError.Code.INTERNAL_ERROR,
+            message = "Authentication service unavailable.",
+            retryable = true,
         )
     }
 }

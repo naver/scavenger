@@ -10,9 +10,7 @@ data class McpError(
         AUTH_MISSING,
         AUTH_INVALID,
         METHOD_NOT_FOUND,
-        SNAPSHOT_NOT_READY,
         INVALID_ARGUMENT,
-        REFRESH_FAILED,
         INTERNAL_ERROR
     }
 }

@@ -13,6 +13,8 @@ interface EnvironmentRepository : DelegatableJdbcRepository<EnvironmentEntity, S
 
     fun findByCustomerIdAndId(customerId: Long, id: Long): EnvironmentEntity
 
+    fun findByCustomerIdAndName(customerId: Long, name: String): EnvironmentEntity?
+
     @Modifying
     @Query("DELETE FROM environments WHERE customerId = :customerId AND id = :id")
     fun deleteByCustomerIdAndId(customerId: Long, id: Long)
