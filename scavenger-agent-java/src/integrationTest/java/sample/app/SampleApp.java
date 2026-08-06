@@ -42,6 +42,11 @@ public class SampleApp {
     public void postConstruct() {
         log.info("2+2=" + add(2, 2));
         sampleService1.doSomething(1);
+        try {
+            sampleService1.throwsException();
+        } catch (RuntimeException e) {
+            // noOp
+        }
         intentionallySlowService.doSlowJob();
     }
 }

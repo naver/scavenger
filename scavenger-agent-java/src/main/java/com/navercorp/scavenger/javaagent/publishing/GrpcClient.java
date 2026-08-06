@@ -11,6 +11,7 @@ import io.grpc.ManagedChannel;
 import io.grpc.okhttp.OkHttpChannelBuilder;
 import lombok.extern.java.Log;
 
+import com.navercorp.scavenger.model.CallStackDataPublication;
 import com.navercorp.scavenger.model.CodeBasePublication;
 import com.navercorp.scavenger.model.GetConfigRequest;
 import com.navercorp.scavenger.model.GetConfigResponse;
@@ -27,14 +28,22 @@ public class GrpcClient implements AutoCloseable {
     private static final Pattern DATA_SIZE_PATTERN = Pattern.compile("^([+\\-]?\\d+)([a-zA-Z]{0,2})$");
 
     private final String host;
-
+    private final boolean useTls;
     private ManagedChannel channel;
     private GrpcAgentServiceGrpc.GrpcAgentServiceBlockingStub stub;
 
-    public GrpcClient(String host) {
-        log.info("[scavenger] creating new grpc client. host is " + host);
-        this.host = host;
+    public static GrpcClient createPlaintext(String host) {
+        return new GrpcClient(host, false);
+    }
 
+    public static GrpcClient createTls(String host) {
+        return new GrpcClient(host, true);
+    }
+
+    private GrpcClient(String host, boolean useTls) {
+        log.info("[scavenger] creating new grpc client. host is " + host + " tls=" + useTls);
+        this.host = host;
+        this.useTls = useTls;
         createNewChannelIfShutdown();
     }
 
@@ -56,6 +65,12 @@ public class GrpcClient implements AutoCloseable {
         createNewChannelIfShutdown();
 
         return stub.sendInvocationDataPublication(request);
+    }
+
+    public PublicationResponse sendCallStackDataPublication(CallStackDataPublication request) {
+        createNewChannelIfShutdown();
+
+        return stub.sendCallStackDataPublication(request);
     }
 
     @Override
@@ -90,10 +105,16 @@ public class GrpcClient implements AutoCloseable {
     }
 
     private ManagedChannel createChannel(int maxMessageSize) {
-        return OkHttpChannelBuilder.forTarget(this.host)
-            .maxInboundMessageSize(maxMessageSize)
-            .usePlaintext()
-            .build();
+        OkHttpChannelBuilder okHttpChannelBuilder = OkHttpChannelBuilder.forTarget(this.host)
+            .maxInboundMessageSize(maxMessageSize);
+
+        if (useTls) {
+            okHttpChannelBuilder.useTransportSecurity();
+        } else {
+            okHttpChannelBuilder.usePlaintext();
+        }
+
+        return okHttpChannelBuilder.build();
     }
 
     private int maxMessageSize() {

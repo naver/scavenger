@@ -1,6 +1,6 @@
 plugins {
     java
-    id("com.google.protobuf") version "0.8.18"
+    id("com.google.protobuf") version "0.9.5"
 }
 
 tasks.register<Exec>("protoc") {

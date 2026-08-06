@@ -63,7 +63,7 @@ class MethodSql : SqlGeneratorSupport() {
             AND lastSeenAtMillis < :lastSeenBeforeMillis
         """.trimIndent()
 
-    fun deleteAllMethodsAndInvocations(): String =
+    fun deleteAllMethods(): String =
         """
         DELETE FROM
             methods

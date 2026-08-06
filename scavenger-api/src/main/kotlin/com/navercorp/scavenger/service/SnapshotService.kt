@@ -22,6 +22,7 @@ class SnapshotService(
     private val snapshotApplicationDao: SnapshotApplicationDao,
     private val snapshotEnvironmentDao: SnapshotEnvironmentDao,
     private val snapshotNodeService: SnapshotNodeService,
+    private val callStackService: CallStackService
 ) {
     fun createSnapshot(
         customerId: Long,
@@ -112,6 +113,14 @@ class SnapshotService(
 
     fun listSnapshots(customerId: Long): List<SnapshotDto> {
         return snapshotDao.findAllByCustomerId(customerId).map { SnapshotDto.from(it) }
+    }
+
+    fun getCallStackMap(
+        customerId: Long,
+        snapshotId: Long,
+    ): Map<String, List<String>> {
+        val snapshot = snapshotDao.findById(snapshotId).orElseThrow()
+        return callStackService.getCallStackMap(customerId, snapshotId, snapshot)
     }
 
     companion object {

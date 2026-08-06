@@ -1,5 +1,5 @@
 plugins {
-    val kotlinVersion = "1.9.24"
+    val kotlinVersion = "2.3.21"
 
     java
     kotlin("jvm") version kotlinVersion
@@ -8,7 +8,7 @@ plugins {
 
 dependencies {
     implementation(kotlin("stdlib-jdk8"))
-    implementation("org.springframework.boot:spring-boot-starter-data-jdbc:3.2.4")
+    implementation("org.springframework.boot:spring-boot-starter-data-jdbc:3.5.9")
 }
 
 java {

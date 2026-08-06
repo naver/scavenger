@@ -1,10 +1,10 @@
-import com.google.protobuf.gradle.*
+import com.google.protobuf.gradle.id
 
 plugins {
-    java
+    `java-library`
     idea
-    kotlin("jvm") version "1.9.24"
-    id("com.google.protobuf") version "0.8.18"
+    kotlin("jvm") version "2.3.21"
+    id("com.google.protobuf") version "0.9.5"
 }
 
 repositories {
@@ -12,10 +12,11 @@ repositories {
 }
 
 dependencies {
-    implementation("com.google.protobuf:protobuf-kotlin:${property("protobufVersion")}")
-    implementation("io.grpc:grpc-stub:${property("grpcVersion")}")
-    implementation("io.grpc:grpc-kotlin-stub:${property("grpcKotlinVersion")}")
-    implementation("io.grpc:grpc-protobuf:${property("grpcVersion")}")
+    api("com.google.protobuf:protobuf-java:${property("protobufVersion")}")
+    api("com.google.protobuf:protobuf-kotlin:${property("protobufVersion")}")
+    api("io.grpc:grpc-stub:${property("grpcVersion")}")
+    api("io.grpc:grpc-kotlin-stub:${property("grpcKotlinVersion")}")
+    api("io.grpc:grpc-protobuf:${property("grpcVersion")}")
     implementation("javax.annotation:javax.annotation-api:1.3.2")
 }
 

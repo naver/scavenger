@@ -16,6 +16,7 @@ import okhttp3.Response;
 
 import com.navercorp.scavenger.javaagent.model.Config;
 import com.navercorp.scavenger.javaagent.util.Constants;
+import com.navercorp.scavenger.model.CallStackDataPublication;
 import com.navercorp.scavenger.model.CodeBasePublication;
 import com.navercorp.scavenger.model.GetConfigRequest;
 import com.navercorp.scavenger.model.GetConfigResponse;
@@ -88,7 +89,9 @@ public class Publisher {
 
     private GrpcClient getGrpcClient() {
         if (grpcClient == null) {
-            grpcClient = new GrpcClient(getInitConfigResponse().getCollectorUrl());
+            boolean useTls = config.getServerUrl().startsWith("https://");
+            String collectorUrl = getInitConfigResponse().getCollectorUrl();
+            grpcClient = useTls ? GrpcClient.createTls(collectorUrl) : GrpcClient.createPlaintext(collectorUrl);
         }
 
         return grpcClient;
@@ -109,6 +112,12 @@ public class Publisher {
         log.info("[scavenger] publishing invocation data: " + pub.getEntryCount() + " invocations");
         getGrpcClient().sendInvocationDataPublication(pub);
         log.info("[scavenger] invocation data published");
+    }
+
+    public void publishCallStackData(CallStackDataPublication pub) {
+        log.info("[scavenger] publishing call stack data: " + pub.getEntryCount() + " call stacks");
+        getGrpcClient().sendCallStackDataPublication(pub);
+        log.info("[scavenger] call stack data published");
     }
 
     public String getInitConfigRequestEndpoint() {

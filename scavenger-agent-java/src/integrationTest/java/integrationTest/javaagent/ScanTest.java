@@ -65,8 +65,10 @@ public class ScanTest extends AbstractWireMockTest {
                 "sample.app.SampleAspect.logAspectLoaded()",
                 "sample.app.SampleService1(sample.app.SampleService2)",
                 "sample.app.SampleService1.doSomething(int)",
+                "sample.app.SampleService1.throwsException()",
                 "sample.app.SampleService2()",
                 "sample.app.SampleService2.doSomething(int)",
+                "sample.app.SampleService2.throwsException()",
                 "sample.app.IntentionallySlowService()",
                 "sample.app.IntentionallySlowService.doSlowJob()"
         );
@@ -78,7 +80,7 @@ public class ScanTest extends AbstractWireMockTest {
         String stdout = agentRunner.call();
 
         List<String> installedAdvice = extractFromMatchingLogLines(stdout, InvocationTracker.class,
-                "[scavenger] Advice on ", " is installed");
+                "[scavenger][InvocationTracker] Advice on ", " is installed");
 
         assertThat(installedAdvice).containsExactlyInAnyOrder(
                 SampleApp.class.getName(),

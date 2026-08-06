@@ -59,7 +59,7 @@ class MethodDao(
             return 0
         }
         return update(
-            sql.deleteAllMethodsAndInvocations(),
+            sql.deleteAllMethods(),
             mapParameterSource()
                 .addValue("customerId", customerId)
                 .addValue("signatureHashes", signatureHashes)

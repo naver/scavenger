@@ -6,7 +6,7 @@ plugins {
     `maven-publish`
     signing
     id("io.freefair.lombok") version "8.6"
-    id("com.github.johnrengelman.shadow") version "8.0.0"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
     id("org.unbroken-dome.test-sets") version "4.1.0"
 }
 
@@ -146,7 +146,7 @@ tasks.named<Test>("integrationTest") {
 
     systemProperty("integrationTest.codekvastAgent", tasks.shadowJar.get().outputs.files.asPath)
     systemProperty("integrationTest.classpath", "build/classes/java/integrationTest:$integrationTestRuntimeClasspath")
-    systemProperty("integrationTest.javaPaths", javaPath(7))
+    systemProperty("integrationTest.javaPaths", javaPath(8))
 }
 
 publishing {
@@ -210,9 +210,9 @@ publishing {
             }
             name = "OSSRH"
             url = if (version.toString().endsWith("-SNAPSHOT")) {
-                uri("https://oss.sonatype.org/content/repositories/snapshots/")
+                uri("https://central.sonatype.com/repository/maven-snapshots/")
             } else {
-                uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+                uri("https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/")
             }
         }
     }

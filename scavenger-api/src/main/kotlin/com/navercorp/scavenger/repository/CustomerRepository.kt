@@ -10,4 +10,6 @@ interface CustomerRepository : DelegatableJdbcRepository<CustomerEntity, Long> {
     fun findAllByGroupId(groupId: String): List<CustomerEntity>
 
     fun findByNameAndGroupId(name: String, groupId: String): Optional<CustomerEntity>
+
+    fun findByLicenseKey(licenseKey: String): Optional<CustomerEntity>
 }

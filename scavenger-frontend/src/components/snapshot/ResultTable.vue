@@ -1,4 +1,3 @@
-"
 <template>
   <el-scrollbar>
     <el-table :data="rows" header-row-class-name="table-header" border style="width: 100%" size="small">
@@ -23,6 +22,9 @@
               <a v-if="githubLink(scope.row)" :href="githubLink(scope.row)" class="function-box">
                 <font-awesome-icon icon="fa-brands fa-github"/>
               </a>
+              <a v-if="isMethod(scope.row)" @click="showCallStackTree(scope.row.signature)" class="function-box">
+                <font-awesome-icon icon="fa-solid fa-link"/>
+              </a>
             </span>
           </div>
         </template>
@@ -37,14 +39,25 @@
       </el-table-column>
     </el-table>
   </el-scrollbar>
+  <CallStackTreeDialog :dialogTableVisible="dialogTableVisible" :call-stack="callStack"/>
 </template>
 <script>
 import copy from "copy-to-clipboard";
 import {getFilePath, openLink, toPercentageStr} from "../util/util";
 import {ElNotification} from "element-plus";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import CallStackTreeDialog from "@/components/snapshot/CallStackTreeDialog.vue";
+import {useStore} from "../util/store";
 
 export default {
-  props: ["rows", "updateSnapshotData", "githubLink"],
+  components: {CallStackTreeDialog, FontAwesomeIcon},
+  props: ["rows", "updateSnapshotData", "githubLink", "customerId", "snapshot"],
+  data() {
+    return {
+      dialogTableVisible: false,
+      callStack: [],
+    };
+  },
   methods: {
     toPercentageStr(percentage) {
       return toPercentageStr(percentage);
@@ -76,6 +89,33 @@ export default {
         this.updateSnapshotData(signature);
       }
     },
+    isMethod(row) {
+      return row.type.value === "METHOD";
+    },
+    showCallStackTree(signature) {
+      this.callStack = [this.buildCallStackTree(signature, useStore().callStacks)];
+      this.dialogTableVisible = true;
+    },
+    buildCallStackTree(targetCallee, callStackMap, visited = new Set()) {
+      if (visited.has(targetCallee)) {
+        return {
+          signature: targetCallee,
+          callers: []
+        };
+      }
+
+      visited.add(targetCallee);
+
+      const callerSignatures = callStackMap[targetCallee] || [];
+      const callers = callerSignatures.map(signature =>
+        this.buildCallStackTree(signature, callStackMap, visited)
+      );
+
+      return {
+        signature: targetCallee,
+        callers: callers
+      };
+    }
   },
 };
 </script>

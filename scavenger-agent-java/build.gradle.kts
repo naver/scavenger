@@ -4,14 +4,14 @@ plugins {
     java
     `maven-publish`
     signing
-    id("com.gradleup.shadow") version "8.3.3"
-    id("io.freefair.lombok") version "8.6"
+    id("com.gradleup.shadow") version "9.2.2"
+    id("io.freefair.lombok") version "9.0.0"
     id("org.unbroken-dome.test-sets") version "4.1.0"
 }
 
 java {
     toolchain {
-        languageVersion.set(JavaLanguageVersion.of(21))
+        languageVersion.set(JavaLanguageVersion.of(25))
     }
     withJavadocJar()
     withSourcesJar()
@@ -23,6 +23,10 @@ tasks.withType<JavaCompile>().matching {
     options.release = 8
 }
 
+tasks.withType<Javadoc>().configureEach {
+    (options as StandardJavadocDocletOptions).addStringOption("Xdoclint:none", "-quiet")
+}
+
 tasks.withType<ShadowJar> {
     archiveFileName.set("${project.name}-${project.version}.jar")
 
@@ -31,9 +35,10 @@ tasks.withType<ShadowJar> {
         attributes["Implementation-Version"] = project.version
     }
 
-    isEnableRelocation = true
+    enableAutoRelocation = true
     relocationPrefix = "sc"
 
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
     mergeServiceFiles()
 
     minimize {
@@ -63,18 +68,18 @@ repositories {
 
 dependencies {
     implementation(project(":scavenger-model"))
-    implementation("net.bytebuddy:byte-buddy:1.14.3")
-    implementation("org.ow2.asm:asm:9.5")
-    implementation("org.ow2.asm:asm-tree:9.5")
+    implementation("net.bytebuddy:byte-buddy:1.17.8")
+    implementation("org.ow2.asm:asm:9.9.1")
+    implementation("org.ow2.asm:asm-tree:9.9")
     implementation("com.squareup.okhttp3:okhttp:3.14.9")
     implementation("com.google.protobuf:protobuf-java-util:${property("protobufVersion")}")
-    implementation("io.grpc:grpc-stub:${property("grpcVersion")}")
     implementation("io.grpc:grpc-okhttp:${property("grpcVersion")}")
 
-    testImplementation(platform("org.junit:junit-bom:5.8.2"))
-    testImplementation(platform("org.mockito:mockito-bom:5.13.0"))
+    testImplementation(platform("org.junit:junit-bom:5.12.2"))
+    testImplementation(platform("org.mockito:mockito-bom:5.17.0"))
     testImplementation("org.junit.jupiter:junit-jupiter")
-    testImplementation("org.assertj:assertj-core:3.22.0")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation("org.assertj:assertj-core:3.27.6")
     testImplementation("org.mockito:mockito-core")
     testImplementation("org.mockito:mockito-junit-jupiter")
 }
@@ -86,8 +91,8 @@ testSets {
 dependencies {
     "integrationTestImplementation"("org.springframework.boot:spring-boot-starter-test:2.5.12")
     "integrationTestImplementation"("org.springframework.boot:spring-boot-starter-aop:2.5.12")
-    "integrationTestImplementation"("com.github.tomakehurst:wiremock:2.27.2")
-    "integrationTestImplementation"("org.grpcmock:grpcmock-junit5:0.13.0")
+    "integrationTestImplementation"("com.github.tomakehurst:wiremock-jre8:2.35.2")
+    "integrationTestImplementation"("org.grpcmock:grpcmock-junit5:0.16.0")
 
     // JMH benchmarks
     "integrationTestImplementation"("org.openjdk.jmh:jmh-core:1.37")
@@ -115,7 +120,7 @@ tasks.named<Test>("integrationTest") {
 
     systemProperty("integrationTest.scavengerAgent", tasks.shadowJar.get().outputs.files.asPath)
     systemProperty("integrationTest.classpath", "build/classes/java/integrationTest:$integrationTestRuntimeClasspath")
-    systemProperty("integrationTest.javaPaths", javaPaths(8, 11, 17, 21))
+    systemProperty("integrationTest.javaPaths", javaPaths(8, 11, 17, 21, 25))
 }
 
 tasks.withType<ProcessResources> {
@@ -186,9 +191,9 @@ publishing {
             }
             name = "OSSRH"
             url = if (version.toString().endsWith("-SNAPSHOT")) {
-                uri("https://oss.sonatype.org/content/repositories/snapshots/")
+                uri("https://central.sonatype.com/repository/maven-snapshots/")
             } else {
-                uri("https://oss.sonatype.org/service/local/staging/deploy/maven2/")
+                uri("https://ossrh-staging-api.central.sonatype.com/service/local/staging/deploy/maven2/")
             }
         }
     }
