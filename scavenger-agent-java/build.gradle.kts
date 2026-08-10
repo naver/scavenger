@@ -1,4 +1,5 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import java.util.Base64
 
 plugins {
     java
@@ -201,4 +202,39 @@ publishing {
 
 signing {
     sign(publishing.publications["agent"])
+}
+
+val ossrhNamespace = "com.navercorp"
+
+tasks.register<Exec>("closeStagingRepository") {
+    group = "publishing"
+    description = "Uploads the open OSSRH staging repository to Central Portal"
+
+    onlyIf { !version.toString().endsWith("-SNAPSHOT") }
+
+    doFirst {
+        val username = project.properties["ossrhUsername"]
+        val password = project.properties["ossrhPassword"]
+        require(username != null && password != null) {
+            "ossrhUsername and ossrhPassword are required to close the staging repository"
+        }
+
+        val token = Base64.getEncoder()
+            .encodeToString("$username:$password".toByteArray())
+
+        commandLine(
+            "curl", "-f", "-sS", "-X", "POST",
+            "-H", "Authorization: Bearer $token",
+            "https://ossrh-staging-api.central.sonatype.com/manual/upload/defaultRepository/" +
+                "$ossrhNamespace?publishing_type=user_managed"
+        )
+    }
+
+    doLast {
+        logger.lifecycle("Check the deployment at https://central.sonatype.com/publishing/deployments")
+    }
+}
+
+tasks.named("publishAgentPublicationToOSSRHRepository") {
+    finalizedBy("closeStagingRepository")
 }
