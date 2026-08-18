@@ -54,6 +54,10 @@ You can find the user guide at the following location link.
 
 - https://github.com/naver/scavenger/blob/develop/doc/user-guide.md
 
+You can query Scavenger from an AI coding agent via the MCP server. See the guide here.
+
+- https://github.com/naver/scavenger/blob/develop/doc/mcp-guide.md
+
 # Contribution?
 
 Scavenger welcomes any contributions from users.<br/>
