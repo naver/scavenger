@@ -8,6 +8,8 @@ server:
 
 scavenger:
   collector-server-url: ${COLLECTOR_URL}
+  mcp:
+    enabled: true
 
 spring:
   profiles:
@@ -18,6 +20,17 @@ spring:
     encoding: UTF-8
   application:
     name: scavenger
+  ai:
+    mcp:
+      server:
+        # STATELESS: read-only tools need no server-side session; avoids session↔tenant binding risk
+        # and keeps tool execution synchronous in the HTTP request thread (auth propagation relies on it).
+        protocol: STATELESS
+        name: scavenger-mcp
+        version: 1.0.0
+        type: SYNC
+        # Endpoint defaults to /mcp; with server.servlet.context-path=/scavenger the external path is
+        # /scavenger/mcp. Gateway must route ONLY this path (/api/** has no app-level auth).
   datasource:
     password: ${DATASOURCE_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver

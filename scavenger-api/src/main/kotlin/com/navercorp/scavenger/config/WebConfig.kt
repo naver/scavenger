@@ -7,6 +7,7 @@ import org.springframework.core.Ordered
 import org.springframework.http.HttpHeaders
 import org.springframework.web.servlet.HandlerInterceptor
 import org.springframework.web.servlet.config.annotation.EnableWebMvc
+import org.springframework.web.servlet.config.annotation.CorsRegistry
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
@@ -22,6 +23,18 @@ class WebConfig(
         registry.addInterceptor(MdcLoggingInterceptor())
         registry.addInterceptor(apiKeyAuthInterceptor)
             .addPathPatterns("/mcp", "/mcp/**")
+    }
+
+    override fun addCorsMappings(registry: CorsRegistry) {
+        // Browser-based MCP clients (e.g. MCP Inspector) need CORS on the MCP endpoint. CLI clients don't.
+        registry.addMapping("/mcp/**")
+            .allowedOriginPatterns("*")
+            .allowedMethods("GET", "POST", "DELETE", "OPTIONS")
+            .allowedHeaders("*")
+        registry.addMapping("/mcp")
+            .allowedOriginPatterns("*")
+            .allowedMethods("GET", "POST", "DELETE", "OPTIONS")
+            .allowedHeaders("*")
     }
 
     override fun addResourceHandlers(registry: ResourceHandlerRegistry) {

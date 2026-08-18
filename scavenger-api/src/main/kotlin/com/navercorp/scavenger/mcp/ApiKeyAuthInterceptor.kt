@@ -11,6 +11,7 @@ import org.springframework.core.Ordered
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Component
+import org.springframework.web.cors.CorsUtils
 import org.springframework.web.servlet.HandlerInterceptor
 
 @Component
@@ -24,6 +25,12 @@ class ApiKeyAuthInterceptor(
     override fun getOrder(): Int = Ordered.HIGHEST_PRECEDENCE + 100
 
     override fun preHandle(request: HttpServletRequest, response: HttpServletResponse, handler: Any): Boolean {
+        // CORS preflight (OPTIONS) carries no custom headers, incl. the license key — let Spring's CORS
+        // handling answer it rather than rejecting with AUTH_MISSING (browser MCP clients would break).
+        if (CorsUtils.isPreFlightRequest(request)) {
+            return true
+        }
+
         val licenseKey = request.getHeader(McpAuthContext.HEADER_LICENSE_KEY)
         if (licenseKey.isNullOrBlank()) {
             return reject(response, MISSING_KEY_ERROR)
