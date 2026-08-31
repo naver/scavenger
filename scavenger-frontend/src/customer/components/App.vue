@@ -66,9 +66,11 @@
           </el-row>
           <el-row class="footer-area">
             <el-col :span="19">
-              <el-button color="#be714f" :dark="true" @click="dialogTableVisible = true" class="create-button">
-                <font-awesome-icon icon="fa-solid fa-plus"/>&nbsp;{{ $t("message.customer.customer-create") }}
-              </el-button>
+              <span class="disable-create-button" @click="notifyCreateDisabled()">
+                <el-button color="#be714f" :dark="true" disabled class="create-button">
+                  <font-awesome-icon icon="fa-solid fa-plus"/>&nbsp;{{ $t("message.customer.customer-create") }}
+                </el-button>
+              </span>
               <el-dialog v-model="dialogTableVisible" class="dialog" align-center width="30%"
                          :show-close="false" @open="init()">
                 <template #header="{ close, titleId, titleClass }">
@@ -143,6 +145,9 @@ export default {
   methods: {
     init() {
       this.configuration.name = "";
+    },
+    notifyCreateDisabled() {
+      ElNotification.warning({message: this.$t("message.customer.create-disabled")});
     },
     filterCustomers() {
       const keywordRegExp = new RegExp(this.keyword, "i");

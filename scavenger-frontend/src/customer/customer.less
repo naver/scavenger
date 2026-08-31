@@ -152,10 +152,19 @@ body {
             border-top: 1px solid #e5e5e5;
             padding-top: 25px;
 
+            .disable-create-button {
+              display: inline-block;
+              cursor: not-allowed;
+            }
+
             .create-button {
               &.el-button {
                 --el-button-text-color: #fff !important;
                 --el-button-hover-text-color: #fff !important;
+              }
+
+              &.el-button.is-disabled {
+                pointer-events: none;
               }
             }
 
