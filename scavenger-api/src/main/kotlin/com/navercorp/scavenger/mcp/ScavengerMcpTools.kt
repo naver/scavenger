@@ -101,8 +101,10 @@ class ScavengerMcpTools(
               - "한 번도 호출 안 된 메서드" → neverInvoked=true
               - "30일 이상 미호출" → idleDays=30
               - Periodic dead-code cleanup, legacy-package removal candidates
-            Omitting idleDays returns all matching methods regardless of idle time (no hidden default) — set it
-            explicitly for "idle for N days" requests. Results are paginated: pass nextCursor back as cursor.
+            IMPORTANT: without idleDays or neverInvoked=true this returns ALL instrumented methods, used ones
+            included (check lastInvokedAtMillis) — for dead-code questions always set at least one of them.
+            Omitting idleDays applies no idle cutoff (no hidden default). Results are paginated: pass nextCursor
+            back as cursor.
             Results are evidence, not deletion verdicts — weigh the `coverage` metadata.
         """,
     )

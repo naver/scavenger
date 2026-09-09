@@ -2,6 +2,8 @@ scavenger:
   collector-server-url: tmp
   mcp:
     enabled: true
+    cors:
+      enabled: true # exercised by McpIntegrationTest; production default is off
 
 spring:
   datasource:
@@ -18,6 +20,8 @@ spring:
         name: scavenger-mcp
         version: 1.0.0
         type: SYNC
+        streamable-http:
+          mcp-endpoint: /mcp
 
 server:
   servlet:

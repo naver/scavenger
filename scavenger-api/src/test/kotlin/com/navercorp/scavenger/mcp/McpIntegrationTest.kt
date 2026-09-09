@@ -1,5 +1,7 @@
 package com.navercorp.scavenger.mcp
 
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
@@ -20,6 +22,14 @@ class McpIntegrationTest {
     private var port: Int = 0
 
     private val rest = TestRestTemplate()
+
+    private val objectMapper = ObjectMapper()
+
+    // The envelope travels as a JSON string inside result.content[0].text
+    private fun envelope(response: ResponseEntity<String>): JsonNode {
+        val text = objectMapper.readTree(response.body).path("result").path("content").path(0).path("text").asText()
+        return objectMapper.readTree(text)
+    }
 
     private fun mcp(body: String, licenseKey: String? = CUSTOMER_1_KEY): ResponseEntity<String> {
         val headers = HttpHeaders().apply {
@@ -63,6 +73,7 @@ class McpIntegrationTest {
         val headers = HttpHeaders().apply {
             set(HttpHeaders.ORIGIN, "https://inspector.example")
             set(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "POST")
+            set(HttpHeaders.ACCESS_CONTROL_REQUEST_HEADERS, McpAuthContext.HEADER_LICENSE_KEY)
         }
         val response = rest.exchange(
             "http://localhost:$port/scavenger/mcp",
@@ -73,6 +84,40 @@ class McpIntegrationTest {
 
         assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
         assertThat(response.headers.accessControlAllowOrigin).isNotNull()
+        assertThat(response.headers.accessControlAllowHeaders).contains(McpAuthContext.HEADER_LICENSE_KEY)
+    }
+
+    @Test
+    fun `env filter propagates through the transport into the query`() {
+        val inTest = envelope(callTool("is_method_used", """{"signature":"$CROSS_ENV_METHOD","env":"test"}""", CUSTOMER_2_KEY))
+        val inProd = envelope(callTool("is_method_used", """{"signature":"$CROSS_ENV_METHOD","env":"prod"}""", CUSTOMER_2_KEY))
+
+        assertThat(inTest.path("data").path("used").asBoolean()).isTrue
+        assertThat(inProd.path("data").path("used").asBoolean()).isFalse
+    }
+
+    @Test
+    fun `env filter scopes coverage metadata to that environment`() {
+        val body = envelope(callTool("is_method_used", """{"signature":"$SEEDED_METHOD","env":"prod"}"""))
+
+        val coverage = body.path("coverage")
+        assertThat(coverage.size()).isEqualTo(1)
+        assertThat(coverage[0].path("application").asText()).isEqualTo("demo")
+        assertThat(coverage[0].path("environment").asText()).isEqualTo("prod")
+    }
+
+    @Test
+    fun `envelope omits error on success and data on failure`() {
+        val success = envelope(callTool("is_method_used", """{"signature":"$SEEDED_METHOD"}"""))
+        val failure = envelope(callTool("is_method_used", """{"signature":"com.nonexistent.Foo.bar()"}"""))
+
+        assertThat(success.path("ok").asBoolean()).isTrue
+        assertThat(success.has("error")).isFalse
+        assertThat(success.path("dataFreshness").has("queryExecutedAtMillis")).isTrue
+        assertThat(failure.path("ok").asBoolean()).isFalse
+        assertThat(failure.path("error").path("code").asText()).isEqualTo("METHOD_NOT_FOUND")
+        assertThat(failure.has("data")).isFalse
+        assertThat(failure.has("coverage")).isFalse
     }
 
     @Test
@@ -118,5 +163,8 @@ class McpIntegrationTest {
         private const val CUSTOMER_1_KEY = "4c94e0dd-ad04-4b17-9238-f46bba75c684"
         private const val CUSTOMER_2_KEY = "11e8e9f2-7a5b-4f00-bd1e-1f2a3c4d5e6f"
         private const val SEEDED_METHOD = "com.example.demo.MyController.additional()"
+
+        // customer 2: INVOKED in env 'test', NOT_INVOKED in env 'prod' (test-data-set-1.1.5.sql)
+        private const val CROSS_ENV_METHOD = "com.example.demo.legacy.LegacyService.usedInTestOnly()"
     }
 }
