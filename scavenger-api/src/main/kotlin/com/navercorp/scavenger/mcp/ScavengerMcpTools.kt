@@ -76,8 +76,9 @@ class ScavengerMcpTools(
               - User asks "who calls this method?"
               - Cross-checking caller evidence after is_method_used
               - Analyzing the impact of changing a method signature, or planning a deprecation migration
-            IMPORTANT: call-stack tracking is off by default. When the customer has no call-stack data the
-            result carries a typed "tracking disabled or no data" state — never read an empty list as "no callers".
+            IMPORTANT: call-stack tracking is off by default. When there is no call-stack data in the requested
+            scope (the given env, or the whole workspace) the result carries a typed "tracking disabled or no
+            data" state — never read an empty list as "no callers".
             Data covers direct callers only, within instrumented packages and the tracking-enabled window.
         """,
     )

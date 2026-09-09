@@ -36,10 +36,15 @@ class CallStackSql : SqlGeneratorSupport() {
         ORDER BY caller_methods.signature
         """.trimIndent()
 
-    fun selectExistsAnyCallStack(): String =
+    // With an environment the negative case scans the customer's ix_call_stacks_identity entries (covering);
+    // call_stacks holds distinct caller→callee edges, not invocations, so that stays bounded.
+    fun selectExistsAnyCallStack(hasEnvironmentId: Boolean): String =
         """
         SELECT count(1) FROM (
-            SELECT 1 FROM call_stacks WHERE customerId = :customerId LIMIT 1
+            SELECT 1 FROM call_stacks
+            WHERE customerId = :customerId
+            ${if (hasEnvironmentId) "AND environmentId = :environmentId" else ""}
+            LIMIT 1
         ) first_row
         """.trimIndent()
 }

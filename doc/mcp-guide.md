@@ -164,7 +164,7 @@ To remove the endpoint entirely, set Spring AI's `spring.ai.mcp.server.enabled=f
 | `401` with `AUTH_MISSING` | The `X-Scavenger-License-Key` header is not set. |
 | `401` with `AUTH_INVALID` | The license key does not match any workspace. |
 | `INVALID_ARGUMENT` on an `env` filter | Unknown or disabled environment — call `list_scopes` for valid names. |
-| `get_method_callers` returns `trackingState: DISABLED_OR_NO_DATA` | Call-stack tracking (`callStackTraceMode`) is off, or no call-stack data yet. An empty list is **not** "no callers". The state is evaluated per workspace, not per environment: with an `env` filter, `DATA_AVAILABLE` with an empty list can still mean tracking is off in that environment. |
+| `get_method_callers` returns `trackingState: DISABLED_OR_NO_DATA` | Call-stack tracking (`callStackTraceMode`) is off, or no call-stack data yet. An empty list is **not** "no callers". The state is evaluated within the requested scope: with an `env` filter it reflects that environment only. |
 | `list_scopes` / `coverage` is empty | No agent has reported yet for this workspace. Data appears after the first agent publish. |
 | `METHOD_NOT_FOUND` for a method you expect | The signature must match the stored format exactly, and the method must be inside the agent's instrumented packages. Absence is not evidence the method is dead. |
 | CORS error from a browser-based MCP client | CORS is off by default — set `scavenger.mcp.cors.enabled=true`, and make sure the gateway does not strip the preflight (`OPTIONS`) request. |
