@@ -1,7 +1,6 @@
 package com.navercorp.scavenger.service
 
 import com.navercorp.scavenger.dto.McpScopesDto
-import com.navercorp.scavenger.mcp.McpQueryLimits
 import com.navercorp.scavenger.repository.ApplicationRepository
 import com.navercorp.scavenger.repository.EnvironmentRepository
 import org.springframework.stereotype.Service

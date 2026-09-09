@@ -1,7 +1,8 @@
-package com.navercorp.scavenger.mcp
+package com.navercorp.scavenger.exception
 
 import com.navercorp.scavenger.dto.McpError
 
+// No @ResponseStatus on purpose: MCP tools map this to the ok:false envelope, not to an HTTP status.
 class McpException(val error: McpError) : RuntimeException(error.message) {
     companion object {
         fun invalidArgument(message: String, hint: String? = null): McpException =

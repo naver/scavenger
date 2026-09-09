@@ -2,16 +2,10 @@ package com.navercorp.scavenger.service
 
 import com.navercorp.scavenger.dto.McpCoverage
 import com.navercorp.scavenger.dto.McpDataFreshness
-import com.navercorp.scavenger.mcp.McpEnvironmentResolver
-import com.navercorp.scavenger.mcp.McpQueryLimits
+import com.navercorp.scavenger.dto.McpMeta
 import com.navercorp.scavenger.repository.McpCoverageDao
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
-
-data class McpMeta(
-    val coverage: List<McpCoverage>,
-    val dataFreshness: McpDataFreshness,
-)
 
 @Service
 class McpMetaService(

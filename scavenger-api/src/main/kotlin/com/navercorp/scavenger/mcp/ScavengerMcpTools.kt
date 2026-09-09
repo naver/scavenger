@@ -2,7 +2,9 @@ package com.navercorp.scavenger.mcp
 
 import com.navercorp.scavenger.dto.McpError
 import com.navercorp.scavenger.dto.McpResponse
+import com.navercorp.scavenger.exception.McpException
 import com.navercorp.scavenger.service.McpMetaService
+import com.navercorp.scavenger.service.McpQueryLimits
 import com.navercorp.scavenger.service.MethodCallerQueryService
 import com.navercorp.scavenger.service.MethodUsageQueryService
 import com.navercorp.scavenger.service.ScopeQueryService
@@ -10,7 +12,7 @@ import com.navercorp.scavenger.service.StaleMethodSearchService
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.ai.tool.annotation.Tool
 import org.springframework.ai.tool.annotation.ToolParam
-import org.springframework.stereotype.Service
+import org.springframework.stereotype.Component
 
 private val logger = KotlinLogging.logger {}
 
@@ -19,7 +21,7 @@ private val logger = KotlinLogging.logger {}
 // the JSON guided by the tool descriptions. Native MCP structuredContent + outputSchema is deferred to v2:
 // it requires the @McpTool provider path and concrete (non-wildcard) return types, and adds little for the
 // P0 LLM-agent consumer. Revisit when a programmatic (non-LLM) consumer needs schema-validated output.
-@Service
+@Component
 class ScavengerMcpTools(
     private val methodUsageQueryService: MethodUsageQueryService,
     private val methodCallerQueryService: MethodCallerQueryService,

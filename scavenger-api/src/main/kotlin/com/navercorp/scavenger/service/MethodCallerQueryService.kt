@@ -2,9 +2,7 @@ package com.navercorp.scavenger.service
 
 import com.navercorp.scavenger.dto.McpMethodCallerDto
 import com.navercorp.scavenger.dto.McpMethodCallersDto
-import com.navercorp.scavenger.mcp.McpEnvironmentResolver
-import com.navercorp.scavenger.mcp.McpException
-import com.navercorp.scavenger.mcp.McpQueryLimits
+import com.navercorp.scavenger.exception.McpException
 import com.navercorp.scavenger.repository.CallStackDao
 import com.navercorp.scavenger.repository.McpMethodQueryDao
 import org.springframework.stereotype.Service
