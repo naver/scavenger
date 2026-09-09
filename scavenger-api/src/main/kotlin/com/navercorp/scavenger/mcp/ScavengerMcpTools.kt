@@ -32,14 +32,16 @@ class ScavengerMcpTools(
     @Tool(
         name = "list_scopes",
         description = """
-            List the customer's environments and applications (names, ids, enabled). Start here for any
-            analysis so you use valid environment/application names instead of guessing "prod" vs "production".
+            List the customer's environments and applications (names, ids, enabled), plus per
+            (application, environment) coverage: how far back the registered JVMs go (collectingSinceMillis)
+            and when an agent last reported (agentAliveAtMillis). Start here for any analysis so you use valid
+            environment/application names instead of guessing "prod" vs "production".
             Use this tool when:
               - Starting any analysis — discover valid environment/application names first
               - An env filter returned INVALID_ARGUMENT
-            The response `coverage` metadata gives, per (application, environment), how far back data goes
-            (collectingSinceMillis) and when an agent last reported (agentAliveAtMillis) — check it before
-            trusting a "not invoked" result.
+              - Judging whether a "not invoked" result is trustworthy for a specific application
+            Every tool response also carries `coverage` per environment — check it before trusting a
+            "not invoked" result.
         """,
     )
     fun listScopes(): McpResponse<*> = mcpCall {

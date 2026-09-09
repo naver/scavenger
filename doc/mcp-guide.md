@@ -51,7 +51,7 @@ environments, disabled ones included; a disabled environment cannot be named exp
 
 | Tool | Purpose |
 | --- | --- |
-| `list_scopes` | List environments and applications. Start here to discover valid names. |
+| `list_scopes` | List environments and applications, with per-(application, environment) coverage. Start here to discover valid names. |
 | `is_method_used` | Is a single method used (invoked) anywhere? |
 | `get_method_callers` | Runtime direct callers of a method (from call-stack data). |
 | `get_stale_methods` | Find stale / never-invoked methods. The workhorse for dead-code discovery. **Set `idleDays` and/or `neverInvoked`** — without them it lists every instrumented method, used ones included. |
@@ -68,9 +68,9 @@ Every successful response is a JSON envelope:
 {
   "ok": true,
   "data": { /* tool-specific payload */ },
-  "coverage": [
-    { "application": "demo", "environment": "prod",
-      "collectingSinceMillis": 1767571260000,   // start of the oldest JVM still registered for this scope
+  "coverage": [                                 // one entry per environment (only the filtered env if set)
+    { "environment": "prod",
+      "collectingSinceMillis": 1767571260000,   // start of the oldest JVM still registered in this environment
       "agentAliveAtMillis": 1768003200000 }      // when an agent last polled (null: no agent state yet)
   ],
   "dataFreshness": { "queryExecutedAtMillis": 1786329861602 }
@@ -83,7 +83,8 @@ Every successful response is a JSON envelope:
 > ago, or if `agentAliveAtMillis` is stale. Results are **evidence, not deletion verdicts.**
 > `collectingSinceMillis` reflects the JVMs currently registered: JVMs that stopped reporting are
 > swept by the Collector, so after a full rolling restart it moves forward even though older
-> invocation data is still counted.
+> invocation data is still counted. Coverage is per environment because a method result cannot
+> be tied to one application; `list_scopes` returns the per-(application, environment) breakdown.
 
 Failures use a typed error instead of `data`:
 
@@ -105,7 +106,8 @@ Ask the agent in natural language — it picks the tool and arguments. Under the
 
 ```
 list_scopes {}
-→ environments: [prod, staging(disabled), test], applications: [demo, demo2]
+→ environments: [prod, staging(disabled), test], applications: [demo, demo2],
+  coverage: [ {demo, prod, ...}, {demo, test, ...}, {demo2, test, ...} ]   // per (application, environment)
 ```
 
 **Is a method used?**

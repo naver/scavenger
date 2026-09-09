@@ -2,10 +2,12 @@ package com.navercorp.scavenger.dto
 
 import com.navercorp.scavenger.entity.ApplicationEntity
 import com.navercorp.scavenger.entity.EnvironmentEntity
+import com.navercorp.scavenger.entity.McpScopeCoverageDbRow
 
 data class McpScopesDto(
     val environments: List<Environment>,
     val applications: List<Application>,
+    val coverage: List<Coverage>,
 ) {
     data class Environment(
         val id: Long,
@@ -27,6 +29,23 @@ data class McpScopesDto(
         companion object {
             fun from(entity: ApplicationEntity): Application =
                 Application(entity.id, entity.name, entity.createdAt.toEpochMilli())
+        }
+    }
+
+    data class Coverage(
+        val application: String,
+        val environment: String,
+        val collectingSinceMillis: Long?,
+        val agentAliveAtMillis: Long?,
+    ) {
+        companion object {
+            fun from(row: McpScopeCoverageDbRow): Coverage =
+                Coverage(
+                    application = row.application,
+                    environment = row.environment,
+                    collectingSinceMillis = row.collectingSince?.toEpochMilli(),
+                    agentAliveAtMillis = row.agentAliveAt?.toEpochMilli(),
+                )
         }
     }
 }

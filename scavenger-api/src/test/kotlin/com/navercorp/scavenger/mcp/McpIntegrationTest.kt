@@ -102,8 +102,25 @@ class McpIntegrationTest {
 
         val coverage = body.path("coverage")
         assertThat(coverage.size()).isEqualTo(1)
-        assertThat(coverage[0].path("application").asText()).isEqualTo("demo")
         assertThat(coverage[0].path("environment").asText()).isEqualTo("prod")
+    }
+
+    @Test
+    fun `coverage is aggregated per environment`() {
+        // customer 1 has JVMs for demo/prod, demo/test and demo2/test → two environments
+        val body = envelope(callTool("is_method_used", """{"signature":"$SEEDED_METHOD"}"""))
+
+        val environments = body.path("coverage").map { it.path("environment").asText() }
+        assertThat(environments).containsExactlyInAnyOrder("prod", "test")
+        assertThat(body.path("coverage")[0].has("application")).isFalse
+    }
+
+    @Test
+    fun `list_scopes carries the per-application coverage breakdown`() {
+        val body = envelope(callTool("list_scopes", "{}"))
+
+        val scopes = body.path("data").path("coverage").map { it.path("application").asText() + "/" + it.path("environment").asText() }
+        assertThat(scopes).containsExactlyInAnyOrder("demo/prod", "demo/test", "demo2/test")
     }
 
     @Test

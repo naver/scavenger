@@ -12,11 +12,12 @@ class McpMetaService(
     private val mcpCoverageDao: McpCoverageDao,
     private val mcpEnvironmentResolver: McpEnvironmentResolver,
 ) {
-    // Built after the data query already succeeded, so env re-resolution here can't fail with a new error.
+    // Runs after the data query succeeded, in its own transaction; only a concurrent env disable can make the
+    // env re-resolution fail here (surfaces as INVALID_ARGUMENT via mcpCall).
     @Transactional(readOnly = true, timeout = McpQueryLimits.QUERY_TIMEOUT_SECONDS)
     fun build(customerId: Long, env: String?): McpMeta {
         val environmentId = mcpEnvironmentResolver.resolveEnvironmentId(customerId, env)
-        val coverage = mcpCoverageDao.findCoverage(customerId, environmentId).map { McpCoverage.from(it) }
+        val coverage = mcpCoverageDao.findEnvironmentCoverage(customerId, environmentId).map { McpCoverage.from(it) }
         return McpMeta(
             coverage = coverage,
             dataFreshness = McpDataFreshness(queryExecutedAtMillis = System.currentTimeMillis()),
