@@ -7,6 +7,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.http.HttpHeaders
 import org.springframework.mock.web.MockHttpServletRequest
 import org.springframework.mock.web.MockHttpServletResponse
 
@@ -70,6 +71,22 @@ class ApiKeyAuthInterceptorTest {
         assertThat(result).isFalse
         assertThat(response.status).isEqualTo(401)
         assertErrorCode(response, McpError.Code.AUTH_INVALID)
+    }
+
+    @Test
+    fun `preHandle allows CORS preflight without a licenseKey`() {
+        val request = MockHttpServletRequest().apply {
+            method = "OPTIONS"
+            addHeader(HttpHeaders.ORIGIN, "https://inspector.example")
+            addHeader(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "POST")
+        }
+        val response = MockHttpServletResponse()
+
+        val result = sut.preHandle(request, response, Any())
+
+        assertThat(result).isTrue
+        assertThat(response.status).isEqualTo(200)
+        assertThat(request.getAttribute(McpAuthContext.ATTRIBUTE_CUSTOMER_ID)).isNull()
     }
 
     private fun assertErrorCode(response: MockHttpServletResponse, expected: McpError.Code) {

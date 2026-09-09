@@ -2,9 +2,7 @@ package com.navercorp.scavenger.service
 
 import com.navercorp.scavenger.dto.McpMethodCallerDto
 import com.navercorp.scavenger.dto.McpMethodCallersDto
-import com.navercorp.scavenger.mcp.McpEnvironmentResolver
-import com.navercorp.scavenger.mcp.McpException
-import com.navercorp.scavenger.mcp.McpQueryLimits
+import com.navercorp.scavenger.exception.McpException
 import com.navercorp.scavenger.repository.CallStackDao
 import com.navercorp.scavenger.repository.McpMethodQueryDao
 import org.springframework.stereotype.Service
@@ -28,8 +26,9 @@ class MethodCallerQueryService(
             )
 
         val callers = callStackDao.findCallersBySignatureHash(customerId, method.signatureHash, environmentId)
-        // empty caller data must distinguish "tracking off" from "no callers" — a false dead verdict deletes live code
-        val trackingState = if (callers.isEmpty() && !callStackDao.existsAnyCallStack(customerId)) {
+        // empty caller data must distinguish "tracking off / no data in the requested scope" from "no callers"
+        // — a false dead verdict deletes live code. The scope is the given env, or the whole workspace.
+        val trackingState = if (callers.isEmpty() && !callStackDao.existsAnyCallStack(customerId, environmentId)) {
             McpMethodCallersDto.CallStackTrackingState.DISABLED_OR_NO_DATA
         } else {
             McpMethodCallersDto.CallStackTrackingState.DATA_AVAILABLE

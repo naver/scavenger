@@ -2,7 +2,7 @@ package com.navercorp.scavenger.service
 
 import com.navercorp.scavenger.dto.McpError
 import com.navercorp.scavenger.dto.McpMethodCallersDto
-import com.navercorp.scavenger.mcp.McpException
+import com.navercorp.scavenger.exception.McpException
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
@@ -45,11 +45,19 @@ class MethodCallerQueryServiceTest {
 
     @Test
     fun `env filter should scope callers to that environment`() {
-        // all call_stacks rows are in env 'test' — prod scope must be empty but DATA_AVAILABLE
+        val result = sut.getCallers(1, "com.example.demo.additional.AdditionalService.get()", env = "test")
+
+        assertThat(result.callers).isNotEmpty()
+        assertThat(result.trackingState).isEqualTo(McpMethodCallersDto.CallStackTrackingState.DATA_AVAILABLE)
+    }
+
+    @Test
+    fun `env without any call stack rows should signal DISABLED_OR_NO_DATA even if other envs have data`() {
+        // all call_stacks rows are in env 'test' — an empty prod result must not be read as "no callers in prod"
         val result = sut.getCallers(1, "com.example.demo.additional.AdditionalService.get()", env = "prod")
 
         assertThat(result.callers).isEmpty()
-        assertThat(result.trackingState).isEqualTo(McpMethodCallersDto.CallStackTrackingState.DATA_AVAILABLE)
+        assertThat(result.trackingState).isEqualTo(McpMethodCallersDto.CallStackTrackingState.DISABLED_OR_NO_DATA)
     }
 
     @Test

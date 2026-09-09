@@ -8,6 +8,12 @@ server:
 
 scavenger:
   collector-server-url: ${COLLECTOR_URL}
+  mcp:
+    enabled: true
+    cors:
+      # Off by default — only browser-based MCP clients (e.g. MCP Inspector) need it; CLI clients don't.
+      enabled: false
+      allowed-origin-patterns: "*"
 
 spring:
   profiles:
@@ -18,6 +24,20 @@ spring:
     encoding: UTF-8
   application:
     name: scavenger
+  ai:
+    mcp:
+      server:
+        # STATELESS + SYNC are load-bearing for tenant isolation: no server-side session (no session↔tenant
+        # binding risk) and tools run in the HTTP request thread that McpAuthContext reads the customerId
+        # from. WebConfig refuses to start if either value is changed.
+        protocol: STATELESS
+        name: scavenger-mcp
+        version: 1.0.0
+        type: SYNC
+        streamable-http:
+          # WebConfig derives the auth interceptor path from this value. With server.servlet.context-path=/scavenger
+          # the external path is /scavenger/mcp. Gateway must route ONLY this path (/api/** has no app-level auth).
+          mcp-endpoint: /mcp
   datasource:
     password: ${DATASOURCE_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver

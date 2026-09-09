@@ -44,11 +44,12 @@ class CallStackDao(
         )
     }
 
-    fun existsAnyCallStack(customerId: Long): Boolean {
+    fun existsAnyCallStack(customerId: Long, environmentId: Long?): Boolean {
         return selectOne(
-            sql.selectExistsAnyCallStack(),
+            sql.selectExistsAnyCallStack(hasEnvironmentId = environmentId != null),
             mapParameterSource()
-                .addValue("customerId", customerId),
+                .addValue("customerId", customerId)
+                .addValue("environmentId", environmentId),
             Long::class.java
         ).orElse(0L) > 0L
     }

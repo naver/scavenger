@@ -1,5 +1,6 @@
-package com.navercorp.scavenger.mcp
+package com.navercorp.scavenger.service
 
+import com.navercorp.scavenger.exception.McpException
 import com.navercorp.scavenger.repository.EnvironmentRepository
 import org.springframework.stereotype.Component
 
