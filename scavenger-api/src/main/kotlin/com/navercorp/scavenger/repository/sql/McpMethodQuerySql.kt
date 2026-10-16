@@ -12,6 +12,8 @@ class McpMethodQuerySql : SqlGeneratorSupport() {
             MAX(CASE WHEN invocations.status = 'INVOKED' THEN 1 ELSE 0 END) AS invokedFlag,
             MAX(invocations.invokedAtMillis) AS lastInvokedAtMillis,
             MAX(invocations.lastSeenAtMillis) AS lastSeenAtMillis,
+            -- 0 = no record in the requested scope (not deployed / not instrumented there): no evidence, not "not invoked"
+            COUNT(invocations.id) AS observedRows,
             methods.createdAt AS knownSince
         FROM
             methods

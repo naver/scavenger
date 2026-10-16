@@ -92,8 +92,8 @@ class McpIntegrationTest {
         val inTest = envelope(callTool("is_method_used", """{"signature":"$CROSS_ENV_METHOD","env":"test"}""", CUSTOMER_2_KEY))
         val inProd = envelope(callTool("is_method_used", """{"signature":"$CROSS_ENV_METHOD","env":"prod"}""", CUSTOMER_2_KEY))
 
-        assertThat(inTest.path("data").path("used").asBoolean()).isTrue
-        assertThat(inProd.path("data").path("used").asBoolean()).isFalse
+        assertThat(inTest.path("data").path("usage").asText()).isEqualTo("INVOKED")
+        assertThat(inProd.path("data").path("usage").asText()).isEqualTo("NOT_INVOKED")
     }
 
     @Test

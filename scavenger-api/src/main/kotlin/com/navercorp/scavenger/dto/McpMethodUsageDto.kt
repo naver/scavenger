@@ -4,16 +4,26 @@ import com.navercorp.scavenger.entity.McpMethodUsageDbRow
 
 data class McpMethodUsageDto(
     val signature: String,
-    val used: Boolean,
+    val usage: UsageState,
     val lastInvokedAtMillis: Long?,
     val lastSeenAtMillis: Long?,
     val knownSinceMillis: Long?
 ) {
+    enum class UsageState {
+        INVOKED,
+        NOT_INVOKED,
+        NOT_OBSERVED_IN_SCOPE
+    }
+
     companion object {
         fun from(row: McpMethodUsageDbRow): McpMethodUsageDto {
             return McpMethodUsageDto(
                 signature = row.signature,
-                used = row.invokedFlag == 1,
+                usage = when {
+                    row.observedRows == 0L -> UsageState.NOT_OBSERVED_IN_SCOPE
+                    row.invokedFlag == 1 -> UsageState.INVOKED
+                    else -> UsageState.NOT_INVOKED
+                },
                 lastInvokedAtMillis = row.lastInvokedAtMillis?.takeIf { it > 0 },
                 lastSeenAtMillis = row.lastSeenAtMillis,
                 knownSinceMillis = row.knownSince?.toEpochMilli()

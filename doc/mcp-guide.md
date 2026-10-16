@@ -60,6 +60,11 @@ environments, disabled ones included; a disabled environment cannot be named exp
 Method signatures use the fully-qualified format stored by the agent, e.g.
 `com.example.demo.MyController.additional()`.
 
+`is_method_used` and `get_pr_impact` report `usage` per method: `INVOKED`, `NOT_INVOKED`
+(recorded in the scope, no invocation seen), or `NOT_OBSERVED_IN_SCOPE` (no runtime record in the
+scope — e.g. the application is not deployed, or the package is not instrumented, in that
+environment). `NOT_OBSERVED_IN_SCOPE` is no evidence either way, not "unused".
+
 ## Response format
 
 Every successful response is a JSON envelope:
@@ -114,7 +119,7 @@ list_scopes {}
 
 ```
 is_method_used { "signature": "com.example.demo.service2.TestService.call()" }
-→ { "used": true, "lastInvokedAtMillis": 1786096620000, ... }
+→ { "usage": "INVOKED", "lastInvokedAtMillis": 1786096620000, ... }
 ```
 
 **Who calls it?**

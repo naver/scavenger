@@ -52,13 +52,16 @@ class ScavengerMcpTools(
     @Tool(
         name = "is_method_used",
         description = """
-            Check whether a single method is used (INVOKED in any application/environment), from Scavenger's
+            Check whether a single method is used (INVOKED in any application/environment in scope), from Scavenger's
             runtime data. Returns evidence — not a deletion verdict.
             Use this tool when:
               - User asks "is this method dead?" / "이 메서드 진짜 안 쓰여?"
               - Gathering evidence that a method may be safe to delete (combine with get_method_callers)
               - Validating a deprecated method is no longer called, or a new method is being invoked
             Input is the fully-qualified signature as stored by the agent, e.g. com.example.Foo.bar().
+            `usage` is INVOKED, NOT_INVOKED (recorded in the scope, no invocation seen), or NOT_OBSERVED_IN_SCOPE (no
+            runtime record in the scope — e.g. the application is not deployed or not instrumented in that env).
+            NOT_OBSERVED_IN_SCOPE means no evidence either way — never read it as "not used".
             An empty/absent result is NOT proof of death — weigh the `coverage` metadata.
         """,
     )
@@ -153,7 +156,8 @@ class ScavengerMcpTools(
               - Verifying all changed methods in a refactor are safe to remove
               - Auditing a deprecation cycle, or validating a library upgrade (migrated APIs no longer called)
             Returns per-method usage plus the list of signatures that were not found. Not-found is NOT proof of
-            death — the method may simply be outside the agent's instrumented packages.
+            death — the method may simply be outside the agent's instrumented packages. Each method carries the
+            same `usage` states as is_method_used; NOT_OBSERVED_IN_SCOPE is no evidence, not "unused".
         """,
     )
     fun getPrImpact(
