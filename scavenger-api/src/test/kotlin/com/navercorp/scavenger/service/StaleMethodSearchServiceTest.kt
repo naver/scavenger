@@ -99,6 +99,20 @@ class StaleMethodSearchServiceTest {
     }
 
     @Test
+    @Transactional
+    fun `idleDays should require every environment in scope to have recorded the method`() {
+        // env 'test' starts recording oldMethod only a day ago; env 'prod' has recorded it since the seed
+        val inTestEnv = invocationRepository.findById(OLD_METHOD_TEST_ENV_INVOCATION_ID).orElseThrow()
+        invocationRepository.save(inTestEnv.copy(createdAt = Instant.now().minus(1, ChronoUnit.DAYS)))
+
+        val allEnvironments = sut.search(2, idleDays = 30, limit = 100).methods.map { it.signature }
+        val prodOnly = sut.search(2, env = "prod", idleDays = 30, limit = 100).methods.map { it.signature }
+
+        assertThat(allEnvironments).doesNotContain(OLD_METHOD)
+        assertThat(prodOnly).contains(OLD_METHOD)
+    }
+
+    @Test
     fun `results should carry when the scope started recording the method`() {
         val result = sut.search(2, env = "prod", neverInvoked = true, limit = 100)
 
@@ -176,8 +190,10 @@ class StaleMethodSearchServiceTest {
         private const val OLD_METHOD = "com.example.demo.legacy.LegacyService.oldMethod()"
         private const val USED_IN_TEST_ONLY = "com.example.demo.legacy.LegacyService.usedInTestOnly()"
 
-        // test-data-set-1.1.5.sql: customer 2 invocation rows are created at this time; id 38 is usedInTestOnly INVOKED in env 'test'
+        // test-data-set-1.1.5.sql: customer 2 invocation rows are created at this time; in env 'test',
+        // id 36 is oldMethod (NOT_INVOKED) and id 38 is usedInTestOnly (INVOKED)
         private val SEED_RECORDED_AT: Instant = Instant.parse("2026-01-05T09:02:00Z")
+        private const val OLD_METHOD_TEST_ENV_INVOCATION_ID = 36L
         private const val USED_IN_TEST_ONLY_INVOCATION_ID = 38L
     }
 }
