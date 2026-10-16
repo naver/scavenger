@@ -172,7 +172,8 @@ get_pr_impact { "signatures": ["com.foo.A.x()", "com.foo.B.y()", ...] }   // up 
 
 **Transport guard** — the API refuses to start unless `spring.ai.mcp.server.protocol` is
 `STATELESS` and `type` is `SYNC`; both are load-bearing for tenant isolation. The auth
-interceptor follows `spring.ai.mcp.server.streamable-http.mcp-endpoint` (default `/mcp`).
+interceptor follows `spring.ai.mcp.server.streamable-http.mcp-endpoint` (default `/mcp`), which
+must start with `/`.
 
 **CORS** is off by default. Browser-based MCP clients (e.g. MCP Inspector) need
 `scavenger.mcp.cors.enabled=true`; narrow `scavenger.mcp.cors.allowed-origin-patterns`
@@ -194,4 +195,4 @@ To remove the endpoint entirely, set Spring AI's `spring.ai.mcp.server.enabled=f
 | `coverage` is empty, or an environment is missing from it | No JVM is registered there right now: no agent has reported yet, or its agents stopped and the Collector swept them. Earlier invocation data is still queried, so a "not used" result there is unverified. |
 | `METHOD_NOT_FOUND` for a method you expect | The signature must match the stored format exactly, and the method must be inside the agent's instrumented packages. Absence is not evidence the method is dead. |
 | CORS error from a browser-based MCP client | CORS is off by default — set `scavenger.mcp.cors.enabled=true`, and make sure the gateway does not strip the preflight (`OPTIONS`) request. |
-| API fails to start with `spring.ai.mcp.server.protocol must be STATELESS` | The MCP auth model requires `protocol: STATELESS` and `type: SYNC`; restore them, or disable the server with `spring.ai.mcp.server.enabled=false`. |
+| API fails to start with `spring.ai.mcp.server.protocol must be STATELESS` (or `type`, `mcp-endpoint`) | The MCP auth model requires `protocol: STATELESS`, `type: SYNC` and an `mcp-endpoint` starting with `/`; restore them, or disable the server with `spring.ai.mcp.server.enabled=false`. |

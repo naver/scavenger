@@ -29,12 +29,16 @@ class WebConfig(
     init {
         // Fail closed. SSE/STREAMABLE register endpoints (/sse, /mcp/message) outside the auth interceptor,
         // and ASYNC moves tool execution off the request thread that McpAuthContext reads the tenant from.
+        // The MCP route prefixes a missing leading slash; the interceptor pattern does not, so it would miss.
         if (mcpServerEnabled) {
             check(mcpProtocol.equals("STATELESS", ignoreCase = true)) {
                 "spring.ai.mcp.server.protocol must be STATELESS for the MCP auth model (was '$mcpProtocol')"
             }
             check(mcpType.equals("SYNC", ignoreCase = true)) {
                 "spring.ai.mcp.server.type must be SYNC for the MCP auth model (was '$mcpType')"
+            }
+            check(mcpEndpoint.startsWith("/")) {
+                "spring.ai.mcp.server.streamable-http.mcp-endpoint must start with '/' for the MCP auth model (was '$mcpEndpoint')"
             }
         }
     }
