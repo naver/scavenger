@@ -47,7 +47,7 @@ class ScavengerMcpTools(
             its agents stopped and were swept) — a "not invoked" result there is unverified.
         """,
     )
-    fun listScopes(): McpResponse<*> = mcpCall {
+    fun listScopes(): McpResponse<*> = mcpCall("list_scopes") {
         val customerId = currentMcpCustomerId()
         withMeta(customerId, null, scopeQueryService.listScopes(customerId))
     }
@@ -76,7 +76,7 @@ class ScavengerMcpTools(
         signature: String,
         @ToolParam(required = false, description = "Optional environment name (e.g. prod). Omit to aggregate across all.")
         env: String?,
-    ): McpResponse<*> = mcpCall {
+    ): McpResponse<*> = mcpCall("is_method_used", "signature" to signature, "env" to env) {
         val customerId = currentMcpCustomerId()
         withMeta(customerId, env, methodUsageQueryService.isMethodUsed(customerId, signature, env))
     }
@@ -105,7 +105,7 @@ class ScavengerMcpTools(
         signature: String,
         @ToolParam(required = false, description = "Optional environment name. Omit to aggregate across all.")
         env: String?,
-    ): McpResponse<*> = mcpCall {
+    ): McpResponse<*> = mcpCall("get_method_callers", "signature" to signature, "env" to env) {
         val customerId = currentMcpCustomerId()
         withMeta(customerId, env, methodCallerQueryService.getCallers(customerId, signature, env))
     }
@@ -145,7 +145,15 @@ class ScavengerMcpTools(
         limit: Int?,
         @ToolParam(required = false, description = "Opaque pagination cursor — pass the previous page's nextCursor as-is.")
         cursor: String?,
-    ): McpResponse<*> = mcpCall {
+    ): McpResponse<*> = mcpCall(
+        "get_stale_methods",
+        "env" to env,
+        "idleDays" to idleDays,
+        "prefix" to prefix,
+        "neverInvoked" to neverInvoked,
+        "limit" to limit,
+        "cursor" to cursor,
+    ) {
         val customerId = currentMcpCustomerId()
         withMeta(
             customerId,
@@ -181,7 +189,7 @@ class ScavengerMcpTools(
         signatures: List<String>,
         @ToolParam(required = false, description = "Optional environment name. Omit to aggregate across all.")
         env: String?,
-    ): McpResponse<*> = mcpCall {
+    ): McpResponse<*> = mcpCall("get_pr_impact", "signatureCount" to signatures.size, "env" to env) {
         val customerId = currentMcpCustomerId()
         withMeta(customerId, env, methodUsageQueryService.getPrImpact(customerId, signatures, env))
     }
@@ -195,14 +203,36 @@ class ScavengerMcpTools(
 
     // Maps the service's typed failures to the response envelope. Any non-McpException (incl. the
     // IllegalStateException from currentMcpCustomerId) becomes a retryable INTERNAL_ERROR rather than
-    // leaking a framework stack trace to the agent.
-    private fun <T> mcpCall(block: () -> McpResponse<T>): McpResponse<T> =
+    // leaking a framework stack trace to the agent. The agent only sees "Internal error.", so the log carries
+    // the tool, tenant and arguments to trace the call (get_pr_impact logs only the signature count).
+    private fun <T> mcpCall(
+        tool: String,
+        vararg args: Pair<String, Any?>,
+        block: () -> McpResponse<T>,
+    ): McpResponse<T> =
         try {
             block()
         } catch (e: McpException) {
             McpResponse.failure(e.error)
         } catch (e: Exception) {
-            logger.error(e) { "Unexpected error handling MCP tool call" }
+            val customerId = runCatching { currentMcpCustomerId() }.getOrNull()
+            logger.error(e) {
+                "Unexpected error handling MCP tool call: tool=$tool customerId=$customerId" +
+                    args.joinToString("") { (name, value) -> " $name=${logValue(value)}" }
+            }
             McpResponse.failure(McpError(McpError.Code.INTERNAL_ERROR, "Internal error.", retryable = true))
         }
+}
+
+private val LOG_UNSAFE_CHARS = Regex("[\\p{Cc}\"\\\\]")
+
+// String arguments come from the MCP client and may be logged before validation: quote them, escape what could
+// forge a line or a field, and cap the length at the longest valid argument.
+private fun logValue(value: Any?): String {
+    if (value !is String) {
+        return value.toString()
+    }
+    val quoted = "\"" + value.take(McpQueryLimits.MAX_SIGNATURE_LENGTH)
+        .replace(LOG_UNSAFE_CHARS) { "\\u%04x".format(it.value.single().code) } + "\""
+    return if (value.length > McpQueryLimits.MAX_SIGNATURE_LENGTH) "$quoted...(length=${value.length})" else quoted
 }
