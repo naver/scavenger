@@ -11,8 +11,6 @@ data class McpResponse<out T>(
     val dataFreshness: McpDataFreshness? = null
 ) {
     companion object {
-        fun <T> success(data: T): McpResponse<T> = McpResponse(ok = true, data = data)
-
         fun <T> success(data: T, coverage: List<McpCoverage>, dataFreshness: McpDataFreshness): McpResponse<T> =
             McpResponse(ok = true, data = data, coverage = coverage, dataFreshness = dataFreshness)
 

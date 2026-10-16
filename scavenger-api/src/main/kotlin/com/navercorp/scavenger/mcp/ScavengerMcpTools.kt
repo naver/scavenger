@@ -194,8 +194,9 @@ class ScavengerMcpTools(
         withMeta(customerId, env, methodUsageQueryService.getPrImpact(customerId, signatures, env))
     }
 
-    // Attaches coverage + dataFreshness metadata to a successful data payload. Built only after the data
-    // query succeeded, so the env re-resolution inside cannot surface a new error.
+    // Attaches coverage + dataFreshness metadata to a successful data payload. Runs after the data query in its
+    // own transaction: an env disabled or deleted in between fails the call (INVALID_ARGUMENT) rather than
+    // returning data without coverage.
     private fun <T> withMeta(customerId: Long, env: String?, data: T): McpResponse<T> {
         val meta = mcpMetaService.build(customerId, env)
         return McpResponse.success(data, meta.coverage, meta.dataFreshness)
