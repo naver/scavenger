@@ -116,6 +116,16 @@ class McpIntegrationTest {
     }
 
     @Test
+    fun `an environment without a registered agent is answered with an empty coverage`() {
+        // customer 2 has invocation rows but no JVM rows: nothing vouches that prod is still instrumented
+        val body = envelope(callTool("is_method_used", """{"signature":"$CROSS_ENV_METHOD","env":"prod"}""", CUSTOMER_2_KEY))
+
+        assertThat(body.path("data").path("usage").asText()).isEqualTo("NOT_INVOKED")
+        assertThat(body.path("coverage").isArray).isTrue
+        assertThat(body.path("coverage").size()).isZero
+    }
+
+    @Test
     fun `list_scopes carries the per-application coverage breakdown`() {
         val body = envelope(callTool("list_scopes", "{}"))
 
@@ -154,9 +164,13 @@ class McpIntegrationTest {
 
     @Test
     fun `list_scopes returns the customer's environments and applications`() {
-        val response = callTool("list_scopes", "{}")
+        val data = envelope(callTool("list_scopes", "{}")).path("data")
 
-        assertThat(response.body).contains("test", "demo")
+        // customer 2 reuses the environment names, so an exact match also guards tenant isolation
+        assertThat(data.path("environments").map { it.path("name").asText() to it.path("enabled").asBoolean() })
+            .containsExactlyInAnyOrder("test" to true, "prod" to true, "staging" to false)
+        assertThat(data.path("applications").map { it.path("name").asText() })
+            .containsExactlyInAnyOrder("demo", "demo2")
     }
 
     @Test
