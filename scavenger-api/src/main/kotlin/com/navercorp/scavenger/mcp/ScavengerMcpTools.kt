@@ -89,10 +89,15 @@ class ScavengerMcpTools(
               - User asks "who calls this method?"
               - Cross-checking caller evidence after is_method_used
               - Analyzing the impact of changing a method signature, or planning a deprecation migration
-            IMPORTANT: call-stack tracking is off by default. When there is no call-stack data in the requested
-            scope (the given env, or the whole workspace) the result carries a typed "tracking disabled or no
-            data" state — never read an empty list as "no callers".
+            IMPORTANT: call-stack tracking is off by default and switched on per agent (application). recordedIn
+            lists the application/environment pairs in scope that record the method and whether each has
+            call-stack data. trackingState is DATA_AVAILABLE only when every pair has data — only then may an empty
+            list read as "no direct caller recorded from instrumented code while tracking was on". PARTIAL: callers
+            from the pairs without data are unknown. DISABLED_OR_NO_DATA: no pair has data — never read an empty
+            list as "no callers".
             Data covers direct callers only, within instrumented packages and the tracking-enabled window.
+            Constructors and calls from outside instrumented code (framework entry points, reflection) are never
+            recorded: an INVOKED method (is_method_used) with no recorded callers is called from there, not dead.
         """,
     )
     fun getMethodCallers(

@@ -144,7 +144,8 @@ is_method_used { "signature": "com.example.demo.service2.TestService.call()" }
 ```
 get_method_callers { "signature": "com.example.demo.service2.TestService.call()" }
 → callers: [ { "callerSignature": "com.example.demo.controller.MyController.hello()", "lastInvokedAtMillis": ... } ],
-  trackingState: DATA_AVAILABLE
+  trackingState: DATA_AVAILABLE,
+  recordedIn: [ { "application": "demo", "environment": "prod", "hasCallStackData": true } ]
 ```
 
 **Dead code in prod**
@@ -188,7 +189,7 @@ To remove the endpoint entirely, set Spring AI's `spring.ai.mcp.server.enabled=f
 | `401` with `AUTH_MISSING` | The `X-Scavenger-License-Key` header is not set. |
 | `401` with `AUTH_INVALID` | The license key does not match any workspace. |
 | `INVALID_ARGUMENT` on an `env` filter | Unknown or disabled environment — call `list_scopes` for valid names. |
-| `get_method_callers` returns `trackingState: DISABLED_OR_NO_DATA` | Call-stack tracking (`callStackTraceMode`) is off, or no call-stack data yet. An empty list is **not** "no callers". The state is evaluated within the requested scope: with an `env` filter it reflects that environment only. |
+| `get_method_callers` returns `trackingState: DISABLED_OR_NO_DATA` or `PARTIAL` | Call-stack tracking (`callStackTraceMode`) is a per-agent switch, off by default. The state is evaluated per (application, environment) that records the method, listed in `recordedIn` with `hasCallStackData`: `DISABLED_OR_NO_DATA` means none of them has call-stack data, `PARTIAL` means only some do (callers from the others are unknown). Only `DATA_AVAILABLE` lets an empty list read as "no direct caller recorded from instrumented code while tracking was on" — constructors and callers outside the instrumented packages (framework entry points, reflection) are never recorded, so an invoked method with no recorded callers is not dead. |
 | `list_scopes` returns no environments or applications | No agent has reported yet for this workspace — they are registered on the first agent report. |
 | `coverage` is empty, or an environment is missing from it | No JVM is registered there right now: no agent has reported yet, or its agents stopped and the Collector swept them. Earlier invocation data is still queried, so a "not used" result there is unverified. |
 | `METHOD_NOT_FOUND` for a method you expect | The signature must match the stored format exactly, and the method must be inside the agent's instrumented packages. Absence is not evidence the method is dead. |

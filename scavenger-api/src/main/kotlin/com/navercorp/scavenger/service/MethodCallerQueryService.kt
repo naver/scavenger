@@ -26,17 +26,20 @@ class MethodCallerQueryService(
             )
 
         val callers = callStackDao.findCallersBySignatureHash(customerId, method.signatureHash, environmentId)
-        // empty caller data must distinguish "tracking off / no data in the requested scope" from "no callers"
-        // — a false dead verdict deletes live code. The scope is the given env, or the whole workspace.
-        val trackingState = if (callers.isEmpty() && !callStackDao.existsAnyCallStack(customerId, environmentId)) {
-            McpMethodCallersDto.CallStackTrackingState.DISABLED_OR_NO_DATA
-        } else {
-            McpMethodCallersDto.CallStackTrackingState.DATA_AVAILABLE
+        val recordedIn = callStackDao.findCallStackScopes(customerId, method.signatureHash, environmentId)
+            .map { McpMethodCallersDto.RecordedScope.from(it) }
+        // empty caller data must distinguish "tracking off / no data" from "no callers" — a false dead verdict
+        // deletes live code. Tracking is per agent, so only data in every pair that records the method vouches for it.
+        val trackingState = when {
+            recordedIn.isNotEmpty() && recordedIn.all { it.hasCallStackData } -> McpMethodCallersDto.CallStackTrackingState.DATA_AVAILABLE
+            recordedIn.any { it.hasCallStackData } -> McpMethodCallersDto.CallStackTrackingState.PARTIAL
+            else -> McpMethodCallersDto.CallStackTrackingState.DISABLED_OR_NO_DATA
         }
         return McpMethodCallersDto(
             signature = signature,
             callers = callers.map { McpMethodCallerDto.from(it) },
-            trackingState = trackingState
+            trackingState = trackingState,
+            recordedIn = recordedIn
         )
     }
 }
