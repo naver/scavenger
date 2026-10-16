@@ -9,5 +9,6 @@ data class McpMethodUsageDbRow(
     val lastInvokedAtMillis: Long?,
     val lastSeenAtMillis: Long?,
     val observedRows: Long,
+    val observedInScopeSince: Instant?,
     val knownSince: Instant?
 )

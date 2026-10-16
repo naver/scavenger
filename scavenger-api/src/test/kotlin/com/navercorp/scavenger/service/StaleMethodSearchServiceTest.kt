@@ -2,16 +2,23 @@ package com.navercorp.scavenger.service
 
 import com.navercorp.scavenger.dto.McpError
 import com.navercorp.scavenger.exception.McpException
+import com.navercorp.scavenger.repository.InvocationRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.transaction.annotation.Transactional
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 @SpringBootTest
 class StaleMethodSearchServiceTest {
     @Autowired
     private lateinit var sut: StaleMethodSearchService
+
+    @Autowired
+    private lateinit var invocationRepository: InvocationRepository
 
     @Test
     fun `neverInvoked with prefix should exclude abstract, garbage and invoked methods`() {
@@ -62,12 +69,42 @@ class StaleMethodSearchServiceTest {
         val stale30 = sut.search(1, idleDays = 30, limit = 100).methods.map { it.signature }
         assertThat(stale30).contains("com.example.demo.MyController.hello()")
 
-        // usedInTestOnly: invoked 2026-01 — stale at 30 days, not stale at 365
+        // usedInTestOnly: invoked 2026-01 — stale at 30 days
         val stale30c2 = sut.search(2, idleDays = 30, limit = 100).methods.map { it.signature }
-        assertThat(stale30c2).contains("com.example.demo.legacy.LegacyService.usedInTestOnly()")
+        assertThat(stale30c2).contains(USED_IN_TEST_ONLY)
+    }
 
-        val stale365c2 = sut.search(2, idleDays = 365, limit = 100).methods.map { it.signature }
-        assertThat(stale365c2).doesNotContain("com.example.demo.legacy.LegacyService.usedInTestOnly()")
+    @Test
+    @Transactional
+    fun `idleDays should not report a method invoked after the cutoff`() {
+        // recorded in scope since the seed; only its last invocation moves inside the window
+        val invocation = invocationRepository.findById(USED_IN_TEST_ONLY_INVOCATION_ID).orElseThrow()
+        invocationRepository.save(invocation.copy(invokedAtMillis = Instant.now().minus(5, ChronoUnit.DAYS).toEpochMilli()))
+
+        val stale30 = sut.search(2, idleDays = 30, limit = 100).methods.map { it.signature }
+
+        assertThat(stale30).doesNotContain(USED_IN_TEST_ONLY)
+    }
+
+    @Test
+    fun `idleDays should not count a method as idle for longer than the scope has recorded it`() {
+        // oldMethod has never been invoked; every row in scope was recorded at the seed time
+        val daysSinceSeed = ChronoUnit.DAYS.between(SEED_RECORDED_AT, Instant.now()).toInt()
+
+        val longerThanRecorded = sut.search(2, idleDays = daysSinceSeed + 30, limit = 100).methods.map { it.signature }
+        val withinRecorded = sut.search(2, idleDays = daysSinceSeed - 1, limit = 100).methods.map { it.signature }
+
+        assertThat(longerThanRecorded).doesNotContain(OLD_METHOD)
+        assertThat(withinRecorded).contains(OLD_METHOD)
+    }
+
+    @Test
+    fun `results should carry when the scope started recording the method`() {
+        val result = sut.search(2, env = "prod", neverInvoked = true, limit = 100)
+
+        val observedSince = result.methods.single { it.signature == OLD_METHOD }.observedInScopeSinceMillis?.let(Instant::ofEpochMilli)
+        // seed rows are zone-less TIMESTAMPs read in the JVM time zone
+        assertThat(observedSince).isBetween(SEED_RECORDED_AT.minus(1, ChronoUnit.DAYS), SEED_RECORDED_AT.plus(1, ChronoUnit.DAYS))
     }
 
     @Test
@@ -133,5 +170,14 @@ class StaleMethodSearchServiceTest {
             "com.other.App.run()",
             "com.example.demo.legacy.LegacyService.oldMethod()"
         )
+    }
+
+    companion object {
+        private const val OLD_METHOD = "com.example.demo.legacy.LegacyService.oldMethod()"
+        private const val USED_IN_TEST_ONLY = "com.example.demo.legacy.LegacyService.usedInTestOnly()"
+
+        // test-data-set-1.1.5.sql: customer 2 invocation rows are created at this time; id 38 is usedInTestOnly INVOKED in env 'test'
+        private val SEED_RECORDED_AT: Instant = Instant.parse("2026-01-05T09:02:00Z")
+        private const val USED_IN_TEST_ONLY_INVOCATION_ID = 38L
     }
 }

@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.transaction.annotation.Transactional
+import java.time.Instant
+import java.time.temporal.ChronoUnit
 
 @SpringBootTest
 class MethodUsageQueryServiceTest {
@@ -57,6 +59,17 @@ class MethodUsageQueryServiceTest {
         val result = sut.isMethodUsed(2, "com.other.App.run()", env = "prod")
 
         assertThat(result.usage).isEqualTo(McpMethodUsageDto.UsageState.NOT_OBSERVED_IN_SCOPE)
+    }
+
+    @Test
+    fun `should report when the scope started recording the method`() {
+        val recorded = sut.isMethodUsed(2, "com.example.demo.legacy.LegacyService.oldMethod()", env = "prod")
+        val notRecorded = sut.isMethodUsed(2, "com.other.App.run()", env = "prod")
+
+        // seed rows are zone-less TIMESTAMPs read in the JVM time zone
+        assertThat(recorded.observedInScopeSinceMillis?.let(Instant::ofEpochMilli))
+            .isBetween(SEED_RECORDED_AT.minus(1, ChronoUnit.DAYS), SEED_RECORDED_AT.plus(1, ChronoUnit.DAYS))
+        assertThat(notRecorded.observedInScopeSinceMillis).isNull()
     }
 
     @Test
@@ -159,5 +172,10 @@ class MethodUsageQueryServiceTest {
             .isInstanceOf(McpException::class.java)
             .extracting { (it as McpException).error.code }
             .isEqualTo(McpError.Code.INVALID_ARGUMENT)
+    }
+
+    companion object {
+        // test-data-set-1.1.5.sql: customer 2 invocation rows are created at this time
+        private val SEED_RECORDED_AT: Instant = Instant.parse("2026-01-05T09:02:00Z")
     }
 }

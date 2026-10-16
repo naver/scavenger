@@ -62,6 +62,9 @@ class ScavengerMcpTools(
             `usage` is INVOKED, NOT_INVOKED (recorded in the scope, no invocation seen), or NOT_OBSERVED_IN_SCOPE (no
             runtime record in the scope — e.g. the application is not deployed or not instrumented in that env).
             NOT_OBSERVED_IN_SCOPE means no evidence either way — never read it as "not used".
+            observedInScopeSinceMillis is when the scope started recording the method (the latest start among its
+            applications/environments) — a start, not proof the agent kept instrumenting it, so check `coverage`.
+            Judge a NOT_INVOKED window by it, not by knownSinceMillis (workspace-wide).
             An empty/absent result is NOT proof of death — weigh the `coverage` metadata.
         """,
     )
@@ -113,13 +116,18 @@ class ScavengerMcpTools(
             included (check lastInvokedAtMillis) — for dead-code questions always set at least one of them.
             Omitting idleDays applies no idle cutoff (no hidden default). Results are paginated: pass nextCursor
             back as cursor.
+            idleDays=N only lists methods every application/environment in scope started recording at least N days
+            ago, so a method deployed yesterday is not "idle for 30 days". neverInvoked=true alone also lists methods
+            deployed minutes ago — add idleDays for a minimum observation window. observedInScopeSinceMillis on each
+            result is when the scope started recording it (a start, not proof of continuous instrumentation — check
+            `coverage`); knownSinceMillis is workspace-wide.
             Results are evidence, not deletion verdicts — weigh the `coverage` metadata.
         """,
     )
     fun getStaleMethods(
         @ToolParam(required = false, description = "Optional environment name (e.g. prod). Omit to aggregate across all.")
         env: String?,
-        @ToolParam(required = false, description = "Only methods idle for at least this many days. Omit for no idle filter.")
+        @ToolParam(required = false, description = "Only methods uninvoked for, and recorded in scope since, at least this many days. Omit for none.")
         idleDays: Int?,
         @ToolParam(required = false, description = "Left-anchored declaringType prefix, e.g. com.foo.legacy")
         prefix: String?,

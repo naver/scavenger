@@ -7,6 +7,7 @@ data class McpMethodUsageDto(
     val usage: UsageState,
     val lastInvokedAtMillis: Long?,
     val lastSeenAtMillis: Long?,
+    val observedInScopeSinceMillis: Long?,
     val knownSinceMillis: Long?
 ) {
     enum class UsageState {
@@ -26,6 +27,7 @@ data class McpMethodUsageDto(
                 },
                 lastInvokedAtMillis = row.lastInvokedAtMillis?.takeIf { it > 0 },
                 lastSeenAtMillis = row.lastSeenAtMillis,
+                observedInScopeSinceMillis = row.observedInScopeSince?.toEpochMilli(),
                 knownSinceMillis = row.knownSince?.toEpochMilli()
             )
         }

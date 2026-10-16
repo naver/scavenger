@@ -14,6 +14,7 @@ class McpMethodQuerySql : SqlGeneratorSupport() {
             MAX(invocations.lastSeenAtMillis) AS lastSeenAtMillis,
             -- 0 = no record in the requested scope (not deployed / not instrumented there): no evidence, not "not invoked"
             COUNT(invocations.id) AS observedRows,
+            MAX(invocations.createdAt) AS observedInScopeSince,
             methods.createdAt AS knownSince
         FROM
             methods
@@ -39,6 +40,7 @@ class McpMethodQuerySql : SqlGeneratorSupport() {
             methods.signature AS signature,
             methods.signatureHash AS signatureHash,
             MAX(invocations.invokedAtMillis) AS lastInvokedAtMillis,
+            MAX(invocations.createdAt) AS observedInScopeSince,
             methods.createdAt AS knownSince
         FROM
             methods
@@ -65,6 +67,9 @@ class McpMethodQuerySql : SqlGeneratorSupport() {
         val conditions = buildList {
             if (hasIdleCutoff) {
                 add("MAX(invocations.invokedAtMillis) < :idleCutoffMillis")
+                // never-invoked rows carry invokedAtMillis = 0: also require every (application, environment) in scope
+                // to have recorded the method since before the cutoff, or a method deployed yesterday reads as idle for N days
+                add("MAX(invocations.createdAt) < :idleCutoffAt")
             }
             if (neverInvokedOnly) {
                 add("MAX(CASE WHEN invocations.status = 'INVOKED' THEN 1 ELSE 0 END) = 0")

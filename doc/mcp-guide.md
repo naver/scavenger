@@ -65,6 +65,16 @@ Method signatures use the fully-qualified format stored by the agent, e.g.
 scope — e.g. the application is not deployed, or the package is not instrumented, in that
 environment). `NOT_OBSERVED_IN_SCOPE` is no evidence either way, not "unused".
 
+`idleDays=N` lists only methods that every application/environment in the scope started recording
+at least N days ago, so a method deployed yesterday never shows up as idle for 30 days. (The UI
+snapshot counts a never-invoked method as unused regardless of how long it has been recorded.)
+`neverInvoked=true` on its own also lists methods deployed minutes ago — combine it with `idleDays`
+for a minimum observation window.
+Method results carry `observedInScopeSinceMillis` — when the scope started recording the method,
+the latest start among its applications/environments. Judge how long a method has gone uninvoked
+by this value, not by `knownSinceMillis` (workspace-wide, not specific to the scope). It is a start
+of recording, not proof that the agent kept instrumenting the method since — check `coverage`.
+
 ## Response format
 
 Every successful response is a JSON envelope:
