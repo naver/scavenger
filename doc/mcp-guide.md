@@ -83,10 +83,10 @@ Every successful response is a JSON envelope:
 {
   "ok": true,
   "data": { /* tool-specific payload */ },
-  "coverage": [                                 // one entry per environment (only the filtered env if set)
+  "coverage": [                                 // one entry per environment with a registered JVM (only the filtered env if set)
     { "environment": "prod",
       "collectingSinceMillis": 1767571260000,   // start of the oldest JVM still registered in this environment
-      "agentAliveAtMillis": 1768003200000 }      // when an agent last polled (null: no agent state yet)
+      "agentAliveAtMillis": 1768003200000 }      // latest poll from any agent in this environment (null: no agent state yet)
   ],
   "dataFreshness": { "queryExecutedAtMillis": 1786329861602 }
 }
@@ -100,6 +100,13 @@ Every successful response is a JSON envelope:
 > swept by the Collector, so after a full rolling restart it moves forward even though older
 > invocation data is still counted. Coverage is per environment because a method result cannot
 > be tied to one application; `list_scopes` returns the per-(application, environment) breakdown.
+>
+> The per-environment values are a best case across the environment's applications — the earliest
+> collection start and the most recent poll — so one long-running, healthy application can mask a
+> newly added or silent one. To judge a specific application, use the per-(application, environment)
+> rows from `list_scopes`. An environment missing from `coverage` has no registered JVM right now
+> (no agent has reported yet, or its agents stopped and the Collector swept them): a "not used"
+> result there is unverified.
 
 Failures use a typed error instead of `data`:
 
@@ -182,7 +189,8 @@ To remove the endpoint entirely, set Spring AI's `spring.ai.mcp.server.enabled=f
 | `401` with `AUTH_INVALID` | The license key does not match any workspace. |
 | `INVALID_ARGUMENT` on an `env` filter | Unknown or disabled environment — call `list_scopes` for valid names. |
 | `get_method_callers` returns `trackingState: DISABLED_OR_NO_DATA` | Call-stack tracking (`callStackTraceMode`) is off, or no call-stack data yet. An empty list is **not** "no callers". The state is evaluated within the requested scope: with an `env` filter it reflects that environment only. |
-| `list_scopes` / `coverage` is empty | No agent has reported yet for this workspace. Data appears after the first agent publish. |
+| `list_scopes` returns no environments or applications | No agent has reported yet for this workspace — they are registered on the first agent report. |
+| `coverage` is empty, or an environment is missing from it | No JVM is registered there right now: no agent has reported yet, or its agents stopped and the Collector swept them. Earlier invocation data is still queried, so a "not used" result there is unverified. |
 | `METHOD_NOT_FOUND` for a method you expect | The signature must match the stored format exactly, and the method must be inside the agent's instrumented packages. Absence is not evidence the method is dead. |
 | CORS error from a browser-based MCP client | CORS is off by default — set `scavenger.mcp.cors.enabled=true`, and make sure the gateway does not strip the preflight (`OPTIONS`) request. |
 | API fails to start with `spring.ai.mcp.server.protocol must be STATELESS` | The MCP auth model requires `protocol: STATELESS` and `type: SYNC`; restore them, or disable the server with `spring.ai.mcp.server.enabled=false`. |

@@ -41,7 +41,10 @@ class ScavengerMcpTools(
               - An env filter returned INVALID_ARGUMENT
               - Judging whether a "not invoked" result is trustworthy for a specific application
             Every tool response also carries `coverage` per environment — check it before trusting a
-            "not invoked" result.
+            "not invoked" result. It is a best case across the environment's applications (earliest
+            collectingSinceMillis, latest agentAliveAtMillis); for a specific application use the per-application
+            rows here. An environment missing from `coverage` has no registered agent now (none reported yet, or
+            its agents stopped and were swept) — a "not invoked" result there is unverified.
         """,
     )
     fun listScopes(): McpResponse<*> = mcpCall {
