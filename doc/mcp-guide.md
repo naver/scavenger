@@ -19,7 +19,8 @@ first:
 ## Setup
 
 Add a single entry to your MCP client configuration. Authentication reuses your existing
-workspace **licenseKey** via the `X-Scavenger-License-Key` header.
+workspace **licenseKey** via the `X-Scavenger-License-Key` header. Example for Claude Code
+(`.mcp.json`) — other clients take the same URL and header in their own configuration format:
 
 ```jsonc
 {
@@ -27,11 +28,14 @@ workspace **licenseKey** via the `X-Scavenger-License-Key` header.
     "scavenger": {
       "type": "http",
       "url": "https://your-scavenger-host/scavenger/mcp",
-      "headers": { "X-Scavenger-License-Key": "<licenseKey>" }
+      "headers": { "X-Scavenger-License-Key": "${SCAVENGER_LICENSE_KEY}" }
     }
   }
 }
 ```
+
+Claude Code expands `${SCAVENGER_LICENSE_KEY}` from your environment, so the file itself never
+holds the key.
 
 The transport is **Streamable HTTP (stateless)** — each request is an independent
 JSON-RPC call, no session to manage.
@@ -39,8 +43,8 @@ JSON-RPC call, no session to manage.
 > **Where to find the licenseKey:** it is the workspace key on the API's workspace screen
 > — the same value the Java/Python agents use as `apiKey`.
 
-> ⚠️ **The same key lets agents write to the Collector.** Keep MCP client config files out of
-> version control and treat a leaked key as a compromised workspace credential: with it, an
+> ⚠️ **The same key lets agents write to the Collector.** Keep the key out of version control
+> and treat a leaked key as a compromised workspace credential: with it, an
 > attacker can both read your data and poison the invocation evidence this server reports.
 
 ## Tools
@@ -115,8 +119,11 @@ Failures use a typed error instead of `data`:
 ```
 
 Error codes: `AUTH_MISSING`, `AUTH_INVALID`, `METHOD_NOT_FOUND`, `INVALID_ARGUMENT`,
-`INTERNAL_ERROR`. `AUTH_*` errors arrive as an HTTP 401 with this envelope as the body; tool
-errors arrive inside a normal `tools/call` result. Argument schema violations (missing required
+`INTERNAL_ERROR`. `AUTH_*` errors arrive as an HTTP 401 with this envelope as the body; if the
+license lookup itself fails (e.g. the database is unavailable), the request gets an HTTP 500 with a
+retryable `INTERNAL_ERROR` envelope instead. Tool errors arrive inside a normal `tools/call`
+result; an unexpected failure there is a retryable `INTERNAL_ERROR` whose details are only in the
+API log. Argument schema violations (missing required
 field, wrong type) are reported by the MCP layer itself as `isError: true` with a plain-text
 message, not as this envelope.
 
@@ -148,11 +155,11 @@ get_method_callers { "signature": "com.example.demo.service2.TestService.call()"
   recordedIn: [ { "application": "demo", "environment": "prod", "hasCallStackData": true } ]
 ```
 
-**Dead code in prod**
+**Dead-code candidates in prod**
 
 ```
-get_stale_methods { "env": "prod", "neverInvoked": true, "limit": 50 }
-→ methods: [ ... ], nextCursor: "..."   // page with cursor
+get_stale_methods { "env": "prod", "neverInvoked": true, "idleDays": 30, "limit": 50 }
+→ methods: [ ... ], nextCursor: "..."   // page with cursor; weigh coverage before acting
 ```
 
 **PR impact (bulk)**
@@ -175,6 +182,10 @@ get_pr_impact { "signatures": ["com.foo.A.x()", "com.foo.B.y()", ...] }   // up 
 interceptor follows `spring.ai.mcp.server.streamable-http.mcp-endpoint` (default `/mcp`), which
 must start with `/`.
 
+**Request size** — the API sets no request-body limit, and the MCP transport reads each body into
+memory. Cap it at the gateway: the largest valid request, `get_pr_impact` with 200 signatures of
+up to 1,000 characters, is about 200 KB.
+
 **CORS** is off by default. Browser-based MCP clients (e.g. MCP Inspector) need
 `scavenger.mcp.cors.enabled=true`; narrow `scavenger.mcp.cors.allowed-origin-patterns`
 (default `*`) to the client's origin.
@@ -189,6 +200,7 @@ To remove the endpoint entirely, set Spring AI's `spring.ai.mcp.server.enabled=f
 | --- | --- |
 | `401` with `AUTH_MISSING` | The `X-Scavenger-License-Key` header is not set. |
 | `401` with `AUTH_INVALID` | The license key does not match any workspace. |
+| `INTERNAL_ERROR` — HTTP `500` "Authentication service unavailable.", or "Internal error." in a tool result | A server-side failure, such as an unavailable database. Retry; if it persists, check the API log — an unexpected tool failure is logged with the tool, workspace and arguments. |
 | `INVALID_ARGUMENT` on an `env` filter | Unknown or disabled environment — call `list_scopes` for valid names. |
 | `get_method_callers` returns `trackingState: DISABLED_OR_NO_DATA` or `PARTIAL` | Call-stack tracking (`callStackTraceMode`) is a per-agent switch, off by default. The state is evaluated per (application, environment) that records the method, listed in `recordedIn` with `hasCallStackData`: `DISABLED_OR_NO_DATA` means none of them has call-stack data, `PARTIAL` means only some do (callers from the others are unknown). Only `DATA_AVAILABLE` lets an empty list read as "no direct caller recorded from instrumented code while tracking was on" — constructors and callers outside the instrumented packages (framework entry points, reflection) are never recorded, so an invoked method with no recorded callers is not dead. |
 | `list_scopes` returns no environments or applications | No agent has reported yet for this workspace — they are registered on the first agent report. |
