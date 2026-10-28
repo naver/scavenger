@@ -1,6 +1,7 @@
-package com.navercorp.scavenger.mcp
+package com.navercorp.scavenger.service
 
 import com.navercorp.scavenger.dto.McpError
+import com.navercorp.scavenger.exception.McpException
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
