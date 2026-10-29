@@ -3,7 +3,7 @@
 ## Prerequisite
 
 - Scavenger is a combination of various server components(API, Frontend, Collector) and agent component.
-  To install scavenger, you need JDK 21 or latest version.
+  To run the Collector and API, you need JDK 25 or later. The agent runs on Java 8 or later.
 - Scavenger uses 2 ports. if some ports are blocked by your firewall, you should ask the network admin to open the
   following ports in the firewall.
   These ports can be configured by the configuration.
@@ -82,13 +82,13 @@ Start API using the following command.
 When you start the API, you need to set the value `scavenger.collector-server-url` with the `-D` option so that the API
 knows the collector's url.
 
-- e.g) `java -Dscavenger.collector-server-url=http://localhost:8080 -jar scavenger-api-boot.jar`
+- e.g) `java -Dscavenger.collector-server-url=http://localhost:8080 -jar scavenger-api.jar`
 
 #### Configuration
 
 You can override any configuration values with `-D` option.
 
-- `java -jar scavenger-api-boot.jar`
+- `java -jar scavenger-api.jar`
 
 To change the http(default 8081) ports used by API, you can change the settings below.
 
@@ -100,7 +100,7 @@ The profile can be enabled with `spring.profiles.active` configuration.</br>
 The API uses in-memory H2 in `local` profile. </br>
 This means that the data is initialised every time the API application starts, and the data is independent of the collector because it is using a different h2 than the collector. </br>
 If you have enabled the h2 profile on the collector to work around this, you can enable the h2 profile on the API as well.
-- `java -Dspring.profiles.active=h2 -jar scavenger-api-boot.jar`
+- `java -Dspring.profiles.active=h2 -jar scavenger-api.jar`
 
 If you've built your own MySQL, follow the steps below.
 > If you have already deployed MySQL when installing collector, you can skip ahead to step 4.
