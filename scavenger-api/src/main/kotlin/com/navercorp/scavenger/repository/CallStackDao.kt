@@ -1,6 +1,7 @@
 package com.navercorp.scavenger.repository
 
 import com.navercorp.scavenger.entity.CallStackSignatureDbRow
+import com.navercorp.scavenger.entity.McpCallStackScopeDbRow
 import com.navercorp.scavenger.entity.McpMethodCallerDbRow
 import com.navercorp.scavenger.repository.sql.CallStackSql
 import com.navercorp.spring.data.jdbc.plus.sql.provider.EntityJdbcProvider
@@ -44,12 +45,18 @@ class CallStackDao(
         )
     }
 
-    fun existsAnyCallStack(customerId: Long): Boolean {
-        return selectOne(
-            sql.selectExistsAnyCallStack(),
+    fun findCallStackScopes(
+        customerId: Long,
+        signatureHash: String,
+        environmentId: Long?,
+    ): List<McpCallStackScopeDbRow> {
+        return select(
+            sql.selectCallStackScopes(hasEnvironmentId = environmentId != null),
             mapParameterSource()
-                .addValue("customerId", customerId),
-            Long::class.java
-        ).orElse(0L) > 0L
+                .addValue("customerId", customerId)
+                .addValue("signatureHash", signatureHash)
+                .addValue("environmentId", environmentId),
+            McpCallStackScopeDbRow::class.java
+        )
     }
 }

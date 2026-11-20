@@ -5,6 +5,7 @@ import com.navercorp.scavenger.entity.McpStaleMethodDbRow
 import com.navercorp.scavenger.repository.sql.McpMethodQuerySql
 import com.navercorp.spring.data.jdbc.plus.sql.provider.EntityJdbcProvider
 import org.springframework.stereotype.Repository
+import java.time.Instant
 
 @Repository
 class McpMethodQueryDao(
@@ -50,6 +51,7 @@ class McpMethodQueryDao(
                 .addValue("prefix", prefix)
                 .addValue("cursor", cursor)
                 .addValue("idleCutoffMillis", idleCutoffMillis)
+                .addValue("idleCutoffAt", idleCutoffMillis?.let { Instant.ofEpochMilli(it) })
                 .addValue("limit", limit),
             McpStaleMethodDbRow::class.java
         )

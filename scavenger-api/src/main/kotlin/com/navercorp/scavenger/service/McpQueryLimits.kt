@@ -1,4 +1,6 @@
-package com.navercorp.scavenger.mcp
+package com.navercorp.scavenger.service
+
+import com.navercorp.scavenger.exception.McpException
 
 object McpQueryLimits {
     const val MAX_SIGNATURE_LENGTH = 1000

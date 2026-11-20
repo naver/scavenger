@@ -11,6 +11,7 @@ data class McpStaleMethodsDto(
 data class McpStaleMethodDto(
     val signature: String,
     val lastInvokedAtMillis: Long?,
+    val observedInScopeSinceMillis: Long?,
     val knownSinceMillis: Long?
 ) {
     companion object {
@@ -18,6 +19,7 @@ data class McpStaleMethodDto(
             return McpStaleMethodDto(
                 signature = row.signature,
                 lastInvokedAtMillis = row.lastInvokedAtMillis?.takeIf { it > 0 },
+                observedInScopeSinceMillis = row.observedInScopeSince?.toEpochMilli(),
                 knownSinceMillis = row.knownSince?.toEpochMilli()
             )
         }
