@@ -70,8 +70,7 @@ instrumentation.
   and combine them in one snapshot.
 - **Snapshots** with a package tree, a usage treemap and the last invocation time of every method.
 - **Call-stack tracking** (optional, `callStackTraceMode`) to see which method calls which.
-- **MCP server** so AI coding agents can check "is this method used?" against real usage
-  (on `develop`, not yet released).
+- **MCP server** so AI coding agents can check "is this method used?" against real usage.
 - **H2** to try it out, **MySQL** or **Vitess** for production.
 
 ## 📋 Requirements
@@ -187,11 +186,6 @@ lists the invoked share per package or class. A snapshot is computed when it is 
   *Last polled at* on the dashboard to see that the agents are still reporting.
 
 ## 🤖 Ask from your AI coding agent (MCP)
-
-> [!NOTE]
-> The MCP server is on `develop` and not in a release yet. To try it, build the API from source with
-> `./gradlew assemble -p scavenger-api` and run `scavenger-api/build/libs/scavenger-api-*-SNAPSHOT.jar`
-> in place of the released API jar — it works on the same database.
 
 The API embeds an [MCP](https://modelcontextprotocol.io/) server at `/scavenger/mcp`, so an agent
 such as Claude Code, Cursor or Codex can check real usage before it suggests deleting code. Register
