@@ -78,23 +78,23 @@ instrumentation.
 
 | Component | Requirement |
 | --- | --- |
-| Collector, API (v1.1.4) | JDK 25 or later |
+| Collector, API | JDK 25 or later |
 | Java agent | An application on Java 8 or later (integration-tested on 8, 11, 17, 21 and 25) |
 | Database | H2 (embedded, for trying out), MySQL or Vitess |
 | Network | Agents → Collector `8080` (HTTP and gRPC). Users → API `8081` (UI, REST, MCP) |
 
 ## 🚀 Quick start
 
-Run everything on one machine with the embedded H2 database. The steps below were run as written
-with v1.1.4 on JDK 25.
+Run everything on one machine with the embedded H2 database.
 
 ### 1. Download
 
 ```bash
-VERSION=1.1.4
-curl -LO https://github.com/naver/scavenger/releases/download/v$VERSION/scavenger-collector-$VERSION.jar
-curl -LO https://github.com/naver/scavenger/releases/download/v$VERSION/scavenger-api-$VERSION.jar
-curl -LO https://repo1.maven.org/maven2/com/navercorp/scavenger/scavenger-agent-java/$VERSION/scavenger-agent-java-$VERSION.jar
+# the latest release
+VERSION=$(curl -fsSLo /dev/null -w '%{url_effective}' https://github.com/naver/scavenger/releases/latest | sed 's|.*/v||')
+curl -fLO https://github.com/naver/scavenger/releases/download/v$VERSION/scavenger-collector-$VERSION.jar
+curl -fLO https://github.com/naver/scavenger/releases/download/v$VERSION/scavenger-api-$VERSION.jar
+curl -fLO https://github.com/naver/scavenger/releases/download/v$VERSION/scavenger-agent-java-$VERSION.jar
 ```
 
 ### 2. Start the collector, then the API
